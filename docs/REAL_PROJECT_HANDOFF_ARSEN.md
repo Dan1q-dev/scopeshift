@@ -4,7 +4,7 @@
 
 Общие DTO и Zod-схемы находятся в `src/types/real-project.ts`; REST и примеры в `REAL_PROJECT_API.md`, продуктовые правила в `REAL_PROJECT_MODE_SPEC.md`. Backend и reference integration капитан развивает в `codex/real-project-mode`. Доступность конкретного endpoint проверяй по итоговому сообщению капитана, а не по одному наличию документа.
 
-Не создавай второй несовместимый API/state layer. Если на ветке уже есть reference UI нового режима, развивай его по тем же контрактам. Существующие Practice/Results и незакоммиченные изменения Gemini сохраняются.
+На ветке добавлен отдельный reference UI: `src/app/real-projects/page.tsx`, `src/components/real-projects/{RealProjectWorkspace,AnalysisReview,ImpactForm}.tsx`, `src/lib/client/real-project-api.ts`. Это функциональная основа для интеграции и проверки P0. Арсен владеет финальным UX, визуальной полировкой и развитием этих экранов. Не создавай второй несовместимый API/state layer. Существующие Practice/Results и незакоммиченные изменения Gemini сохраняются.
 
 ## Твоя зона
 
@@ -39,4 +39,4 @@
 
 Новый пользователь проходит synthetic create -> analyze -> correction -> confirm -> impact -> draft -> edit/copy -> reload history -> delete. Проверь мобильный viewport, клавиатурный фокус и live/error announcements. Ни один AI-вызов не выполняется при простом вводе текста. Чужой UUID не открывает данные. После удаления исчезает весь проектный history. Исходная Practice симуляция, Replay и Compare продолжают работать.
 
-Перед PR: Node 22, typecheck/lint/unit/build и согласованный E2E. В отчете отделяй mocked UI-проверку от настоящего OpenAI и опубликованного flow. Укажи commit, API revision, какие состояния не проверены. Не отправляй реальные договоры команды в AI для теста.
+Новые `tests/e2e/real-project.spec.ts` используют явные синтетические HTTP fixtures для UI. Они не доказывают работу реального OpenAI, изоляцию БД или production. Перед PR: Node 22, typecheck/lint/unit/build и согласованный E2E. В отчете отделяй mocked UI-проверку от настоящего OpenAI и опубликованного flow. Укажи commit, API revision, какие состояния не проверены. Не отправляй реальные договоры команды в AI для теста.
