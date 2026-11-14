@@ -249,6 +249,16 @@ describe("Real Project Mode AI boundary", () => {
     expect(body).toContain("Please confirm whether");
   });
 
+  it("allows conditional once we confirm while retaining the numerical frequency guard", async () => {
+    const { project, request, impact } = fixture();
+    const fetchMock = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(response({ opening: "Thank you for sharing the request.", closing: "Once we confirm the proposed scope, we can discuss how to proceed." }))
+      .mockResolvedValueOnce(response({ opening: "This charge applies once.", closing: "Please confirm." }));
+    const ai = createRealProjectAi(config, { fetch: fetchMock });
+    await expect(ai.draft(project, request, impact, "professional")).resolves.toContain("Once we confirm the proposed scope");
+    await expect(ai.draft(project, request, impact, "professional")).rejects.toMatchObject({ kind: "invalid_response" });
+  });
+
   it("rejects an oversized server terms block before spending budget or calling the provider", async () => {
     const { project, request, impact } = fixture();
     impact.input.assumptions = Array.from({ length: 12 }, (_, index) => `${index}: ${"Synthetic scope assumption. ".repeat(35)}`);

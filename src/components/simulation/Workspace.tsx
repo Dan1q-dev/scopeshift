@@ -14,7 +14,7 @@ export function InterpreterNote({ mode }: { mode: InterpreterMode }) {
   return (
     <p role="note" className="m-0 border-b border-white/10 bg-white/[0.03] px-4 py-2 text-center text-xs text-slate-400">
       {mode === "openai"
-        ? "OpenAI interprets your proposals. The simulation engine determines client replies and outcomes."
+        ? "OpenAI interprets your messages and voices client replies. The simulation engine verifies and determines all contract outcomes."
         : "The rules-v2 interpreter reads your proposals. The simulation engine determines client replies and outcomes. State exact terms - price, days, and scope."}
     </p>
   );

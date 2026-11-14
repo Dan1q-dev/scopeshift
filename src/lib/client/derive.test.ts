@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { websiteProjectScenario } from "@/data/scenarios/website-project";
 import { negotiateHistory } from "@/lib/simulation/negotiate";
-import { toPublicScenario, type Agreement, type NegotiateResponse, type PublicScenario } from "@/types/scope";
+import { toPublicScenario, type Agreement, type NegotiateResponse, type NegotiationTurn, type PublicScenario } from "@/types/scope";
 import { agreementsOf, evidenceParts, normalizeLegacyScopeEvidence, readableIds } from "./derive";
 
 const scenario = toPublicScenario(websiteProjectScenario);
@@ -12,7 +12,65 @@ const response = negotiateHistory(websiteProjectScenario, [{
   userMessage: "I can add booking for an extra $400 and two more days.",
 }]);
 
+const makeAgreement = (id: string, eventId: string, status: Agreement["status"]): Agreement => ({
+  id,
+  eventId,
+  sourceTurnId: `${id}-turn`,
+  status,
+  change: { feeDeltaCents: 0, deadlineDeltaDays: 0, addScopeItemIds: [], removeScopeItemIds: [] },
+  explanation: "Recorded test decision.",
+});
+
+const makeTurn = (turnId: string, eventId: string, agreement: Agreement | null = null): NegotiationTurn => ({
+  turnId,
+  eventId,
+  userMessage: "Test reply.",
+  action: { kind: "clarify", question: "Test question." },
+  clientReply: "Test client reply.",
+  agreement,
+});
+
+const responseWith = (turns: NegotiationTurn[]): NegotiateResponse => ({
+  scenarioId: scenario.id,
+  turns,
+  project: response.project,
+  evaluation: response.evaluation,
+  currentEventId: null,
+  completed: false,
+});
+
+describe("agreementsOf", () => {
+  it("returns no decisions without a response", () => {
+    expect(agreementsOf(null)).toEqual([]);
+  });
+
+  it("drops a counteroffer replaced by a later decision on the same request", () => {
+    const result = responseWith([
+      makeTurn("t1", "booking-request", makeAgreement("a1", "booking-request", "counteroffered")),
+      makeTurn("t2", "booking-request", makeAgreement("a2", "booking-request", "accepted")),
+      makeTurn("t3", "earlier-delivery"),
+    ]);
+    expect(agreementsOf(result).map((item) => item.id)).toEqual(["a2"]);
+  });
+
+  it("keeps a pending counteroffer and decisions on other requests", () => {
+    const result = responseWith([
+      makeTurn("t1", "booking-request", makeAgreement("a1", "booking-request", "accepted")),
+      makeTurn("t2", "scope-swap", makeAgreement("a2", "scope-swap", "counteroffered")),
+    ]);
+    expect(agreementsOf(result).map((item) => item.id)).toEqual(["a1", "a2"]);
+  });
+});
+
 describe("evidenceParts", () => {
+  it("splits an observation into action, rule and verified result when the learner message matches", () => {
+    expect(evidenceParts("Action: I can add it. Rule: Propose a defined addition. Verified: Accepted scope amendment.", "I can add it.")).toEqual({
+      action: "I can add it.",
+      rule: "Propose a defined addition.",
+      verified: "Accepted scope amendment.",
+    });
+  });
+
   it("anchors the full learner message even when it contains the display labels", () => {
     const message = "I wrote Rule: a suggested term.\nVerified: this is still my reply.";
     expect(evidenceParts(`Action: ${message} Rule: The actual rule. Verified: The actual result.`, message)).toEqual({
@@ -69,6 +127,10 @@ describe("readableIds", () => {
     };
     expect(readableIds("contact-form / portfolio-gallery", literal, response)).toBe("Contact $& $$ portfolio-gallery / Portfolio gallery");
   });
+
+  it("leaves text without known IDs unchanged", () => {
+    expect(readableIds("No deliverables removed.", scenario, response)).toBe("No deliverables removed.");
+  });
 });
 
 describe("normalizeLegacyScopeEvidence", () => {
@@ -100,24 +162,5 @@ describe("normalizeLegacyScopeEvidence", () => {
     for (const text of [`Asked a requirements question: ${legacy}`, `Quoted: ${legacy}`, "Accepted scope amendment. No deliverables removed.", "Accepted catalog amendment: added [unknown-item], removed [].", "Accepted catalog amendment: added [], removed []."]) {
       expect(normalizeLegacyScopeEvidence(text, accepted)).toBe(text);
     }
-  });
-});
-
-describe("agreementsOf", () => {
-  const decision = (id: string, eventId: string, status: Agreement["status"]) => ({ turnId: id, agreement: { id, eventId, status } });
-  const withTurns = (turns: unknown[]) => ({ turns }) as NegotiateResponse;
-
-  it("returns no decisions without a response", () => {
-    expect(agreementsOf(null)).toEqual([]);
-  });
-
-  it("drops a counteroffer replaced by a later decision on the same request", () => {
-    const listed = agreementsOf(withTurns([decision("a1", "booking-request", "counteroffered"), decision("a2", "booking-request", "accepted"), { turnId: "t3" }]));
-    expect(listed.map((item) => item.id)).toEqual(["a2"]);
-  });
-
-  it("keeps a pending counteroffer and decisions on other requests", () => {
-    const listed = agreementsOf(withTurns([decision("a1", "booking-request", "accepted"), decision("a2", "scope-swap", "counteroffered")]));
-    expect(listed.map((item) => item.id)).toEqual(["a1", "a2"]);
   });
 });

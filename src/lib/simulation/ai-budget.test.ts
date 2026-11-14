@@ -10,6 +10,7 @@ import { signedSession, signedSessionCookie } from "./signed-session";
 const mocked = vi.hoisted(() => ({
   query: vi.fn<SqlClient["query"]>(),
   interpret: vi.fn(),
+  reply: vi.fn(),
   receipts: new Map<string, NegotiationTurn>(),
 }));
 
@@ -30,6 +31,10 @@ vi.mock("@/lib/ai/openai-interpreter", async (original) => ({
   ...await original<typeof import("@/lib/ai/openai-interpreter")>(),
   createOpenAIInterpreter: () => mocked.interpret,
 }));
+vi.mock("@/lib/ai/openai-client-reply", async (original) => ({
+  ...await original<typeof import("@/lib/ai/openai-client-reply")>(),
+  createOpenAIClientReplyGenerator: () => mocked.reply,
+}));
 
 const sql: SqlClient = { query: mocked.query };
 const secret = "synthetic-ai-budget-signing-secret-".repeat(2);
@@ -37,6 +42,7 @@ const secret = "synthetic-ai-budget-signing-secret-".repeat(2);
 beforeEach(() => {
   mocked.query.mockReset().mockResolvedValue({ rows: [{ calls: 1 }], rowCount: 1 });
   mocked.interpret.mockReset().mockResolvedValue({ kind: "clarify", question: "Which booking fields are required?" });
+  mocked.reply.mockReset().mockResolvedValue("Visitors need to provide a name, email, and preferred consultation slot, while our existing agreement stays unchanged.");
   mocked.receipts.clear();
 });
 
@@ -137,9 +143,10 @@ describe("HTTP AI quota boundary", () => {
     const retry = await POST(request());
     expect(retry.status).toBe(200);
     expect(await retry.json()).toEqual(expected);
-    expect(first.headers.get("X-ScopeShift-OpenAI-Calls")).toBe("1");
+    expect(first.headers.get("X-ScopeShift-OpenAI-Calls")).toBe("2");
     expect(retry.headers.get("X-ScopeShift-OpenAI-Calls")).toBe("0");
-    expect(mocked.query).toHaveBeenCalledOnce();
+    expect(mocked.query).toHaveBeenCalledTimes(2);
     expect(mocked.interpret).toHaveBeenCalledOnce();
+    expect(mocked.reply).toHaveBeenCalledOnce();
   });
 });

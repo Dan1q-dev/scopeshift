@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GET } from "@/app/api/attempts/route";
 import { POST } from "@/app/api/negotiate/route";
 import { createOpenAIInterpreter } from "@/lib/ai/openai-interpreter";
+import { createOpenAIClientReplyGenerator } from "@/lib/ai/openai-client-reply";
 import { getDatabasePool } from "./postgres-client";
 import { createReplayStore } from "./replay-store-factory";
 import { reserveAiCall } from "./ai-budget";
@@ -14,6 +15,10 @@ vi.mock("@/lib/simulation/replay-store-factory", () => ({ createReplayStore: vi.
 vi.mock("@/lib/ai/openai-interpreter", async (original) => ({
   ...await original<typeof import("@/lib/ai/openai-interpreter")>(),
   createOpenAIInterpreter: vi.fn(),
+}));
+vi.mock("@/lib/ai/openai-client-reply", async (original) => ({
+  ...await original<typeof import("@/lib/ai/openai-client-reply")>(),
+  createOpenAIClientReplyGenerator: vi.fn(),
 }));
 vi.mock("@/lib/simulation/ai-budget", async (original) => ({
   ...await original<typeof import("@/lib/simulation/ai-budget")>(),
@@ -97,10 +102,21 @@ describe("private attempt history HTTP endpoint", () => {
   });
 
   it("returns a persistence failure and retries its durable turn without another paid inference", async () => {
-    let cached: NegotiationTurn | undefined;
-    vi.mocked(createReplayStore).mockReturnValue({ getOrCreate: async (_identity, produce) => cached ??= await produce() });
+    const cache = new Map<string, NegotiationTurn>();
+    vi.mocked(createReplayStore).mockReturnValue({
+      getOrCreate: async (identity, produce) => {
+        const key = JSON.stringify(identity);
+        const existing = cache.get(key);
+        if (existing) return existing;
+        const created = await produce();
+        cache.set(key, created);
+        return created;
+      },
+    });
     const interpret = vi.fn().mockResolvedValue({ kind: "propose", change: { feeDeltaCents: 40000, deadlineDeltaDays: 2, addScopeItemIds: ["consultation-booking"], removeScopeItemIds: [] } });
+    const generateReply = vi.fn().mockResolvedValue("Agreed. Consultation booking is added, bringing the project to $1,900, 26 hours, and delivery on day 9.");
     vi.mocked(createOpenAIInterpreter).mockReturnValue(interpret);
+    vi.mocked(createOpenAIClientReplyGenerator).mockReturnValue(generateReply);
     query.mockRejectedValueOnce(new Error("database temporarily unavailable"))
       .mockResolvedValueOnce({ rows: [{ attempt_id: "retry-attempt" }], rowCount: 1 });
     const identity = cookie();
@@ -114,7 +130,8 @@ describe("private attempt history HTTP endpoint", () => {
     expect(retry.headers.get("X-ScopeShift-OpenAI-Calls")).toBe("0");
     expect((await retry.json()).project.totalFeeCents).toBe(190000);
     expect(interpret).toHaveBeenCalledTimes(1);
-    expect(reserveAiCall).toHaveBeenCalledTimes(1);
+    expect(generateReply).toHaveBeenCalledTimes(1);
+    expect(reserveAiCall).toHaveBeenCalledTimes(2);
     expect(query).toHaveBeenCalledTimes(2);
   });
 });
