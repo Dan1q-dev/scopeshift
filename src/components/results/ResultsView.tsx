@@ -5,7 +5,7 @@ import { useState } from "react";
 import { ChangeSummary } from "@/components/ui/ChangeSummary";
 import { ghostButton, navLink, panel, primaryButton, SiteHeader } from "@/components/ui/SiteHeader";
 import { StatusChip } from "@/components/ui/StatusChip";
-import { agreementsOf, initialProject } from "@/lib/client/derive";
+import { agreementsOf, evidenceParts, initialProject, readableIds } from "@/lib/client/derive";
 import { formatDays, formatHours, formatMoney, formatRate } from "@/lib/client/format";
 import { useSimulation } from "@/lib/client/use-simulation";
 import type { EvaluationCategory } from "@/types/scope";
@@ -65,6 +65,7 @@ export function ResultsView() {
                 const response = attempt.response!;
                 const project = response.project;
                 const agreements = agreementsOf(response);
+                const readable = (text: string) => readableIds(text, scenario, response);
                 return (
                   <section key={attempt.id} aria-label={label} className={`${panel} p-5 ${best !== null && project.effectiveHourlyRateCents === best && shown[0].attempt.response!.project.effectiveHourlyRateCents !== shown[1].attempt.response!.project.effectiveHourlyRateCents ? "border-emerald-400/40" : ""}`}>
                     <div className="flex items-center justify-between gap-2">
@@ -99,12 +100,27 @@ export function ResultsView() {
                         {response.evaluation.criteria.map((criterion) => (
                           <div key={`${criterion.category}:${criterion.evidence.map((item) => `${item.turnId}:${item.ruleId}`).join("|")}`} className="rounded-lg border border-white/10 px-3 py-2">
                             <div className="flex items-center justify-between gap-2"><span className="font-medium">{categoryLabels[criterion.category]}</span><span className="tabular text-xs text-slate-400">{criterion.earnedPoints} / {criterion.maxPoints}</span></div>
-                            <ul className="mt-1 mb-0 space-y-0.5 pl-4 text-xs text-slate-400">{criterion.evidence.map((evidence) => <li key={`${evidence.turnId}-${evidence.ruleId}`}>{evidence.observation}</li>)}</ul>
-                            <p className="mt-1 mb-0 text-xs text-slate-300">{criterion.advice}</p>
+                            <ul className="m-0 mt-2 list-none space-y-2 p-0 text-xs">
+                              {criterion.evidence.map((evidence) => {
+                                const parts = evidenceParts(evidence.observation, response.turns.find((turn) => turn.turnId === evidence.turnId)?.userMessage);
+                                return (
+                                  <li key={`${evidence.turnId}-${evidence.ruleId}`} className="border-l-2 border-emerald-400/30 pl-2.5 text-slate-400">
+                                    {parts ? (
+                                      <dl className="m-0 space-y-1">
+                                        <div><dt className="inline font-medium text-slate-300">Your reply: </dt><dd className="m-0 inline">{parts.action}</dd></div>
+                                        <div><dt className="inline font-medium text-slate-300">Scenario rule: </dt><dd className="m-0 inline">{readable(parts.rule)}</dd></div>
+                                        <div><dt className="inline font-medium text-slate-300">Verified: </dt><dd className="m-0 inline">{readable(parts.verified)}</dd></div>
+                                      </dl>
+                                    ) : readable(evidence.observation)}
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                            <p className="mt-2 mb-0 text-xs text-slate-300">{readable(criterion.advice)}</p>
                           </div>
                         ))}
-                        {response.evaluation.strengths.length > 0 && <div><p className="m-0 text-xs font-semibold text-emerald-300">Strengths</p><ul className="mt-1 mb-0 pl-4 text-xs text-slate-300">{response.evaluation.strengths.map((text) => <li key={text}>{text}</li>)}</ul></div>}
-                        {response.evaluation.improvements.length > 0 && <div><p className="m-0 text-xs font-semibold text-amber-300">To improve</p><ul className="mt-1 mb-0 pl-4 text-xs text-slate-300">{response.evaluation.improvements.map((text) => <li key={text}>{text}</li>)}</ul></div>}
+                        {response.evaluation.strengths.length > 0 && <div><p className="m-0 text-xs font-semibold text-emerald-300">Strengths</p><ul className="mt-1 mb-0 pl-4 text-xs text-slate-300">{response.evaluation.strengths.map((text) => <li key={text}>{readable(text)}</li>)}</ul></div>}
+                        {response.evaluation.improvements.length > 0 && <div><p className="m-0 text-xs font-semibold text-amber-300">To improve</p><ul className="mt-1 mb-0 pl-4 text-xs text-slate-300">{response.evaluation.improvements.map((text) => <li key={text}>{readable(text)}</li>)}</ul></div>}
                       </div>
                     )}
                     <Link href="/simulation" onClick={() => sim.selectAttempt(attempt.id)} className={`${ghostButton} mt-5`}>Open this attempt</Link>
