@@ -1,0 +1,19 @@
+FICTIONAL QA DOCUMENT - NOT LEGAL ADVICE OR A TEMPLATE FOR SIGNING
+
+Website changes before launch
+
+C1. Parties: North Lantern Web Studio and Cedar Finch Studio. All entities, people and records in this document are fictional demo data.
+
+C2. The fixed project fee is USD 1,500. The freelancer estimates 20 hours. Work begins on November 16, 2026, with delivery on November 23, 2026, if approved copy, images and inbox access are provided on November 16.
+
+C3. Deliverables are responsive Home, About and Services pages; a six-image static gallery; and a contact form containing name, email and message fields. The form validates required fields, sends an email notification to the supplied studio inbox and displays a success message.
+
+C4. One consolidated revision round containing up to five copy or image replacements is included. Additional rounds require a separate discussion. The number of rounds already used must be checked before classifying a new revision request.
+
+C5. Appointment scheduling, live slot availability, guaranteed reservations, payment collection and third-party calendar integration are excluded from this fee.
+
+C6. Corrections needed to make the delivered work conform to C3 are included when reported within 14 calendar days after delivery. New behavior must not be classified as a defect without comparing it with C3.
+
+C7. A proposed change does not change the agreed fee or delivery date. An amendment must identify deliverables, price and delivery date and be explicitly accepted by both parties. Estimates and quotes are not accepted amendments.
+
+C8. Fictional acceptance record: both demo parties accepted these terms on November 14, 2026. No amendments have been accepted.

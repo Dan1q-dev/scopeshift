@@ -1,0 +1,88 @@
+{
+  "id": "logo",
+  "title": "Included revisions and optional new work",
+  "clauses": {
+    "C1": "Parties: Pebble Arc Design and Harbor Kite Books. All identities and records are fictional demo data.",
+    "C2": "The fixed fee is USD 900 for an estimated 12 hours. The designer will deliver on November 20, 2026, after receiving the approved creative brief on November 16.",
+    "C3": "The designer will present two initial logo concepts. The client will select one for final refinement. Final files for the selected logo are SVG and PNG with transparent backgrounds.",
+    "C4": "One consolidated refinement round is included for the selected concept. It may include a color-palette change, a typeface adjustment and minor spacing corrections. It does not include a new logo concept. In this fictional project the client has not yet used the included round.",
+    "C5": "Three-dimensional animation, an animated logo and production of business cards are excluded. Social-profile image deliverables and source-file delivery are not addressed in this agreement.",
+    "C6": "A different delivery date or additional deliverable requires explicit approval of its scope, total fee and date. No response, a request for an estimate or a tentative expression of interest is not approval.",
+    "C7": "Fictional acceptance record: both parties accepted C1-C6 on November 14, 2026. No other amendment has been accepted."
+  },
+  "message": "I have selected concept A. For our first refinement round, please make it navy and adjust the spacing. Please send the transparent PNG as agreed. Could you also provide a LinkedIn banner and animate the logo? Let me know the price first. If the banner replaces the SVG export, could the total stay at $900? Sounds interesting, but I need to see the exact terms before approving.",
+  "expected": [
+    {
+      "id": "palette-spacing",
+      "status": "explicitly_included",
+      "evidenceClauseIds": [
+        "C4"
+      ],
+      "rationale": "The unused included round expressly permits palette and spacing changes.",
+      "nextStep": "Use the included round; do not classify the requested refinement as automatically billable.",
+      "autoBill": false
+    },
+    {
+      "id": "transparent-png",
+      "status": "explicitly_included",
+      "evidenceClauseIds": [
+        "C3"
+      ],
+      "rationale": "The specified final PNG is included.",
+      "nextStep": "Provide the agreed export without adding a new fee.",
+      "autoBill": false
+    },
+    {
+      "id": "linkedin-banner",
+      "status": "not_specified",
+      "evidenceClauseIds": [
+        "C5"
+      ],
+      "rationale": "Social-profile deliverables are explicitly left unaddressed; this is not an explicit exclusion.",
+      "nextStep": "Clarify dimensions, content and intended use before estimating.",
+      "autoBill": false
+    },
+    {
+      "id": "animation",
+      "status": "explicitly_excluded",
+      "evidenceClauseIds": [
+        "C5"
+      ],
+      "rationale": "An animated logo is explicitly excluded.",
+      "nextStep": "Discuss exact animation and a separately confirmed estimate; do not invent a price.",
+      "autoBill": false
+    },
+    {
+      "id": "banner-swap",
+      "status": "clarification_required",
+      "evidenceClauseIds": [
+        "C3",
+        "C6"
+      ],
+      "rationale": "Replacing the included SVG is a conditional proposal, not an accepted exchange.",
+      "nextStep": "Confirm that SVG is removed and the exact banner scope, price and date. Preserve the original agreement until accepted.",
+      "autoBill": false
+    }
+  ],
+  "calculations": [
+    {
+      "label": "Optional bounded goodwill, not an included deliverable",
+      "baseFeeCents": 90000,
+      "baseHours": 12,
+      "confirmedExtraHours": 1,
+      "proposedAdditionalFeeCents": 0,
+      "expectedTotalFeeCents": 90000,
+      "expectedTotalHours": 13,
+      "expectedRateCents": 6923,
+      "clientAccepted": false,
+      "committedFeeCents": 90000,
+      "committedHours": 12
+    }
+  ],
+  "skills": [
+    "included-vs-new-work",
+    "scope-exchange",
+    "explicit-agreement"
+  ],
+  "contractText": "FICTIONAL QA DOCUMENT - NOT LEGAL ADVICE OR A TEMPLATE FOR SIGNING\n\nIncluded revisions and optional new work\n\nC1. Parties: Pebble Arc Design and Harbor Kite Books. All identities and records are fictional demo data.\n\nC2. The fixed fee is USD 900 for an estimated 12 hours. The designer will deliver on November 20, 2026, after receiving the approved creative brief on November 16.\n\nC3. The designer will present two initial logo concepts. The client will select one for final refinement. Final files for the selected logo are SVG and PNG with transparent backgrounds.\n\nC4. One consolidated refinement round is included for the selected concept. It may include a color-palette change, a typeface adjustment and minor spacing corrections. It does not include a new logo concept. In this fictional project the client has not yet used the included round.\n\nC5. Three-dimensional animation, an animated logo and production of business cards are excluded. Social-profile image deliverables and source-file delivery are not addressed in this agreement.\n\nC6. A different delivery date or additional deliverable requires explicit approval of its scope, total fee and date. No response, a request for an estimate or a tentative expression of interest is not approval.\n\nC7. Fictional acceptance record: both parties accepted C1-C6 on November 14, 2026. No other amendment has been accepted.\n"
+}

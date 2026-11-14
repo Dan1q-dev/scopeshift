@@ -20,117 +20,143 @@ SOURCES = {
     "Yoodli": "https://support.yoodli.ai/en/articles/15862405-create-chat-based-roleplays",
     "HoneyBook": "https://www.honeybook.com/faqs",
 }
-SLIDES = [
-    {
-        "seconds": 25, "tag": "BUSINESS CUP 2.0 / SKILLS", "title": "ScopeShift",
-        "intro": "Stop working for free. Learn to negotiate.",
-        "cards": [
-            ("$75.00 / hour", ["$1,500 fixed fee", "20 estimated hours"]),
-            ("$57.69 / hour", ["Same fee after free booking", "26 estimated hours: +6 hours"]),
-        ],
-        "bottom": "Practice the decision before a real client asks for more.",
-        "note": "A website project starts at fifteen hundred dollars for twenty estimated hours: seventy-five dollars an hour. The client asks for booking. Add its six hours for free and the estimated rate becomes fifty-seven dollars and sixty-nine cents. ScopeShift lets freelancers practice that decision before the stakes are real.",
-    },
-    {
-        "seconds": 25, "tag": "THE PROBLEM", "title": "A small request changes the whole deal.",
-        "intro": "A contract captures the starting point. The next conversation changes it.",
-        "cards": [
-            ("Clarify", ["What does the client actually need?", "What is already included?"]),
-            ("Choose", ["Price it, exchange scope,", "offer bounded goodwill or decline."]),
-            ("Agree", ["Confirm scope, fee and date", "before making a commitment."]),
-        ],
-        "bottom": "Problem hypothesis: repeated practice can make these trade-offs clearer.",
-        "note": "A small change is rarely only a price question. The freelancer has to understand the request, separate existing work from new work, choose a reasonable trade-off and agree on clear terms. Our hypothesis is that practicing those decisions is more useful than collecting another negotiation script. We have not yet established learning gains.",
-    },
-    {
-        "seconds": 25, "tag": "INITIAL CUSTOMER", "title": "Start with fixed-fee web professionals.",
-        "intro": "Initial audience hypothesis: US independent professionals aged 25-45.",
-        "cards": [
-            ("Relevant work", ["Website scope changes", "A visible budget and delivery date"]),
-            ("Broad context", ["11.9 million independent contractors", "In their main job, July 2023"]),
-        ],
-        "bottom": "The BLS count is broad context, not our addressable market or a 2026 estimate.",
-        "sources": [("BLS, released 8 Nov 2024", SOURCES["BLS"])],
-        "note": "Our first learner is an independent web professional working on fixed-fee projects. The Bureau of Labor Statistics counted eleven point nine million independent contractors in their main job in July twenty twenty-three. That is broad context. It does not measure our age range, profession, demand or willingness to pay.",
-    },
-    {
-        "seconds": 35, "tag": "WORKING PRODUCT", "title": "Free text in. Validated consequences out.",
-        "intro": "One live scenario: Sarah Mitchell's website, three client requests.",
-        "cards": [
-            ("OpenAI", ["Interprets the learner's proposal", "Returns a validated action"]),
-            ("Simulation engine", ["Decides acceptance and client replies", "Computes money, effort and dates"]),
-            ("Replay + feedback", ["Try another decision", "Compare evidence and economics"]),
-        ],
-        "bottom": "Example: booking +$400 and +2 days gives $1,900 / 26h / day 9 / $73.08 per hour.",
-        "note": "The learner answers in their own words. OpenAI extracts a structured action. The deterministic engine checks the scenario rules, decides the client's response and calculates accepted consequences. Client replies currently come from the engine, not unrestricted model generation. Only an accepted agreement changes the project. A booking offer of four hundred dollars and two extra days produces nineteen hundred dollars, twenty-six hours and delivery on day nine.",
-    },
-    {
-        "seconds": 55, "tag": "DEMO / ACTIVE SIX-HOUR SCENARIO", "title": "One project. Two defensible outcomes.",
-        "intro": "Start: $1,500 / 20h / day 7 / $75.00 per hour. Booking adds 6 hours.",
-        "cards": [
-            ("Paid path: $78.85 / hour", ["Booking: +$400, +2 days", "Rush: +$150, -2 days", "Gallery -> testimonials: equal 4h", "Final: $2,050 / 26h / day 7"]),
-            ("Free path: $57.69 / hour", ["Booking: no extra fee or days", "Decline the earlier-delivery request", "Gallery -> testimonials: equal 4h", "Final: $1,500 / 26h / day 7"]),
-        ],
-        "bottom": "Replay the booking decision. Compare accepted outcomes, not promises.",
-        "note": "Here is the active scenario. Start with fifteen hundred dollars, twenty hours and seven days. First propose booking for four hundred dollars and two more days. The client accepts: nineteen hundred dollars, twenty-six hours, day nine. Offer two-day acceleration for another hundred and fifty dollars. Finally exchange the four-hour gallery for the four-hour testimonials section. The result is twenty-fifty, twenty-six hours, day seven. Replay the booking decision and accept it for free. Decline acceleration, then make the same equal-effort swap. The result is fifteen hundred dollars for twenty-six hours. The simulator exposes the cost; it does not automatically call goodwill a mistake.",
-    },
-    {
-        "seconds": 25, "tag": "POSITIONING", "title": "Connect the agreement to its economics.",
-        "intro": "A focused learning workflow, not a claim that AI roleplay is new.",
-        "cards": [
-            ("Yoodli", ["Chat roleplay practice", "Coaching and rubric feedback"]),
-            ("HoneyBook", ["Client workflows", "Contracts, invoices and payments"]),
-            ("ScopeShift", ["Freelancer scope negotiation", "Validated outcomes + branching Replay"]),
-        ],
-        "bottom": "Our intended advantage must be tested with learners. No exclusivity claim.",
-        "sources": [("Yoodli Help Center", SOURCES["Yoodli"]), ("HoneyBook FAQ", SOURCES["HoneyBook"])],
-        "note": "Yoodli already provides chat roleplays with coaching and rubric feedback. HoneyBook supports real client workflows including contracts and payments. Our intended focus is freelancer scope negotiation connected to validated project economics and replay. These are adjacent products, not proof of an exclusive feature. We still need evidence that this specific learning workflow is useful.",
-    },
-    {
-        "seconds": 25, "tag": "EVIDENCE-BASED FEEDBACK", "title": "Show what happened, and why it matters.",
-        "intro": "Action, Rule and Verified evidence support practical next steps.",
-        "cards": [
-            ("Action", ["The learner proposes a defined", "booking addition or scope exchange."]),
-            ("Rule", ["Apply only accepted, feasible", "changes to the active contract."]),
-            ("Verified", ["Show the accepted amendment", "and recomputed project state."]),
-        ],
-        "bottom": "Missing evidence is unassessed. No overall skill percentage or personality score.",
-        "note": "Feedback separates the learner's action, the applicable scenario rule and the verified outcome. It gives a practical next step. A question proves inquiry, not that every requirement was resolved. Missing evidence remains unassessed. We do not turn a partial rubric into an overall skill percentage. Next we must test transfer to a new scenario and voluntary replay.",
-    },
-    {
-        "seconds": 25, "tag": "PRICING HYPOTHESES", "title": "Prove repeated value before charging.",
-        "intro": "The first scenario is available now. Payments are not enabled.",
-        "cards": [
-            ("Free", ["First scenario", "No registration required", "Available now"]),
-            ("$19 / pack", ["Focused scenario collection", "Planned one-time price", "Demand not validated"]),
-            ("$9 / month", ["Future scenario library", "Planned subscription price", "Repeated use not established"]),
-        ],
-        "bottom": "These plans match the landing page. They are not revenue or willingness-to-pay evidence.",
-        "note": "The first scenario is free and needs no account. The landing page shows two future pricing hypotheses: a nineteen-dollar scenario pack and a nine-dollar monthly library. Payments are not enabled. We will test completed purchases after free practice, while measuring whether people return. Stated interest alone will not count as paid demand.",
-    },
-    {
-        "seconds": 30, "tag": "COMMERCIAL EXPERIMENT / ASSUMPTIONS", "title": "A testable funnel, not a market forecast.",
-        "intro": "10,000 prospects x 20% start x 50% finish x 5% buy = 50 buyers.",
-        "cards": [
-            ("50 buyers", ["Every funnel rate is assumed", "Measure each step separately"]),
-            ("$950 gross", ["50 packs x $19", "Not actual sales"]),
-            ("$15.13 / pack", ["$19 - $0.87 - $2 - $1", "Before acquisition and fixed costs"]),
-        ],
-        "bottom": "Payment, usage and support costs are placeholders. Refunds, taxes and CAC are excluded.",
-        "note": "This is a small proposed experiment, not a forecast. The assumed funnel yields fifty buyers and nine hundred fifty dollars in gross sales. Placeholder payment, usage and support costs leave fifteen dollars and thirteen cents per pack before acquisition and fixed costs. None is measured unit economics. We must observe real conversion, token usage, support effort and refunds before relying on it.",
-    },
-    {
-        "seconds": 30, "tag": "BEYOND HORIZON / TEAM", "title": "Practice before the next client call.",
-        "intro": "Working public demo: scopeshift.vercel.app",
-        "cards": [
-            ("Danila", ["Backend + simulation engine", "OpenAI, integration and deployment"]),
-            ("Arsen", ["Frontend + user experience", "Workspace, Replay and comparison"]),
-            ("Albina", ["Scenarios + evaluation", "Quality checks and pitch"]),
-        ],
-        "bottom": "Try a negotiation. Challenge the outcome. No paid-traction or learning-gain claim.",
-        "note": "We are Beyond Horizon: Danila, Arsen and Albina. The public app is available at scopeshift dot vercel dot app, and the code is on GitHub. The current demo has one scenario, evidence feedback and saved anonymous attempts. There is no claim of paid traction or proven learning gains. Try a response you would actually send to a client, then challenge its consequences.",
-    },
-]
+SLIDES = [{'seconds': 25,
+  'tag': 'BUSINESS CUP 2.0 / SKILLS',
+  'title': 'ScopeShift',
+  'intro': 'Learn it. Apply it. Improve it.',
+  'cards': [('$75.00 / hour', ['$1,500 fixed fee', '20 estimated hours']),
+            ('$57.69 / hour', ['Same fee after free booking', '26 estimated hours: +6 hours'])],
+  'bottom': 'Skills is live. Real Project Mode is a planned extension.',
+  'note': 'ScopeShift helps freelancers practice difficult scope conversations. Our next step connects '
+          'practice to actual work: understand a client request, review its evidence and prepare a response. '
+          'Learn it. Apply it. Improve it. Today Skills is live; Real Project Mode is being designed and has '
+          'not yet been validated end to end.'},
+ {'seconds': 25,
+  'tag': 'THE PROBLEM',
+  'title': 'Before pricing a request, understand it.',
+  'intro': 'An extra request is not automatically extra paid work.',
+  'cards': [('Included', ['Promised deliverables', 'Unused included revisions']),
+            ('Unclear', ['Missing requirements', 'Conflicting or changed terms']),
+            ('Outside scope', ['Clarify the requested change', 'Negotiate before committing'])],
+  'bottom': 'A contract-analysis suggestion is not a legal conclusion or an accepted amendment.',
+  'note': 'A client request may already be included, may be an included correction, or may be outside the '
+          'agreed scope. Silence in a contract is not the same as an exclusion. The practical task is to '
+          'establish what the documents say and what still needs clarification before discussing a price. We '
+          'are designing Real Project Mode around that distinction.'},
+ {'seconds': 25,
+  'tag': 'INITIAL CUSTOMER',
+  'title': 'Start with fixed-fee web professionals.',
+  'intro': 'Initial audience hypothesis: US independent professionals aged 25-45.',
+  'cards': [('Relevant work', ['Website scope changes', 'A visible budget and delivery date']),
+            ('Broad context', ['11.9 million independent contractors', 'In their main job, July 2023'])],
+  'bottom': 'The BLS count is broad context, not our addressable market or a 2026 estimate.',
+  'sources': [('BLS, released 8 Nov 2024', 'https://www.bls.gov/news.release/archives/conemp_11082024.htm')],
+  'note': 'Our first learner is an independent web professional working on fixed-fee projects. The Bureau of '
+          'Labor Statistics counted eleven point nine million independent contractors in their main job in '
+          'July twenty twenty-three. That is broad context. It does not measure our age range, profession, '
+          'demand or willingness to pay.'},
+ {'seconds': 35,
+  'tag': 'PRODUCT LOOP / VERIFIED VS PLANNED',
+  'title': 'Learn it. Apply it. Improve it.',
+  'intro': 'Connect negotiation practice with carefully reviewed project decisions.',
+  'cards': [('Learn: live', ['Skills simulations', 'Validated project consequences']),
+            ('Apply: planned', ['Review a contract and request', 'Confirm findings and estimates']),
+            ('Improve: planned', ['Recommend a relevant skill', 'Return to a synthetic practice'])],
+  'bottom': 'The new contract-analysis workflow is not yet implemented or tested.',
+  'note': 'Skills already lets the learner negotiate in natural language, reach an accepted agreement and '
+          'compare economic outcomes. Real Project Mode is the planned application layer: review a contract '
+          'and client request, inspect source evidence, confirm assumptions and draft a reply. A later '
+          'opt-in handoff recommends a relevant synthetic exercise. None of the new workflow is claimed as '
+          'shipped today.'},
+ {'seconds': 55,
+  'tag': 'DEMO / ACTIVE SIX-HOUR SCENARIO',
+  'title': 'One project. Two defensible outcomes.',
+  'intro': 'Start: $1,500 / 20h / day 7 / $75.00 per hour. Booking adds 6 hours.',
+  'cards': [('Paid path: $78.85 / hour',
+             ['Booking: +$400, +2 days',
+              'Rush: +$150, -2 days',
+              'Gallery -> testimonials: equal 4h',
+              'Final: $2,050 / 26h / day 7']),
+            ('Free path: $57.69 / hour',
+             ['Booking: no extra fee or days',
+              'Decline the earlier-delivery request',
+              'Gallery -> testimonials: equal 4h',
+              'Final: $1,500 / 26h / day 7'])],
+  'bottom': 'Replay the booking decision. Compare accepted outcomes, not promises.',
+  'note': 'Here is the active scenario. Start with fifteen hundred dollars, twenty hours and seven days. '
+          'First propose booking for four hundred dollars and two more days. The client accepts: nineteen '
+          'hundred dollars, twenty-six hours, day nine. Offer two-day acceleration for another hundred and '
+          'fifty dollars. Finally exchange the four-hour gallery for the four-hour testimonials section. The '
+          'result is twenty-fifty, twenty-six hours, day seven. Replay the booking decision and accept it '
+          'for free. Decline acceleration, then make the same equal-effort swap. The result is fifteen '
+          'hundred dollars for twenty-six hours. The simulator exposes the cost; it does not automatically '
+          'call goodwill a mistake.'},
+ {'seconds': 25,
+  'tag': 'POSITIONING',
+  'title': 'A focused workflow in an existing category.',
+  'intro': 'AI negotiation practice and scope-management assistance already exist.',
+  'cards': [('The Deep Brief', ['Client-scope roleplay', 'Expanding requests and pricing']),
+            ('Human Dynamics', ['Scope-creep practice', 'Contract-term scenarios']),
+            ('Our focus', ['Skills: validated economics', 'Real Project Mode: planned'])],
+  'bottom': 'Our combined learning-to-application workflow still needs user validation.',
+  'sources': [('The Deep Brief', 'https://www.thedeepbrief.co.uk/practice/client_scope'),
+              ('Human Dynamics', 'https://tryhumandynamics.com/scenarios/')],
+  'note': 'There are direct alternatives. The Deep Brief offers practice with client scope renegotiation. '
+          'Human Dynamics lists scope-creep and contract-term scenarios. Our focus is linking verified '
+          'project consequences to learning and, next, to a carefully confirmed practical workflow. We do '
+          'not claim that no alternatives exist or that the future combination is already proven.'},
+ {'seconds': 25,
+  'tag': 'REAL PROJECT MODE / PLANNED',
+  'title': 'Review evidence. Confirm. Then estimate.',
+  'intro': 'Contract + client message -> analysis -> confirmation -> calculation -> draft reply.',
+  'cards': [('Read the evidence', ['Included or excluded?', 'Unspecified or clarify?']),
+            ('Confirm assumptions', ['User reviews findings', 'User confirms effort and rate']),
+            ('Prepare a draft', ['Calculate a proposed quote', 'Client acceptance is separate'])],
+  'bottom': 'Three fictional QA cases prepared. Live AI and the full flow await the API.',
+  'note': 'We have prepared three fictional contracts and expected analyses. A website case separates '
+          'promised email notifications from excluded booking and unspecified analytics. A design case '
+          'protects an included revision from an automatic upsell. A writing case distinguishes an accepted '
+          'amendment from an unaccepted quote. The user must confirm findings and estimation inputs. The '
+          'output is a draft, not legal advice, a bill or a client agreement.'},
+ {'seconds': 25,
+  'tag': 'PRICING HYPOTHESES',
+  'title': 'Prove repeated value before charging.',
+  'intro': 'The first scenario is available now. Payments are not enabled.',
+  'cards': [('Free', ['First scenario', 'No registration required', 'Available now']),
+            ('$19 / pack', ['Focused scenario collection', 'Planned one-time price', 'Demand not validated']),
+            ('$9 / month',
+             ['Future scenario library', 'Planned subscription price', 'Repeated use not established'])],
+  'bottom': 'Planned prices, not evidence of demand. Real Project Mode packaging is undecided.',
+  'note': 'The first Skills scenario is free. The existing landing lists future hypotheses of nineteen '
+          'dollars per scenario pack and nine dollars per month. Payments are not enabled. We have not '
+          'decided how Real Project Mode would be packaged or priced. We must test useful repeat behavior '
+          'and completed purchases rather than treating interest as paid demand.'},
+ {'seconds': 30,
+  'tag': 'COMMERCIAL EXPERIMENT / ASSUMPTIONS',
+  'title': 'A testable funnel, not a market forecast.',
+  'intro': '10,000 prospects x 20% start x 50% finish x 5% buy = 50 buyers.',
+  'cards': [('50 buyers', ['Every funnel rate is assumed', 'Measure each step separately']),
+            ('$950 gross', ['50 packs x $19', 'Not actual sales']),
+            ('$15.13 / pack', ['$19 - $0.87 - $2 - $1', 'Before acquisition and fixed costs'])],
+  'bottom': 'Payment, usage and support costs are placeholders. Refunds, taxes and CAC are excluded.',
+  'note': 'This is a small proposed experiment, not a forecast. The assumed funnel yields fifty buyers and '
+          'nine hundred fifty dollars in gross sales. Placeholder payment, usage and support costs leave '
+          'fifteen dollars and thirteen cents per pack before acquisition and fixed costs. None is measured '
+          'unit economics. We must observe real conversion, token usage, support effort and refunds before '
+          'relying on it.'},
+ {'seconds': 30,
+  'tag': 'BEYOND HORIZON / TEAM',
+  'title': 'Learn it. Apply it. Improve it.',
+  'intro': 'Beyond Horizon: a live Skills demo and a clearly scoped next step.',
+  'cards': [('Danila', ['Backend + simulation engine', 'OpenAI, integration and deployment']),
+            ('Arsen', ['Frontend + user experience', 'Workspace, Replay and comparison']),
+            ('Albina', ['Scenarios + evaluation', 'Quality checks and pitch'])],
+  'bottom': 'Try the live Skills demo. Real Project Mode remains planned until verified.',
+  'note': 'We are Beyond Horizon: Danila, Arsen and Albina. Our public Skills demo works today. We have '
+          'prepared a fictional quality corpus and acceptance rules for Real Project Mode; backend contracts '
+          'and end-to-end validation are still pending. Our next proof is that freelancers can review a real '
+          'situation, make an informed decision and practice the skill they need. Learn it. Apply it. '
+          'Improve it.'}]
 
 W, H = 960, 540
 BG, CARD, WHITE, MUTED, MINT, LINE = [HexColor(c) for c in ("#0d1b25", "#1a303c", "#f2f5f4", "#b6c4cb", "#a6ed90", "#3a4b55")]
@@ -151,7 +177,7 @@ def build_pdf():
     c = canvas.Canvas(str(OUTPUT), pagesize=(W, H), pageCompression=1)
     c.setTitle("ScopeShift | Beyond Horizon | Public demo pitch")
     c.setAuthor("Beyond Horizon: Danila, Arsen, Albina")
-    c.setSubject("Business Cup 2.0 / Skills / verified active website scenario")
+    c.setSubject("Business Cup 2.0 / Skills live / Real Project Mode planned")
     for index, slide in enumerate(SLIDES, 1):
         c.setFillColor(BG)
         c.rect(0, 0, W, H, fill=1, stroke=0)
@@ -197,7 +223,7 @@ def build_pdf():
 def build_notes():
     lines = ["# ScopeShift - five-minute pitch", "",
              "Current public app: https://scopeshift.vercel.app. Repository: https://github.com/Dan1q-dev/scopeshift.", "",
-             "English ten-slide deck aligned with the active six-hour Sarah Mitchell scenario. Team: Danila, Arsen and Albina / Beyond Horizon. Prepared 14 November 2026. Total allocated time: 300 seconds. Rehearse to fit the speaker's actual pace.", ""]
+             "English ten-slide expansion deck: Skills is live; Real Project Mode is planned, awaiting API and end-to-end verification. The active Skills scenario remains the six-hour Sarah Mitchell project. Team: Danila, Arsen and Albina / Beyond Horizon. Prepared 14 November 2026. Total allocated time: 300 seconds. Rehearse to fit the speaker's actual pace.", ""]
     for i, slide in enumerate(SLIDES, 1):
         lines += [f"## {i}. {slide['title']} - {slide['seconds']} seconds", "", "On slide: " + slide["intro"], ""]
         for heading, details in slide["cards"]:

@@ -1,5 +1,21 @@
 # Jury questions and candid answers
 
+## Real Project Mode expansion
+
+**Is Real Project Mode live?** No. Skills is live. Three fictional contract cases, ground-truth analyses and a test-only checker are prepared. Shared API contracts and the implementation are pending. No upload, live-model grounding or full Real Project flow has yet been verified.
+
+**Is this legal advice?** The planned feature supports document review and business communication. It must cite the actual text, distinguish omissions and ambiguity, and ask the user to confirm facts. It must not claim legal validity, enforceability or entitlement to payment. The demo documents are fictional QA inputs, not templates for signing.
+
+**Does excluded work automatically cost extra?** No. Exclusion means the requested item is outside the specified baseline. Its requirements, effort and commercial terms still need discussion. Included corrections and unused included revisions must not become automatic upsells. A bounded goodwill concession is allowed.
+
+**How do Skills and Real Project connect?** A planned opt-in handoff recommends a related synthetic exercise from an observed issue: requirements clarification, scope exchange, deadline feasibility or explicit agreement. It must not silently transfer a real contract or personal data into public practice content.
+
+**When does an estimate change the contract?** Confirming analysis or generating a reply does not mean the client accepted. Confirmed effort/rate inputs support a reproducible proposed quote. Only separately recorded acceptance of defined terms can establish a new agreed project state.
+
+**Is the practical helper unique?** No exclusivity claim. Both negotiation practice and tools for scope changes already exist. Our proposed extension links reviewed practical decisions back to learning; its benefit remains to be validated.
+
+The questions below describe the current live Skills mode.
+
 **Can we try it now?** Yes: https://scopeshift.vercel.app. No registration is needed. The current product has one website scenario, three requests, evidence feedback and Replay/Compare. See `docs/PUBLIC_DEPLOYMENT.md`; the captain records final combined-branch checks separately.
 
 **Why not a general chatbot?** Our intended value is an explicit contract, constrained client decisions, validated amendments and replayable economics. A chatbot can also support practice. Whether this workflow teaches better decisions still needs learner evidence.

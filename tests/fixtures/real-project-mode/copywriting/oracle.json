@@ -1,0 +1,93 @@
+{
+  "id": "copywriting",
+  "title": "An accepted amendment overrides the original scope",
+  "clauses": {
+    "C1": "Parties: Quiet Harbor Copy and Moss Finch Learning. All identities, messages and acceptance records are fictional demonstration data.",
+    "C2": "Original agreement accepted November 14, 2026: USD 800 for 10 estimated hours. Deliverables are two newsletters of up to 600 words each. Original delivery date: November 20, 2026.",
+    "C3": "One consolidated revision round for each included deliverable is included, provided it stays within the approved audience, offer and outline. New interviews, factual research and translation are excluded. The included revision rounds have not been used.",
+    "C4": "Amendment A1, proposed November 15: remove the second newsletter and replace it with one landing page of up to 600 words. Four estimated newsletter hours are removed and four landing-page hours are added. Only one newsletter remains. Total fee stays USD 800 and total estimate stays 10 hours. Delivery becomes November 22, 2026.",
+    "C5": "Explicit fictional acceptance of A1 on November 15: client: \"I accept A1: one newsletter and one landing page, USD 800 total, delivery November 22.\" Freelancer: \"Confirmed, I accept those exact A1 terms.\" A1 is the current agreed amendment; C2 describes the superseded scope/date where inconsistent.",
+    "C6": "Amendment A2, proposed November 16 only: add a third deliverable for USD 200, delivery November 23. Client reply: \"Thanks, I will review it.\" The freelancer has not received acceptance of A2. A2 is not part of the current agreement.",
+    "C7": "Any later scope, price or date change must identify the revised deliverables and terms and be explicitly accepted by both parties. A new estimate or draft reply alone does not amend the agreement."
+  },
+  "message": "Please revise the headline of the landing page using the approved outline, and send the second newsletter from our original agreement as well. Can everything be ready on November 20? I saw the $200 proposal, but I have not approved it. Also, could you make a Spanish version of the landing page?",
+  "expected": [
+    {
+      "id": "landing-headline",
+      "status": "explicitly_included",
+      "evidenceClauseIds": [
+        "C3",
+        "C4",
+        "C5"
+      ],
+      "rationale": "The accepted landing page and its unused in-outline revision are included.",
+      "nextStep": "Handle the requested in-outline revision within the agreed round.",
+      "autoBill": false
+    },
+    {
+      "id": "second-newsletter",
+      "status": "explicitly_excluded",
+      "evidenceClauseIds": [
+        "C4",
+        "C5"
+      ],
+      "rationale": "A1 explicitly removed the second newsletter; the original clause is superseded for this item.",
+      "nextStep": "Explain the accepted exchange. Discuss re-adding it without claiming it is already owed or already paid.",
+      "autoBill": false
+    },
+    {
+      "id": "november-20",
+      "status": "clarification_required",
+      "evidenceClauseIds": [
+        "C2",
+        "C4",
+        "C5",
+        "C7"
+      ],
+      "rationale": "The currently accepted date is November 22. November 20 is a new acceleration request.",
+      "nextStep": "Check capacity and dependencies; do not silently restore the old date.",
+      "autoBill": false
+    },
+    {
+      "id": "a2-extra-fee",
+      "status": "clarification_required",
+      "evidenceClauseIds": [
+        "C6"
+      ],
+      "rationale": "The USD 200 proposal has not been accepted.",
+      "nextStep": "Keep the fee at USD 800 until a defined amendment is accepted.",
+      "autoBill": false
+    },
+    {
+      "id": "spanish-version",
+      "status": "explicitly_excluded",
+      "evidenceClauseIds": [
+        "C3"
+      ],
+      "rationale": "Translation is explicitly excluded.",
+      "nextStep": "Clarify locale, deliverables and review responsibilities before an estimate.",
+      "autoBill": false
+    }
+  ],
+  "calculations": [
+    {
+      "label": "Accepted A1, not unaccepted A2",
+      "baseFeeCents": 80000,
+      "baseHours": 10,
+      "confirmedExtraHours": 0,
+      "proposedAdditionalFeeCents": 0,
+      "expectedTotalFeeCents": 80000,
+      "expectedTotalHours": 10,
+      "expectedRateCents": 8000,
+      "clientAccepted": true,
+      "committedFeeCents": 80000,
+      "committedHours": 10
+    }
+  ],
+  "skills": [
+    "amendment-tracking",
+    "deadline-feasibility",
+    "explicit-agreement"
+  ],
+  "contractText": "FICTIONAL QA DOCUMENT - NOT LEGAL ADVICE OR A TEMPLATE FOR SIGNING\n\nAn accepted amendment overrides the original scope\n\nC1. Parties: Quiet Harbor Copy and Moss Finch Learning. All identities, messages and acceptance records are fictional demonstration data.\n\nC2. Original agreement accepted November 14, 2026: USD 800 for 10 estimated hours. Deliverables are two newsletters of up to 600 words each. Original delivery date: November 20, 2026.\n\nC3. One consolidated revision round for each included deliverable is included, provided it stays within the approved audience, offer and outline. New interviews, factual research and translation are excluded. The included revision rounds have not been used.\n\nC4. Amendment A1, proposed November 15: remove the second newsletter and replace it with one landing page of up to 600 words. Four estimated newsletter hours are removed and four landing-page hours are added. Only one newsletter remains. Total fee stays USD 800 and total estimate stays 10 hours. Delivery becomes November 22, 2026.\n\nC5. Explicit fictional acceptance of A1 on November 15: client: \"I accept A1: one newsletter and one landing page, USD 800 total, delivery November 22.\" Freelancer: \"Confirmed, I accept those exact A1 terms.\" A1 is the current agreed amendment; C2 describes the superseded scope/date where inconsistent.\n\nC6. Amendment A2, proposed November 16 only: add a third deliverable for USD 200, delivery November 23. Client reply: \"Thanks, I will review it.\" The freelancer has not received acceptance of A2. A2 is not part of the current agreement.\n\nC7. Any later scope, price or date change must identify the revised deliverables and terms and be explicitly accepted by both parties. A new estimate or draft reply alone does not amend the agreement.\n"
+}
