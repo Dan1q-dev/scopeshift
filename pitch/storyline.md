@@ -1,76 +1,144 @@
-# ScopeShift - five-minute pitch blueprint
+# ScopeShift - five-minute pitch
 
-Status: ten-slide English content and speaker notes, with a rendered PDF draft in this directory. No claim that the app is working. Final demo must show verified UI only. Team member names and production URL await the engineering handoff. Repository: https://github.com/Dan1q-dev/scopeshift (empty when first inspected). Total allocated time: 300 seconds. Rehearse and trim to actual speaker pace.
+Current public app: https://scopeshift.vercel.app. Repository: https://github.com/Dan1q-dev/scopeshift.
 
-## 1. A small request can change the whole project - 25 seconds
+English ten-slide deck aligned with the active six-hour Sarah Mitchell scenario. Team: Danila, Arsen and Albina / Beyond Horizon. Prepared 14 November 2026. Total allocated time: 300 seconds. Rehearse to fit the speaker's actual pace.
 
-On slide: **ScopeShift. Stop working for free. Learn to negotiate.** $1,500 / 20 hours = $75/hour. Four free extra hours → $62.50/hour. Illustrative simulation, before expenses and taxes.
+## 1. ScopeShift - 25 seconds
 
-Say: “You quote fifteen hundred dollars for a website. Twenty hours of work. Then the client asks for just one more feature. Four extra hours later, your estimated hourly revenue has fallen from seventy-five dollars to sixty-two fifty. ScopeShift gives freelancers a place to practice that conversation before the stakes are real.”
+On slide: Stop working for free. Learn to negotiate.
 
-## 2. The difficult skill is deciding what to agree to - 25 seconds
+- **$75.00 / hour:** $1,500 fixed fee; 20 estimated hours.
+- **$57.69 / hour:** Same fee after free booking; 26 estimated hours: +6 hours.
 
-On slide: Unclear requests → unpriced work → infeasible promises. Problem hypothesis to validate in freelancer interviews; no fabricated prevalence statistic.
+Practice the decision before a real client asks for more.
 
-Say: “A contract can describe the starting point. It cannot negotiate the next change for you. Freelancers have to clarify the request, explain the trade-off and reach an agreement while keeping the client relationship workable. We are testing the hypothesis that practicing these decisions is more useful than collecting another script.”
+Say: A website project starts at fifteen hundred dollars for twenty estimated hours: seventy-five dollars an hour. The client asks for booking. Add its six hours for free and the estimated rate becomes fifty-seven dollars and sixty-nine cents. ScopeShift lets freelancers practice that decision before the stakes are real.
 
-## 3. Start with US independent web professionals - 25 seconds
+## 2. A small request changes the whole deal. - 25 seconds
 
-On slide: Initial customer: US freelancers aged 25-45 delivering fixed-fee web projects. BLS: 11.9 million independent contractors in their sole/main job, July 2023. Broad context; not our addressable segment. [BLS, published November 8, 2024](https://www.bls.gov/news.release/archives/conemp_11082024.htm).
+On slide: A contract captures the starting point. The next conversation changes it.
 
-Say: “Our first learner is a US independent web professional working on fixed-fee projects. The Bureau of Labor Statistics counted eleven point nine million independent contractors in their main job in July twenty twenty-three. That establishes a broad context. It does not tell us how many fit our age range, profession or willingness to pay.”
+- **Clarify:** What does the client actually need?; What is already included?.
+- **Choose:** Price it, exchange scope,; offer bounded goodwill or decline..
+- **Agree:** Confirm scope, fee and date; before making a commitment..
 
-## 4. Practice a decision and see its consequences - 30 seconds
+Problem hypothesis: repeated practice can make these trade-offs clearer.
 
-On slide: **Negotiate → Agreement → Real project consequences → Replay.** Natural conversation; validated scope, fee, effort and delivery date.
+Say: A small change is rarely only a price question. The freelancer has to understand the request, separate existing work from new work, choose a reasonable trade-off and agree on clear terms. Our hypothesis is that practicing those decisions is more useful than collecting another negotiation script. We have not yet established learning gains.
 
-Say: “The learner reads a real project brief and negotiates with an AI client. The client can clarify, counteroffer or say no. The language model handles the conversation. A deterministic engine validates any accepted amendment and calculates its consequences. A proposal changes nothing until the client explicitly accepts its terms. Replay lets the learner test another defensible decision.”
+## 3. Start with fixed-fee web professionals. - 25 seconds
 
-## 5. Demo: exchange scope instead of giving away time - 50 seconds
+On slide: Initial audience hypothesis: US independent professionals aged 25-45.
 
-On slide: Original $1,500 / 20h / day 7. Add booking request form +4h; remove About and Gallery −4h. After explicit acceptance: $1,500 / 20h / day 7. Replay paid addition: $1,800 / 24h / day 7. These are scenario examples until verified live.
+- **Relevant work:** Website scope changes; A visible budget and delivery date.
+- **Broad context:** 11.9 million independent contractors; In their main job, July 2023.
 
-Say: “The client asks for booking. First I ask whether that means a reservation system or just a request. The client needs a request form. I can offer three hundred dollars of extra work. Or I can say: I can add this at the current price if we remove the separate About page and gallery. Those are both reasonable proposals. Watch the project remain unchanged while the terms are pending. After explicit acceptance, the written amendment and economics update together. Then we replay the decision with the paid addition and compare actual accepted outcomes.”
+The BLS count is broad context, not our addressable market or a 2026 estimate.
 
-Demo safety: use live behavior only after QA. If unavailable, label the visual “scenario walkthrough” and disclose the limitation. No canned response presented as live AI. Do not expose hidden budget. Keep a captioned verified recording as a clearly labeled backup.
+Say: Our first learner is an independent web professional working on fixed-fee projects. The Bureau of Labor Statistics counted eleven point nine million independent contractors in their main job in July twenty twenty-three. That is broad context. It does not measure our age range, profession, demand or willingness to pay.
 
-## 6. Our focus: the agreement and its economics - 30 seconds
+Source: [BLS, released 8 Nov 2024](https://www.bls.gov/news.release/archives/conemp_11082024.htm), checked 14 November 2026.
 
-On slide: Learning content gives concepts. AI roleplay gives conversational practice. Client-management tools organize real contracts. ScopeShift's intended focus: freelancer scope negotiation with validated economic consequences and branching replay.
+## 4. Free text in. Validated consequences out. - 35 seconds
 
-Say: “We do not claim to have invented AI roleplay. Yoodli already offers roleplay and rubric-based feedback, including text conversations. HoneyBook manages contracts and invoices. Our intended distinction is the freelancer-specific connection between what was agreed, what must be delivered and what that does to the project economics. We need to prove that this makes the practice more useful.”
+On slide: One live scenario: Sarah Mitchell's website, three client requests.
 
-Sources: [Yoodli chat roleplays](https://support.yoodli.ai/en/articles/15862405-create-chat-based-roleplays), [HoneyBook FAQ](https://www.honeybook.com/faqs). Reviewed November 14, 2026. Do not claim competitors lack a capability without a targeted feature audit.
+- **OpenAI:** Interprets the learner's proposal; Returns a validated action.
+- **Simulation engine:** Decides acceptance and client replies; Computes money, effort and dates.
+- **Replay + feedback:** Try another decision; Compare evidence and economics.
 
-## 7. Return to improve the decision, not chase a score - 25 seconds
+Example: booking +$400 and +2 days gives $1,900 / 26h / day 9 / $73.08 per hour.
 
-On slide: Evidence → practical advice → alternative decision → new scenario. Retention hypothesis: professional relevance plus replay. Validation: first scenario completion, voluntary replay, return to another scenario, later transfer to a novel task.
+Say: The learner answers in their own words. OpenAI extracts a structured action. The deterministic engine checks the scenario rules, decides the client's response and calculates accepted consequences. Client replies currently come from the engine, not unrestricted model generation. Only an accepted agreement changes the project. A booking offer of four hundred dollars and two extra days produces nineteen hundred dollars, twenty-six hours and delivery on day nine.
 
-Say: “Feedback points to observable evidence: what the learner clarified, what they documented and whether the commitment was feasible. A well-explained refusal can be a strong outcome. More money is not automatically a better negotiation. We will test whether evidence-based feedback and replay bring people back, and whether they improve on a different scenario.”
+## 5. One project. Two defensible outcomes. - 55 seconds
 
-## 8. Test pricing before building a subscription habit - 25 seconds
+On slide: Start: $1,500 / 20h / day 7 / $75.00 per hour. Booking adds 6 hours.
 
-On slide: Free first scenario. Hypothesis: $19 one-time focused scenario pack. Optional $12/month library only if repeated use is demonstrated. No willingness-to-pay evidence yet.
+- **Paid path: $78.85 / hour:** Booking: +$400, +2 days; Rush: +$150, -2 days; Gallery -> testimonials: equal 4h; Final: $2,050 / 26h / day 7.
+- **Free path: $57.69 / hour:** Booking: no extra fee or days; Decline the earlier-delivery request; Gallery -> testimonials: equal 4h; Final: $1,500 / 26h / day 7.
 
-Say: “The first scenario is free and needs no account. Our initial pricing hypothesis is a nineteen-dollar scenario pack. A subscription is an alternative experiment, not assumed recurring revenue. We will test real purchase behavior after learners complete the experience. Payment, conversion and retention claims will stay separate from stated interest.”
+Replay the booking decision. Compare accepted outcomes, not promises.
 
-## 9. A transparent commercial experiment - 35 seconds
+Say: Here is the active scenario. Start with fifteen hundred dollars, twenty hours and seven days. First propose booking for four hundred dollars and two more days. The client accepts: nineteen hundred dollars, twenty-six hours, day nine. Offer two-day acceleration for another hundred and fifty dollars. Finally exchange the four-hour gallery for the four-hour testimonials section. The result is twenty-fifty, twenty-six hours, day seven. Replay the booking decision and accept it for free. Decline acceleration, then make the same equal-effort swap. The result is fifteen hundred dollars for twenty-six hours. The simulator exposes the cost; it does not automatically call goodwill a mistake.
 
-On slide: Illustrative reach: 10,000 qualified prospects × 20% start × 50% finish × 5% buy = 50 buyers; × $19 = $950 gross. Every input is an assumption. Estimated contribution per pack: $19 − $0.87 payment − $2 usage − $1 support = $15.13 before acquisition and overhead.
+## 6. Connect the agreement to its economics. - 25 seconds
 
-Say: “Here is a small experiment, not a market forecast. Ten thousand qualified prospects, with the assumed funnel on screen, yields fifty buyers and nine hundred fifty dollars of gross revenue. Our illustrative payment, usage and support costs leave fifteen dollars and thirteen cents before acquisition and overhead. Those costs are placeholders until measured. That gives us a testable ceiling for acquisition cost, not proof of a viable business.”
+On slide: A focused learning workflow, not a claim that AI roleplay is new.
 
-Notes: payment cost hypothesis is 3% of $19 + $0.30 = $0.87, not a processor quote. Usage assumes $0.20 per run and ten runs per pack, not a provider price. Net contribution target requires CAC below $15.13; aim below $7 as an internal hypothesis for overhead headroom. Refunds, taxes, fraud and fixed costs excluded; do not call this net profit. Do not multiply BLS count by price as a forecast. Measure segment size through occupational/age segmentation and qualified acquisition evidence before publishing TAM/SAM/SOM.
+- **Yoodli:** Chat roleplay practice; Coaching and rubric feedback.
+- **HoneyBook:** Client workflows; Contracts, invoices and payments.
+- **ScopeShift:** Freelancer scope negotiation; Validated outcomes + branching Replay.
 
-## 10. Beyond Horizon: practice before the next client call - 30 seconds
+Our intended advantage must be tested with learners. No exclusivity claim.
 
-On slide: Beyond Horizon · Business Cup 2.0 · Skills. Ask: try one negotiation and challenge the result. Vision: build commercially sound judgment through practice. Production and public repo links only after verification.
+Say: Yoodli already provides chat roleplays with coaching and rubric feedback. HoneyBook supports real client workflows including contracts and payments. Our intended focus is freelancer scope negotiation connected to validated project economics and replay. These are adjacent products, not proof of an exclusive feature. We still need evidence that this specific learning workflow is useful.
 
-Say: “We are Beyond Horizon. ScopeShift is built around a simple promise: practice a difficult client decision, understand its consequences and try again. Our next proof is a complete, reliable scenario that handles disagreement and ambiguity as well as acceptance. Try a negotiation you would actually send to a client, and challenge the result. That is how we want to earn your trust.”
+Source: [Yoodli Help Center](https://support.yoodli.ai/en/articles/15862405-create-chat-based-roleplays), checked 14 November 2026.
 
-## Research notes
+Source: [HoneyBook FAQ](https://www.honeybook.com/faqs), checked 14 November 2026.
 
-- [BLS July 2023 release](https://www.bls.gov/news.release/archives/conemp_11082024.htm): independent contractors in main job; dated evidence, not a November 2026 current estimate.
-- [Upwork Freelance Forward 2023 release](https://www.upwork.com/press/releases/upwork-study-finds-64-million-americans-freelanced-in-2023-adding-1-27-trillion-to-u-s-economy): 64 million Americans did freelance work in 2023. Industry-sponsored, broader annual definition. Do not combine it with BLS or present either count as the target customer population.
-- [Harvard Program on Negotiation FAQ](https://www.pon.harvard.edu/about/faqs/): roleplay materials used in its programs. This supports roleplay as an established practice format, not evidence that ScopeShift improves income or skills.
-- No customer interviews, paid demand, retention, measured learning gains or production functionality have been established by this package.
+## 7. Show what happened, and why it matters. - 25 seconds
+
+On slide: Action, Rule and Verified evidence support practical next steps.
+
+- **Action:** The learner proposes a defined; booking addition or scope exchange..
+- **Rule:** Apply only accepted, feasible; changes to the active contract..
+- **Verified:** Show the accepted amendment; and recomputed project state..
+
+Missing evidence is unassessed. No overall skill percentage or personality score.
+
+Say: Feedback separates the learner's action, the applicable scenario rule and the verified outcome. It gives a practical next step. A question proves inquiry, not that every requirement was resolved. Missing evidence remains unassessed. We do not turn a partial rubric into an overall skill percentage. Next we must test transfer to a new scenario and voluntary replay.
+
+## 8. Prove repeated value before charging. - 25 seconds
+
+On slide: The first scenario is available now. Payments are not enabled.
+
+- **Free:** First scenario; No registration required; Available now.
+- **$19 / pack:** Focused scenario collection; Planned one-time price; Demand not validated.
+- **$9 / month:** Future scenario library; Planned subscription price; Repeated use not established.
+
+These plans match the landing page. They are not revenue or willingness-to-pay evidence.
+
+Say: The first scenario is free and needs no account. The landing page shows two future pricing hypotheses: a nineteen-dollar scenario pack and a nine-dollar monthly library. Payments are not enabled. We will test completed purchases after free practice, while measuring whether people return. Stated interest alone will not count as paid demand.
+
+## 9. A testable funnel, not a market forecast. - 30 seconds
+
+On slide: 10,000 prospects x 20% start x 50% finish x 5% buy = 50 buyers.
+
+- **50 buyers:** Every funnel rate is assumed; Measure each step separately.
+- **$950 gross:** 50 packs x $19; Not actual sales.
+- **$15.13 / pack:** $19 - $0.87 - $2 - $1; Before acquisition and fixed costs.
+
+Payment, usage and support costs are placeholders. Refunds, taxes and CAC are excluded.
+
+Say: This is a small proposed experiment, not a forecast. The assumed funnel yields fifty buyers and nine hundred fifty dollars in gross sales. Placeholder payment, usage and support costs leave fifteen dollars and thirteen cents per pack before acquisition and fixed costs. None is measured unit economics. We must observe real conversion, token usage, support effort and refunds before relying on it.
+
+## 10. Practice before the next client call. - 30 seconds
+
+On slide: Working public demo: scopeshift.vercel.app
+
+- **Danila:** Backend + simulation engine; OpenAI, integration and deployment.
+- **Arsen:** Frontend + user experience; Workspace, Replay and comparison.
+- **Albina:** Scenarios + evaluation; Quality checks and pitch.
+
+Try a negotiation. Challenge the outcome. No paid-traction or learning-gain claim.
+
+Say: We are Beyond Horizon: Danila, Arsen and Albina. The public app is available at scopeshift dot vercel dot app, and the code is on GitHub. The current demo has one scenario, evidence feedback and saved anonymous attempts. There is no claim of paid traction or proven learning gains. Try a response you would actually send to a client, then challenge its consequences.
+
+## Demo cues and limits
+
+Use the public app, not a canned conversation. The active baseline is $1,500 / 20h / day 7. Booking is a six-hour addition. The paid booking step is $1,900 / 26h / day 9; the full paid path is $2,050 / 26h / day 7. A free booking path with declined rush and equal-effort swap is $1,500 / 26h / day 7. The gallery and testimonials are both four-hour items.
+
+Optional named exchange: contact form + portfolio gallery replaced by booking gives $1,500 / 18h / day 7 / $83.33 per hour. Do not use the archived four-hour booking or separate About-page draft for the live demo.
+
+OpenAI interprets actions. The engine forms client replies, checks agreements and computes project state. Booking field and reservation details are partly open; asking a question does not prove requirements were fully resolved. Saved attempts use an anonymous signed browser cookie and Postgres; loss of that cookie prevents recovery without an account. A shared daily AI quota limits the public demo.
+
+## Commercial and research caveats
+
+The BLS statistic is dated July 2023 and covers main-job independent contractors. It is not a 2026 forecast or a count of our exact target segment. Do not multiply it by price to claim TAM. Competitor descriptions establish adjacent categories, not a feature-exclusivity audit. Pricing, acquisition rates and costs are hypotheses. No interviews, paid demand, retention or measured learning gains are claimed.
+
+Illustrative contribution math: $19 - (3% x $19 + $0.30) - $2 usage - $1 support = $15.13 before acquisition and fixed costs. These are assumptions, not processor quotes or measured OpenAI costs. Refunds, taxes and fraud are excluded.
+
+Technical evidence and deployment limits: ../docs/PUBLIC_DEPLOYMENT.md. Final combined-branch checks are recorded separately by the captain; this deck does not claim an uncompleted CI or E2E run.

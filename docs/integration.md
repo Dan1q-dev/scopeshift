@@ -1,15 +1,29 @@
-# Quality package integration status
+# Scenario quality integration
 
-Update: the evaluator is now integrated with the real engine through a tested wrapper. See `EVALUATOR_INTEGRATION_QA.md` for current results, known dialogue defects and the exact HTTP wiring handoff to Danila. The older notes below describe the initial upload.
+The shared product includes frontend, engine, OpenAI action interpretation, `evidence-v2`, Replay/Compare and public Vercel deployment with Neon Postgres: https://scopeshift.vercel.app. The old 501 and pending-evaluator handoff is obsolete.
 
-The repository foundation is now available. AGENTS.md, PROJECT_BRIEF.md, API_CONTRACT.md, the Albina task and src/types/scope.ts were read before this upload.
+The active scenario remains `src/data/scenarios/website-project.ts`: Sarah Mitchell, $1,500 / 20h / day 7, events `booking-request`, `earlier-delivery`, `scope-swap`. Booking adds six catalog hours. Shared schemas remain authoritative. OpenAI extracts actions; the engine decides agreements, forms client replies and calculates state.
 
-The active scenario remains src/data/scenarios/website-project.ts: web-project-01, Sarah Mitchell, booking-request / earlier-delivery / scope-swap. Its identifiers, six-hour booking estimate and server-only boundary are preserved. No engine, frontend, shared types, API contract or dependencies are changed.
+`evaluateSimulation` is injected into both HTTP drivers. Evidence binds actual turns to applicable rules. Friendly deliverable names and `No deliverables removed.` improve presentation without changing the scale. Results separates Action, Rule and Verified. The captain records final combined-branch acceptance in `EVALUATOR_INTEGRATION_QA.md`.
 
-The earlier independent scenario is preserved under docs/design-drafts/website-project.json as a design alternative, not a production Scenario. Its four-hour booking, Maya persona, minute units and different event sequence are NOT the agreed contract. Arithmetic tests cover that draft only. The pitch walkthrough uses that alternative and must be reconciled with the final live demo before submission.
+Production receipts and validated attempt snapshots live in Postgres. Browser cache is a convenience, not the sole store. Signed anonymous identity and recovery limits are documented in `API_CONTRACT.md` and `PUBLIC_DEPLOYMENT.md`.
 
-The evaluator scores validated rubric observations; it is not the backend evaluator and its output must not be returned directly as EvaluationResult. A shared-contract adapter is provided separately. The engine owner must supply validated observations with exact event evidence. Existing history does not expose an impact-review event, quote entailment or proposal revisions; do not infer those silently.
+## Active outcomes
 
-Engine oracles and browser checks are plans, not implemented engine/E2E coverage. Live negotiation still returns 501 in the inspected foundation. No production readiness or user-study pass is claimed.
+| Choice | Fee | Hours | Deadline | Rate |
+| --- | --- | --- | --- | --- |
+| Original contract | $1,500 | 20 | day 7 | $75.00/h |
+| Free booking | $1,500 | 26 | day 7 | $57.69/h |
+| Booking +$400 and +2 days | $1,900 | 26 | day 9 | $73.08/h |
+| Paid booking, +$150 rush, equal-effort testimonials swap | $2,050 | 26 | day 7 | $78.85/h |
+| Contact form + gallery exchanged for booking, same fee/date | $1,500 | 18 | day 7 | $83.33/h |
 
-Questions for Danila: confirm authoritative acceptance evidence and revision semantics; expose validated rubric observations; confirm capacity and cumulative budget policies; approve any changes to scenario IDs or shared schemas before migration.
+These are supported examples, not instructions to maximize price. Unaccepted proposals, clarification, refusal and rejected changes preserve the last agreed contract.
+
+## Archived alternatives and open product questions
+
+The Maya JSON in `design-drafts/website-project.json` and v0.1 observation rubric in `src/lib/evaluation/index.ts` are archived designs. They replace neither the active scenario nor HTTP evaluator. The current pitch uses the active six-hour scenario.
+
+Immediate versus manual reservation and the source of slots are still unspecified. Do not invent these facts or count inquiry as full resolution. A future economic-judgment rubric needs validated learner rationale or impact review, not an inference from a higher fee.
+
+Use Node 22. Run deterministic tests/E2E on the final combined commit, then validate live OpenAI separately. This document does not claim that a pending CI run has passed.

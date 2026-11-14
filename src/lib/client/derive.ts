@@ -44,7 +44,8 @@ export type EvidenceParts = { action: string; rule: string; verified: string };
  */
 export function evidenceParts(observation: string, userMessage?: string): EvidenceParts | null {
   const prefix = `Action: ${userMessage} Rule: `;
-  if (userMessage !== undefined && observation.startsWith(prefix)) {
+  if (userMessage !== undefined) {
+    if (!observation.startsWith(prefix)) return null;
     const rest = /^([\s\S]*?) Verified: ([\s\S]*)$/.exec(observation.slice(prefix.length));
     return rest ? { action: userMessage, rule: rest[1], verified: rest[2] } : null;
   }
@@ -58,9 +59,12 @@ export function readableIds(text: string, scenario: PublicScenario, response: Ne
   const names = new Map<string, string>();
   for (const turn of response.turns) if (turn.agreement) names.set(turn.agreement.id, `"${eventTitle(turn.agreement.eventId)}"`);
   for (const item of [...scenario.initialContract.scopeItems, ...scenario.events.flatMap((event) => event.availableScopeItems)]) names.set(item.id, item.title);
-  let result = text;
-  for (const [id, name] of names) result = result.replaceAll(id, name);
-  return result;
+  if (!names.size) return text;
+  const ids = [...names.keys()].sort((left, right) => right.length - left.length)
+    .map((id) => id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  const tokens = new RegExp(`(?<![\\p{L}\\p{N}_-])(?:${ids.join("|")})(?![\\p{L}\\p{N}_-])`, "gu");
+  // A single pass preserves unknown IDs and does not reprocess replacement names.
+  return text.replace(tokens, (id) => names.get(id) ?? id);
 }
 
 export function findScopeItem(scenario: PublicScenario, id: string): ScopeItem | undefined {

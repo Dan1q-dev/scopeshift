@@ -1,5 +1,9 @@
-# Pitch draft
+# ScopeShift pitch
 
-English ten-slide PDF: scopeshift-pitch.pdf. Storyline and five-minute speech: storyline.md. Jury preparation: jury-qa.md.
+English ten-slide PDF: `scopeshift-pitch.pdf`. Five-minute speaker notes: `storyline.md`. Jury preparation: `jury-qa.md`.
 
-The PDF was rendered and visually checked. It remains a project draft, not proof of a working demo. Its four-hour booking example comes from docs/design-drafts/website-project.json. The active Sarah Mitchell scenario uses six hours: reconcile demo numbers before final submission. Sources and assumptions are attributed in the storyline. No traction or willingness-to-pay evidence is claimed.
+The deck matches the active six-hour Sarah Mitchell scenario, the planned $9/month and $19/pack prices, and https://scopeshift.vercel.app. Danila, Arsen and Albina form Beyond Horizon. OpenAI interprets proposals; the engine determines client replies and accepted consequences. Demand, conversion and cost figures remain hypotheses.
+
+`build_pitch.py` reproduces PDF and storyline. Run `python pitch/build_pitch.py` with ReportLab installed; the Codex bundled Python includes it. The PDF has 10 pages. All pages were rendered and visually inspected on 14 November 2026. Review images are ignored local artifacts.
+
+The archived four-hour design in `docs/design-drafts/website-project.json` is not used by this deck or production. Final combined-branch checks belong in `docs/EVALUATOR_INTEGRATION_QA.md`; publication evidence is in `docs/PUBLIC_DEPLOYMENT.md`. No pending CI/E2E run, paid traction or measured learning gain is claimed.

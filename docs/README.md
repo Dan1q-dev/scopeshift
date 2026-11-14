@@ -1,13 +1,17 @@
-# Scenario quality and pitch package
+# ScopeShift documentation
 
-See integration.md for current status and backend coordination questions.
+Public app: https://scopeshift.vercel.app. Current interfaces and architecture: `PROJECT_BRIEF.md`, `API_CONTRACT.md`, `PUBLIC_DEPLOYMENT.md`.
 
-- Active scenario: src/data/scenarios/website-project.ts, unchanged and compatible with the shared Scenario contract.
-- Alternative design: docs/design-drafts/website-project.json. This is NOT production scenario data. Different persona, event sequence and estimates are preserved as design material only.
-- Rubric: docs/evaluation-spec.md. src/lib/evaluation/index.ts scores validated observations; shared-result.ts maps assessed dimensions to the actual EvaluationResult schema. Evidence extraction and engine wiring remain pending.
-- Tests: evaluation.test.ts, evaluation-shared.test.ts and scenario.test.ts use Vitest. Scenario arithmetic checks apply to the alternative draft. Existing foundation tests remain intact. evaluation.vitest.ts is an extra specimen outside the configured test include pattern.
-- tests/engine-outcomes.json and docs/browser-test-contract.md describe expected engine/E2E behavior, not executed integration coverage. Their draft IDs require mapping before engine use.
-- tests/nonstandard-replies.md covers scope exchange, booking fields and an included-work challenge.
-- pitch/scopeshift-pitch.pdf: ten-slide draft, rendered and visually checked. storyline.md contains the five-minute speech and sources; jury-qa.md contains anticipated questions. The numerical walkthrough is the alternative design, not the active scenario; reconcile it before a live demo.
+- Active scenario: `src/data/scenarios/website-project.ts`, Sarah Mitchell, $1,500 / 20h / day 7, six-hour booking.
+- Active evaluator: `src/lib/evaluation/simulation-evaluator.ts`, `evidence-v2`, injected into both HTTP modes. See `evaluation-spec.md`.
+- Actual checks: `EVALUATOR_INTEGRATION_QA.md`. Historic local walkthrough: `DEMO_READINESS.md`. Published OpenAI/Postgres evidence: `PUBLIC_DEPLOYMENT.md`.
+- Browser requirements: `browser-test-contract.md`. Executable checks: `tests/e2e/`. Rules CI and live OpenAI acceptance are separate.
+- English ten-slide pitch and 300-second notes: `pitch/scopeshift-pitch.pdf` and `pitch/storyline.md`, aligned with the active scenario and public URL.
 
-No production deployment, live AI, user-study result or full negotiation-flow pass is claimed. Node 22 is required by the shared project. Dependencies and shared configuration were not changed by this upload.
+## Archived design material
+
+`design-drafts/website-project.json` is an alternative Maya scenario with four-hour booking, minute units and another event sequence. It is not production data. `tests/scenario.test.ts` and `tests/engine-outcomes.json` contain draft arithmetic/design examples; they do not prove behavior of the active engine.
+
+`src/lib/evaluation/index.ts`, `shared-result.ts`, their aggregation tests and `tests/evaluation.vitest.ts` describe a proposed v0.1 observation rubric. HTTP does not use that scale. Fixture aggregation does not provide semantic evidence extraction.
+
+Test counts and release status must name the tested commit and runtime. Older branch results do not prove the final combined branch or current production passed.

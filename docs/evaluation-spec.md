@@ -1,10 +1,10 @@
-# Current production adapter
+# Active evaluation and archived rubric design
 
-The active evaluator is evidence-v2 in simulation-evaluator.ts, connected through simulation/evaluation-port.ts. It awards one point only for an applicable rule actually present in the current scenario event, with a recorded user action and reconstructed engine evidence. The no-fee equal-effort exchange can earn economic_decision credit; arbitrary free work is not automatically a mistake. Inquiry credit proves a question was asked, not that requirements were resolved. See EVALUATOR_INTEGRATION_QA.md for coverage and limitations.
+The active evaluator is `evidence-v2` in `src/lib/evaluation/simulation-evaluator.ts`, explicitly injected into both HTTP drivers through the evaluation port. Points require applicable current-scenario rules, recorded actions and reconstructed engine facts. Scope evidence uses readable deliverable names and `No deliverables removed.`. Results separates Action, Rule and Verified. An equal-effort no-fee exchange can earn economic-decision credit; free work is not automatically wrong. Inquiry proves a question was asked, not complete requirements resolution. Missing evidence is unassessed and no overall percentage is derived. See `EVALUATOR_INTEGRATION_QA.md` and `PUBLIC_DEPLOYMENT.md` for actual checks and limits.
 
-The original ten-criterion observation rubric below remains a proposed adapter design, not the active HTTP scoring algorithm. Do not mix the two score scales.
+The ten-criterion rubric below is archived adapter design. Its code is `src/lib/evaluation/index.ts` with `shared-result.ts`. It is not wired into HTTP, does not replace `evidence-v2`, and has no complete semantic evidence extractor. Fixture aggregation tests do not prove transcript entailment or learning gains. Do not mix these scales.
 
-# Evidence-based evaluation v0.1
+## Archived: observation-rubric v0.1
 
 Each dimension has two equal binary criteria, listed in `src/lib/evaluation/index.ts`. Display 0-4 only when all applicable criteria have evidence. Each met criterion earns 2 points when both apply; one applicable criterion yields 0 or 4. This is a transparent teaching rubric, not a validated psychometric instrument. Do not display a single overall percentage.
 

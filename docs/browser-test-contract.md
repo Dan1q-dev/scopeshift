@@ -1,15 +1,18 @@
-# Playwright acceptance contract - awaiting frontend
+# Browser acceptance for the active scenario
 
-Do not write selectors against invented screens or report this plan as passed. Once frontend exists, use accessible names or agreed test IDs and the real engine, with a clearly labeled deterministic client fixture for CI. Separately run a live provider smoke test, as a fixture cannot establish LLM behavior.
+Use Node 22 and the real UI. Deterministic Playwright CI uses `SCOPESHIFT_AI_MODE=rules`, without accidentally inheriting local OpenAI. A fixture cannot prove live provider behavior. Keep browser/server origins consistent, including `127.0.0.1` versus `localhost`.
 
-1. Open scenario without authentication. Assert original $1,500, 20h, day 7 and contact-form fields are visible.
-2. Ask booking clarification. Assert client explains manual confirmation and state stays unchanged.
-3. Propose a scope exchange. Assert pending terms show added booking and removed About/Gallery; committed figures remain unchanged.
-4. Send explicit acceptance through the supported client fixture. Assert one agreement, 20h, $1,500, day 7. Refresh: accepted amendment persists if persistence is part of actual product contract.
-5. Retry a timed-out acceptance with the same idempotency key. Assert one agreement and no duplicated cost or effort.
-6. Fork replay before that decision. Negotiate +$300 instead; assert 24h and $1,800, while original run remains unchanged. Compare branches with different scope, not just different rates.
-7. Reject the next request and assert no amendment. Try impossible day-5 delivery after the paid booking addition; assert helpful feasibility message and no committed change.
-8. Finish; assert feedback links to actual evidence. Empty transcript must not show perfect scores.
-9. Inject provider failure; assert message retained and retry works without duplicate effects. Check mobile width, keyboard focus and readable contract/feedback.
+1. Start from the landing without registration. Original: $1,500 / 20h / day 7 / $75.00/h; core pages 12h, contact form 4h, gallery 4h.
+2. Ask booking fields/reservation questions. Proposed name/email/slot still require confirmation; reservation mode and slot source remain unagreed. No contract mutation.
+3. Explicitly exchange contact form and portfolio gallery for booking at unchanged fee/date. On client acceptance expect $1,500 / 18h / day 7 with both removals. Unnamed, unknown, reversed or alternative lists must not be partly applied.
+4. Offer booking for $900 and two more days. The $400 counteroffer leaves the contract unchanged. Accept it to reach $1,900 / 26h / day 9.
+5. Complete paid booking, +$150 two-day rush and gallery/testimonials swap. Expect $2,050 / 26h / day 7 / $78.85/h.
+6. Replay booking for free, decline rush and make the same swap. Expect $1,500 / 26h / day 7 / $57.69/h while the original branch stays unchanged.
+7. `I have to decline this request. Booking is not part of our contract.` must preserve the contract and advance. Ambiguous conditional statements must still request clarification.
+8. Replay a later decision, retaining the booking prefix: restore $1,900 / 26h / day 9 before a new rush choice. Changed suffix IDs are new; exact prefix IDs are reused.
+9. Lose a response after real server processing, then retry the identical request. Assert one amendment. Separately check live provider errors; network injection is not a provider availability test.
+10. Results compares real attempts with Action, Rule and Verified evidence, readable labels and `No deliverables removed.`. Missing evidence is unassessed, not a zero skill score.
+11. Reload and reopen attempts. Postgres history is private to signed identity and survives deployment replacement. Empty-cache restore needs separate evidence; clearing cookies loses anonymous access and is a different test.
+12. Check mobile overflow, disabled navigation while sending, retained failed replies and usable retry. Select the repeated landing CTA unambiguously.
 
-Release evidence must include tested commit, browser, timestamp, scenario version and results. Production smoke: logged-out access, server secrets absent from browser responses, hidden constraints absent, one complete accepted amendment, feedback and replay.
+Release evidence names commit, runtime, browser, scenario/version and results. Public acceptance uses the production URL without Vercel login and real OpenAI; secrets and hidden client rules must stay out of client payloads. Published checks: `PUBLIC_DEPLOYMENT.md`; final combined-branch checks: `EVALUATOR_INTEGRATION_QA.md`.

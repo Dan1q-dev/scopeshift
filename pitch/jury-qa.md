@@ -1,29 +1,33 @@
 # Jury questions and candid answers
 
-**Why not use a general chatbot?** The intended value is an explicit contract, constrained client, validated amendment and replayable economic state. A chatbot can produce useful practice too. We must demonstrate that the linked consequence model makes decisions clearer; it is not yet an established advantage.
+**Can we try it now?** Yes: https://scopeshift.vercel.app. No registration is needed. The current product has one website scenario, three requests, evidence feedback and Replay/Compare. See `docs/PUBLIC_DEPLOYMENT.md`; the captain records final combined-branch checks separately.
 
-**Is the client predetermined to accept?** No. Several viable strategies exist. Hidden client constraints bound responses, while proposals remain pending until explicit acceptance and engine validation. Rejection and unchanged scope are legitimate outcomes. This architecture still needs end-to-end verification in the actual app.
+**Why not a general chatbot?** Our intended value is an explicit contract, constrained client decisions, validated amendments and replayable economics. A chatbot can also support practice. Whether this workflow teaches better decisions still needs learner evidence.
 
-**How do you prevent hallucinated financial results?** Effort comes from scenario IDs, prices use integer cents, and the engine computes accepted changes. The model cannot write authoritative project state. Schema validity alone is insufficient: IDs, revisions, budgets, capacity and acceptance evidence also require validation.
+**What does OpenAI do?** It extracts a structured action from free text. The deterministic engine validates it, decides acceptance, forms client replies and computes consequences. We do not claim unrestricted model-generated client conversation.
 
-**What does the score actually mean?** It is a transparent teaching rubric over evidence, not a personality judgment or validated measure of professional competence. Missing evidence remains unassessed. We do not grade learners on extracting the client's maximum hidden budget.
+**When does a proposal change the contract?** Only after the engine's client explicitly accepts it. A counteroffer leaves the project unchanged until accepted. Clarification, rejection and refusal do not add fees or work. Accepted changes are reconstructed from trusted scenario facts and validated history.
 
-**Does free work always fail?** No. A bounded goodwill concession can be reasonable if the learner understands the cost, preserves feasibility and documents the limit. We evaluate judgment and agreement quality, not a single optimal price.
+**What is the actual arithmetic?** Baseline: $1,500 / 20h / day 7 / $75.00 per hour. Six-hour booking for +$400 and +2 days gives $1,900 / 26h / day 9 / $73.08 per hour. Add $150 for delivery on day 7 and replace the four-hour gallery with four-hour testimonials: $2,050 / 26h / day 7 / $78.85 per hour. Free booking with declined rush and the same swap gives $1,500 / 26h / day 7 / $57.69 per hour.
 
-**What if the user proposes a scope exchange?** Resolve exact deliverables and effort, verify they are still in scope, show the pending amendment, then apply once after explicit client acceptance. An unspecified exchange should trigger clarification.
+**Can two tasks be exchanged for booking?** Explicitly replacing the active contact form and portfolio gallery with booking at the same fee/date gives $1,500 / 18h / day 7 / $83.33 per hour. The separate About-page/four-hour example is archived design data. Unknown or ambiguous removals must not be partly applied.
 
-**What if the client wants something already included?** Clarify against the original scope. The included contact form should not acquire a new fee. New booking behavior is discussed separately.
+**Are booking requirements settled?** No. Name, email and slot are proposed fields that still require confirmation. Immediate versus manual reservation and the slot source remain unagreed. The original contact form includes name, email, message and email notification without scheduling. Inquiry credit proves a question was asked, not complete requirements resolution.
 
-**How large is the market?** BLS provides broad independent-contractor context, not a precise serviceable segment. We have no validated count of US web freelancers aged 25-45 who want this product. Our initial funnel is an explicit acquisition experiment rather than a TAM claim.
+**How do you prevent financial hallucinations?** Hours come from catalog items, money uses integer cents, and the engine applies only accepted valid changes. Browser and LLM totals are not trusted. Stored turns are bound to session, message, history prefix and processing version.
 
-**Why $19?** It is a hypothesis, not willingness-to-pay evidence. Test completed purchases with clear terms after the free scenario; compare a scenario pack with subscription interest only after observing repeated use.
+**What do scores mean?** The active `evidence-v2` rubric references actual actions and current scenario rules. Action, Rule and Verified expose the basis. Missing evidence remains unassessed. There is no overall skill percentage, personality judgment or validated professional-competence claim. Free work is not automatically a failure.
 
-**What are your unit economics?** Illustrative $15.13 contribution per $19 pack before acquisition and fixed costs, using unmeasured variable-cost assumptions. We need logged token usage, run counts, support load, refunds and acquisition cost before relying on it.
+**Does history survive deployment?** Validated turns and attempt snapshots live in Neon Postgres. A stable signed cookie preserves anonymous access for 30 days. Clearing cookies, changing browsers or losing identity prevents recovery without an account. Cross-device accounts and automatic SQL retention are not implemented.
 
-**How will you prove people learn?** Measure performance on a new scenario before and after practice, with a predefined evidence rubric and blinded reviewers. Track replay and return behavior separately from skill transfer. No learning effect has yet been demonstrated.
+**What if the provider fails?** Errors remain visible with retry. Exact cached turns do not call OpenAI again. Ambiguous failures keep a pending claim rather than silently repeat a potentially paid interpretation; a new attempt or operator review may be needed. The shared public quota is currently 200 new AI calls per UTC day.
 
-**What is defensible?** A possible future advantage is a calibrated scenario library, reproducible consequence engine and validated feedback. No proprietary data moat or exclusive technology is claimed.
+**What is the market and business evidence?** The dated BLS independent-contractor statistic is broad context, not our serviceable segment. We have no validated demand, retention, revenue or learning-gain result. The deck's funnel is an explicit experiment with assumed rates.
 
-**What is working now?** This package contains scenario data, a scoring module and passing scoring tests. Engine integration, live AI, browser behavior, deployment and final deck rendering must be demonstrated separately. Update this answer only after verifying those claims.
+**Why $19 and $9?** They match the landing's planned pack and monthly library. Payments are not enabled. Test real completed purchases after free practice; stated interest is not paid demand.
 
-**When is submission?** November 15, 2026, 12:00 Astana time, which is 10:00 Moscow time. Deliverables: public production URL, public GitHub repository and PDF of at most ten slides. Verify access in a logged-out browser before submission.
+**What are the unit economics?** The illustrative $15.13 contribution per $19 pack uses unmeasured payment, usage and support assumptions. It excludes acquisition, refunds, taxes and fixed costs. It is not profit or an OpenAI quote. Measure actual costs before relying on it.
+
+**What about competitors?** Yoodli offers chat roleplay with coaching and rubric feedback. HoneyBook supports real client workflows, contracts and payments. ScopeShift focuses on freelancer scope negotiation with validated economics and branching Replay. We do not claim complete feature exclusivity.
+
+Sources checked 14 November 2026: [BLS release](https://www.bls.gov/news.release/archives/conemp_11082024.htm), [Yoodli](https://support.yoodli.ai/en/articles/15862405-create-chat-based-roleplays), [HoneyBook](https://www.honeybook.com/faqs).
