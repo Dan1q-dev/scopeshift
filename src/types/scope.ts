@@ -200,6 +200,7 @@ export type HistoryEntry = z.infer<typeof historyEntrySchema>;
 
 export const negotiateRequestSchema = z.object({
   scenarioId: idSchema,
+  attemptId: idSchema.optional(),
   history: z.array(historyEntrySchema).min(1).max(50),
 }).strict().superRefine((request, ctx) => {
   const seen = new Set<string>();
@@ -251,6 +252,23 @@ export const negotiateResponseSchema = z.object({
   completed: z.boolean(),
 }).strict();
 export type NegotiateResponse = z.infer<typeof negotiateResponseSchema>;
+
+// Server-owned snapshots of verified negotiation responses, never browser input.
+export const serverAttemptSchema = z.object({
+  id: idSchema,
+  createdAt: z.number().int().nonnegative(),
+  history: z.array(historyEntrySchema).min(1).max(50),
+  response: negotiateResponseSchema,
+}).strict().superRefine((attempt, ctx) => {
+  if (attempt.history.length !== attempt.response.turns.length || attempt.history.some((entry, index) => {
+    const turn = attempt.response.turns[index];
+    return !turn || entry.turnId !== turn.turnId || entry.eventId !== turn.eventId || entry.userMessage !== turn.userMessage;
+  }) || attempt.response.scenarioId !== attempt.response.project.scenarioId) {
+    ctx.addIssue({ code: "custom", message: "The saved attempt does not match its verified history" });
+  }
+});
+export type ServerAttempt = z.infer<typeof serverAttemptSchema>;
+export const attemptsResponseSchema = z.object({ attempts: z.array(serverAttemptSchema).max(20) }).strict();
 
 export const apiErrorSchema = z.object({
   error: z.object({

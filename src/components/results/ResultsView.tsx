@@ -38,6 +38,7 @@ export function ResultsView() {
   return (
     <div className="min-h-screen">
       <SiteHeader><Link href="/simulation" className={navLink}>Back to simulation</Link></SiteHeader>
+      {sim.historyWarning && <p role="alert" className="m-0 border-b border-amber-300/20 bg-amber-300/5 px-4 py-2 text-center text-xs text-amber-200">{sim.historyWarning}</p>}
       <main className="mx-auto max-w-5xl space-y-6 px-4 py-8 sm:px-6">
         <div>
           <h1 className="m-0 text-2xl font-semibold tracking-tight">Results: {scenario.title}</h1>

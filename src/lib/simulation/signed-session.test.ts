@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { signedSession, signedSessionCookie } from "./signed-session";
+import { SESSION_LIFETIME_MS, signedSession, signedSessionCookie } from "./signed-session";
 import { SESSION_COOKIE, SimulationSessionStore } from "./session-store";
 
 const secret = "a".repeat(64);
@@ -20,7 +20,7 @@ describe("persistent anonymous session identity", () => {
     const first = signedSession(null, secret, now);
     const tampered = first.token.replace(/.$/, first.token.endsWith("0") ? "1" : "0");
     expect(signedSession(cookie(tampered), secret, now).id).not.toBe(first.id);
-    expect(signedSession(cookie(first.token), secret, now + 3_600_001).id).not.toBe(first.id);
+    expect(signedSession(cookie(first.token), secret, now + SESSION_LIFETIME_MS + 1).id).not.toBe(first.id);
     expect(signedSession(cookie(first.id), secret, now).id).not.toBe(first.id);
     expect(signedSession(cookie(first.token), "b".repeat(64), now).id).not.toBe(first.id);
   });
@@ -28,7 +28,11 @@ describe("persistent anonymous session identity", () => {
     const first = signedSession(null, secret, now);
     const value = signedSessionCookie(first, true);
     expect(value).toContain("HttpOnly; SameSite=Strict; Secure");
-    expect(value).toContain("Path=/api; Max-Age=3600");
+    expect(value).toContain("Path=/api; Max-Age=2592000");
     expect(value).not.toContain(secret);
+  });
+  it("keeps a saved attempt's identity beyond one hour and across a restart", () => {
+    const first = signedSession(null, secret, now);
+    expect(signedSession(cookie(first.token), secret, now + 24 * 3_600_000)).toMatchObject({ id: first.id, established: true });
   });
 });

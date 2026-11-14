@@ -47,6 +47,7 @@ export function Workspace() {
           : <Link href="/results" className={response?.completed ? primaryButton : navLink}>Results</Link>}
       </SiteHeader>
       <InterpreterNote mode={sim.interpreterMode} />
+      {sim.historyWarning && <p role="alert" className="m-0 border-b border-amber-300/20 bg-amber-300/5 px-4 py-2 text-center text-xs text-amber-200">{sim.historyWarning}</p>}
       <h1 className="sr-only">Simulation workspace</h1>
       {session.attempts.length > 1 && (
         <div className="flex items-center gap-2 overflow-x-auto border-b border-white/10 px-4 py-2 text-xs sm:px-6" role="tablist" aria-label="Attempts">

@@ -2,7 +2,7 @@ import "server-only";
 import { createHash } from "node:crypto";
 import { currentEvent, initialState, processTurn, EngineHistoryError } from "./engine";
 import { pendingEvaluation, type SimulationEvaluator } from "./evaluation-port";
-import { FileReplayStore, ReplayStoreError } from "./replay-store";
+import { ReplayStoreError, type ReplayStore } from "./replay-store";
 import { scenarioRevision } from "./session-store";
 import type { InterpretationContext } from "@/lib/ai/rules-interpreter";
 import { negotiateResponseSchema, type HistoryEntry, type NegotiationAction, type NegotiationTurn, type Scenario } from "@/types/scope";
@@ -10,7 +10,7 @@ import { negotiateResponseSchema, type HistoryEntry, type NegotiationAction, typ
 export interface LlmNegotiationOptions {
   scope: string;
   version: string;
-  store: Pick<FileReplayStore, "getOrCreate">;
+  store: ReplayStore;
   interpret: (context: InterpretationContext & { turns: readonly NegotiationTurn[] }) => Promise<NegotiationAction>;
   evaluate?: SimulationEvaluator;
 }

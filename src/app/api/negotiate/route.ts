@@ -5,13 +5,18 @@ import { createOpenAIInterpreter, OPENAI_INTERPRETER_VERSION, OpenAIProviderErro
 import { ENGINE_VERSION, EngineHistoryError } from "@/lib/simulation/engine";
 import { negotiateHistory } from "@/lib/simulation/negotiate";
 import { negotiateWithLlm } from "@/lib/simulation/llm-negotiate";
-import { FileReplayStore, ReplayConflictError, ReplayStoreError } from "@/lib/simulation/replay-store";
+import { ReplayConflictError, ReplayStoreError } from "@/lib/simulation/replay-store";
+import { createReplayStore } from "@/lib/simulation/replay-store-factory";
+import { getDatabasePool } from "@/lib/simulation/postgres-client";
+import { PostgresAttemptStore } from "@/lib/simulation/attempt-store";
+import { DailyAiLimitError, reserveAiCall } from "@/lib/simulation/ai-budget";
 import { signedSession, signedSessionCookie } from "@/lib/simulation/signed-session";
 import { scenarioRevision, simulationSessions, SimulationRequestError } from "@/lib/simulation/session-store";
 import { negotiateRequestSchema, type ApiError } from "@/types/scope";
 import { evaluateSimulation, EVALUATOR_VERSION } from "@/lib/evaluation/simulation-evaluator";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 const MAX_BODY_BYTES = 131_072;
 
 function error(status: number, code: ApiError["error"]["code"], message: string, cookie?: string) {
@@ -67,10 +72,17 @@ export async function POST(request: Request) {
     const result = config.mode === "rules" ? negotiateHistory(scenario, parsed.data.history, evaluateSimulation) : await negotiateWithLlm(scenario, parsed.data.history, {
       scope: identity!.id,
       version: interpreterVersion,
-      store: new FileReplayStore(config.replayDirectory),
-      interpret: async (context) => { modelCalls += 1; return interpret!(context); },
+      store: createReplayStore(config),
+      interpret: async (context) => {
+        if (config.storage.kind === "postgres") await reserveAiCall(getDatabasePool(config.storage.connectionString), config.dailyAiCallLimit);
+        modelCalls += 1;
+        return interpret!(context);
+      },
       evaluate: evaluateSimulation,
     });
+    if (config.mode === "openai" && config.storage.kind === "postgres" && parsed.data.attemptId) {
+      await new PostgresAttemptStore(getDatabasePool(config.storage.connectionString)).save(identity!.id, scenario.id, parsed.data.attemptId, parsed.data.history, result);
+    }
     simulationSessions.commit(session, scenario, parsed.data.history, interpreterVersion);
     return Response.json(result, {
       headers: {
@@ -85,6 +97,11 @@ export async function POST(request: Request) {
     });
   } catch (cause) {
     if (cause instanceof SimulationRequestError) return error(cause.status, cause.code, cause.message, cookie);
+    if (cause instanceof DailyAiLimitError) {
+      const response = error(429, "RATE_LIMITED", cause.message, cookie);
+      response.headers.set("Retry-After", String(86_400 - Math.floor(Date.now() / 1000) % 86_400));
+      return response;
+    }
     if (cause instanceof EngineHistoryError) return error(400, "INVALID_HISTORY", cause.message, cookie);
     if (cause instanceof ReplayConflictError) return error(409, "INVALID_HISTORY", cause.message, cookie);
     if (cause instanceof AiConfigurationError) return error(503, "AI_UNAVAILABLE", cause.message, cookie);
