@@ -4,6 +4,8 @@ import { basename, dirname, join, resolve } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { websiteProjectScenario as scenario } from "@/data/scenarios/website-project";
 import type { HistoryEntry, NegotiationAction } from "@/types/scope";
+import { evaluateSimulation } from "@/lib/evaluation/simulation-evaluator";
+import { OpenAIProviderError } from "@/lib/ai/openai-responses";
 import { ENGINE_VERSION, EngineHistoryError } from "./engine";
 import { negotiateWithLlm, type LlmNegotiationOptions } from "./llm-negotiate";
 import { FileReplayStore, ReplayConflictError, ReplayStoreError } from "./replay-store";
@@ -164,5 +166,83 @@ describe("LLM negotiation with durable interpreted history", () => {
     expect(results[1]).toEqual(results[0]);
     expect(results[2]).toEqual(results[0]);
     expect(results[0].project.acceptedAgreementIds).toEqual([booking.turnId]);
+  });
+
+  it("voices realistic client replies from authoritative engine outcomes across counteroffers and replay prefix reuse", async () => {
+    const directory = await mkdtemp(join(tmpdir(), directoryPrefix));
+    directories.push(directory);
+    const store = new FileReplayStore(directory, { lockPollMs: 5 });
+    const v2Version = `openai-v2:reply-v1:test-model:${ENGINE_VERSION}`;
+    const interpret = vi.fn<LlmNegotiationOptions["interpret"]>()
+      .mockResolvedValueOnce({ kind: "propose", change: { feeDeltaCents: 100_000, deadlineDeltaDays: 0, addScopeItemIds: ["consultation-booking"], removeScopeItemIds: [] } })
+      .mockResolvedValueOnce({ kind: "propose", change: { feeDeltaCents: 30_000, deadlineDeltaDays: 1, addScopeItemIds: ["consultation-booking"], removeScopeItemIds: [] } })
+      .mockResolvedValueOnce({ kind: "decline", reason: "Retain the day 8 delivery schedule." });
+    const reply = vi.fn<NonNullable<LlmNegotiationOptions["reply"]>>()
+      .mockResolvedValueOnce("I cannot stretch the budget to $1,000 extra, so I can offer $400 extra for booking by day 7 instead.")
+      .mockResolvedValueOnce("Agreed - $300 extra and one additional day works, updating the contract to $1,800, 26 hours, and day 8.")
+      .mockResolvedValueOnce("Understood, we will keep delivery on day 8 without accelerating further.");
+
+    const baseOptions: LlmNegotiationOptions = { scope, version: v2Version, store, interpret, reply, evaluate: evaluateSimulation };
+    const turn1: HistoryEntry = { turnId: "t1-over", eventId: "booking-request", userMessage: "Adding booking takes $1,000 extra." };
+    const turn2: HistoryEntry = { turnId: "t2-offer", eventId: "booking-request", userMessage: "Would you accept an extra $300 and one additional day?" };
+    const turn3: HistoryEntry = { turnId: "t3-rush", eventId: "earlier-delivery", userMessage: "Let's keep day 8 instead of rushing." };
+
+    const after1 = await negotiateWithLlm(scenario, [turn1], baseOptions);
+    expect(after1.turns[0].agreement?.status).toBe("counteroffered");
+    expect(after1.turns[0].agreement?.change.feeDeltaCents).toBe(40_000);
+    expect(after1.turns[0].clientReply).toContain("$400 extra");
+
+    const after2 = await negotiateWithLlm(scenario, [turn1, turn2], baseOptions);
+    expect(interpret.mock.calls[1][0].turns[0].clientReply).toBe(after1.turns[0].clientReply);
+    expect(reply.mock.calls[1][0].engineTurn.action.kind).toBe("propose");
+    expect(after2.project).toMatchObject({ totalFeeCents: 180_000, estimatedHours: 26, deadlineDays: 8 });
+    expect(after2.currentEventId).toBe("earlier-delivery");
+    expect(after2.evaluation.criteria.length).toBeGreaterThan(0);
+
+    const branch = await negotiateWithLlm(scenario, [turn1, turn2, turn3], baseOptions);
+    expect(branch.turns[0]).toEqual(after1.turns[0]);
+    expect(branch.turns[1]).toEqual(after2.turns[1]);
+    expect(interpret).toHaveBeenCalledTimes(3);
+    expect(reply).toHaveBeenCalledTimes(3);
+
+    const neverInterpret = vi.fn<LlmNegotiationOptions["interpret"]>();
+    const neverReply = vi.fn<NonNullable<LlmNegotiationOptions["reply"]>>();
+    await expect(
+      negotiateWithLlm(scenario, [turn1], { ...baseOptions, version: `openai-v1:test-model:${ENGINE_VERSION}`, interpret: neverInterpret, reply: neverReply }),
+    ).rejects.toBeInstanceOf(ReplayConflictError);
+    expect(neverInterpret).not.toHaveBeenCalled();
+    expect(neverReply).not.toHaveBeenCalled();
+  });
+
+  it("preserves Step 1 interpretation across a Step 2 reply failure and rejects tampered stored turns", async () => {
+    const directory = await mkdtemp(join(tmpdir(), directoryPrefix));
+    directories.push(directory);
+    const store = new FileReplayStore(directory, { lockPollMs: 5 });
+    const v2Version = `openai-v2:reply-v1:test-model:${ENGINE_VERSION}`;
+    const interpret = vi.fn<LlmNegotiationOptions["interpret"]>().mockResolvedValue(paidAction);
+    const reply = vi.fn<NonNullable<LlmNegotiationOptions["reply"]>>()
+      .mockRejectedValueOnce(new OpenAIProviderError("unavailable", "OpenAI is temporarily unavailable."))
+      .mockResolvedValueOnce("Agreed. Adding booking brings us to $1,900, 26 hours, and delivery by day 9.");
+
+    const opts: LlmNegotiationOptions = { scope, version: v2Version, store, interpret, reply, evaluate: evaluateSimulation };
+    await expect(negotiateWithLlm(scenario, [booking], opts)).rejects.toBeInstanceOf(OpenAIProviderError);
+    expect(interpret).toHaveBeenCalledTimes(1);
+    expect(reply).toHaveBeenCalledTimes(1);
+
+    const recovered = await negotiateWithLlm(scenario, [booking], opts);
+    expect(interpret).toHaveBeenCalledTimes(1);
+    expect(reply).toHaveBeenCalledTimes(2);
+    expect(recovered.project).toMatchObject({ totalFeeCents: 190_000, estimatedHours: 26, deadlineDays: 9 });
+
+    const files = (await readdir(directory)).filter((file) => file.endsWith(".json"));
+    for (const file of files) {
+      const fullPath = join(directory, file);
+      const parsed = JSON.parse(await readFile(fullPath, "utf8"));
+      if (parsed.turn?.clientReply?.includes("$1,900")) {
+        parsed.turn.clientReply = "";
+        await writeFile(fullPath, JSON.stringify(parsed), "utf8");
+      }
+    }
+    await expect(negotiateWithLlm(scenario, [booking], { ...opts, store: new FileReplayStore(directory) })).rejects.toBeInstanceOf(ReplayStoreError);
   });
 });

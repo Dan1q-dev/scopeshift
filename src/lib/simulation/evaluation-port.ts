@@ -8,6 +8,7 @@ export interface EvaluationContext {
   turns: readonly NegotiationTurn[];
   project: ProjectState;
   completed: boolean;
+  allowGeneratedClientReply?: boolean;
 }
 
 export type SimulationEvaluator = (context: EvaluationContext) => EvaluationResult;

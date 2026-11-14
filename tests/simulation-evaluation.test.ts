@@ -98,6 +98,14 @@ describe("real engine with evidence evaluator", () => {
     expect(() => evaluateSimulation({ scenario, turns: result.turns, project: { ...result.project, totalFeeCents: 1 }, completed: false })).toThrow("Unverified");
     expect(() => evaluateSimulation({ scenario, turns: [{ ...result.turns[0], clientReply: "Invented acceptance" }], project: result.project, completed: false })).toThrow("Unverified");
   });
+  it("allows verified generated client replies only when allowGeneratedClientReply is enabled and still checks all authoritative fields", () => {
+    const result = run(scenario, [booking]);
+    const customReplyTurn = { ...result.turns[0], clientReply: "That works - let's add booking for $1,900 total and deliver by day 9." };
+    const evaluated = evaluateSimulation({ scenario, turns: [customReplyTurn], project: result.project, completed: false, allowGeneratedClientReply: true });
+    expect(evaluated.criteria.map(criterion => criterion.category)).toEqual(["scope_management", "explicit_agreement", "feasibility"]);
+    expect(() => evaluateSimulation({ scenario, turns: [{ ...customReplyTurn, clientReply: "   " }], project: result.project, completed: false, allowGeneratedClientReply: true })).toThrow("Unverified");
+    expect(() => evaluateSimulation({ scenario, turns: [{ ...customReplyTurn, agreement: { ...customReplyTurn.agreement!, change: { ...customReplyTurn.agreement!.change, feeDeltaCents: 0 } } }], project: result.project, completed: false, allowGeneratedClientReply: true })).toThrow("Unverified");
+  });
   it("handles two explicitly named removals in one scope exchange", () => {
     const result = run(scenario, [entry("two-named", "booking-request", "Replace contact form and portfolio gallery with booking at the same price and deadline.")]);
     expect(result.turns[0].action.kind).toBe("propose");

@@ -101,24 +101,28 @@ export function ResultsView() {
                         {response.evaluation.criteria.map((criterion) => (
                           <div key={`${criterion.category}:${criterion.evidence.map((item) => `${item.turnId}:${item.ruleId}`).join("|")}`} className="rounded-lg border border-white/10 px-3 py-2">
                             <div className="flex items-center justify-between gap-2"><span className="font-medium">{categoryLabels[criterion.category]}</span><span className="tabular text-xs text-slate-400">{criterion.earnedPoints} / {criterion.maxPoints}</span></div>
-                            <ul className="m-0 mt-2 list-none space-y-2 p-0 text-xs">
-                              {criterion.evidence.map((evidence) => {
-                                const evidenceTurn = response.turns.find((turn) => turn.turnId === evidence.turnId);
-                                const parts = evidenceParts(evidence.observation, evidenceTurn?.userMessage);
-                                return (
-                                  <li key={`${evidence.turnId}-${evidence.ruleId}`} className="border-l-2 border-emerald-400/30 pl-2.5 text-slate-400">
-                                    {parts ? (
-                                      <dl className="m-0 space-y-1">
-                                        <div><dt className="inline font-medium text-slate-300">Action: </dt><dd className="m-0 inline">{parts.action}</dd></div>
-                                        <div><dt className="inline font-medium text-slate-300">Rule: </dt><dd className="m-0 inline">{readable(parts.rule)}</dd></div>
-                                        <div><dt className="inline font-medium text-slate-300">Verified: </dt><dd className="m-0 inline">{readable(normalizeLegacyScopeEvidence(parts.verified, evidenceTurn))}</dd></div>
-                                      </dl>
-                                    ) : readable(evidence.observation)}
-                                  </li>
-                                );
-                              })}
-                            </ul>
-                            <p className="mt-2 mb-0 text-xs text-slate-300">{readable(criterion.advice)}</p>
+                            <p className="mt-1 mb-0 text-xs text-slate-300">{readable(criterion.advice)}</p>
+                            {/* Evidence stays in the DOM while collapsed, so the score can always be traced to a reply and a rule. */}
+                            <details className="evidence mt-2 text-xs">
+                              <summary className="cursor-pointer text-slate-400 hover:text-emerald-300">Evidence ({criterion.evidence.length})</summary>
+                              <ul className="m-0 mt-2 list-none space-y-2 p-0">
+                                {criterion.evidence.map((evidence) => {
+                                  const evidenceTurn = response.turns.find((turn) => turn.turnId === evidence.turnId);
+                                  const parts = evidenceParts(evidence.observation, evidenceTurn?.userMessage);
+                                  return (
+                                    <li key={`${evidence.turnId}-${evidence.ruleId}`} className="border-l-2 border-emerald-400/30 pl-2.5 text-slate-400">
+                                      {parts ? (
+                                        <dl className="m-0 space-y-1">
+                                          <div><dt className="inline font-medium text-slate-300">Action: </dt><dd className="m-0 inline">{parts.action}</dd></div>
+                                          <div><dt className="inline font-medium text-slate-300">Rule: </dt><dd className="m-0 inline">{readable(parts.rule)}</dd></div>
+                                          <div><dt className="inline font-medium text-slate-300">Verified: </dt><dd className="m-0 inline">{readable(normalizeLegacyScopeEvidence(parts.verified, evidenceTurn))}</dd></div>
+                                        </dl>
+                                      ) : readable(evidence.observation)}
+                                    </li>
+                                  );
+                                })}
+                              </ul>
+                            </details>
                           </div>
                         ))}
                         {response.evaluation.strengths.length > 0 && <div><p className="m-0 text-xs font-semibold text-emerald-300">Strengths</p><ul className="mt-1 mb-0 pl-4 text-xs text-slate-300">{response.evaluation.strengths.map((text) => <li key={text}>{readable(text)}</li>)}</ul></div>}

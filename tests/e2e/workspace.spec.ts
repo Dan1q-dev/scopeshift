@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 import { negotiateResponseSchema } from "../../src/types/scope";
 
 const paid = "I can add booking for an extra $400 and two more days.";
@@ -12,6 +12,16 @@ async function send(page: Page, message: string) {
   const result = await response;
   expect(result.status()).toBe(200);
   return negotiateResponseSchema.parse(await result.json());
+}
+
+async function expectEvidenceState(details: Locator, open: boolean) {
+  if (open) await expect(details).toHaveAttribute("open", "");
+  else await expect(details).not.toHaveAttribute("open", "");
+  for (const label of ["Action:", "Rule:", "Verified:"]) {
+    const item = details.getByText(label, { exact: true }).first();
+    if (open) await expect(item).toBeVisible();
+    else await expect(item).toBeHidden();
+  }
 }
 
 test("paid completion, free Replay, comparison and persisted original attempt", async ({ page }) => {
@@ -38,8 +48,26 @@ test("paid completion, free Replay, comparison and persisted original attempt", 
   await expect(first).toContainText("$78.85/h");
   await expect(second).toContainText("$1,500");
   await expect(second).toContainText("$57.69/h");
-  await expect(first).toContainText("Rule:");
-  await expect(first).toContainText("Action:");
+
+  const firstEvidence = first.locator("details.evidence").first();
+  await expectEvidenceState(firstEvidence, false);
+  await firstEvidence.locator("summary").click();
+  await expectEvidenceState(firstEvidence, true);
+  await expect(firstEvidence.getByText(paid)).toBeVisible();
+  await expect(firstEvidence.getByText(/Consultation booking/)).toBeVisible();
+
+  const secondEvidence = first.locator("details.evidence").nth(1);
+  const secondSummary = secondEvidence.locator("summary");
+  await expectEvidenceState(secondEvidence, false);
+  await secondSummary.focus();
+  await expect(secondSummary).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expectEvidenceState(secondEvidence, true);
+  await page.keyboard.press("Space");
+  await expectEvidenceState(secondEvidence, false);
+  await page.keyboard.press("Space");
+  await expectEvidenceState(secondEvidence, true);
+
   await page.reload();
   await expect(first).toContainText("$2,050");
   await expect(second).toContainText("$1,500");
