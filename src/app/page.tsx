@@ -34,6 +34,7 @@ export default function Home() {
       <SiteHeader>
         <a href="#how" className={`${navLink} hidden sm:inline-block`}>How it works</a>
         <a href="#pricing" className={`${navLink} hidden sm:inline-block`}>Pricing</a>
+        <Link href="/real-projects" className={navLink}>Real Project Mode</Link>
         <Link href="/simulation" className={primaryButton}>Start free simulation</Link>
       </SiteHeader>
       <main>
