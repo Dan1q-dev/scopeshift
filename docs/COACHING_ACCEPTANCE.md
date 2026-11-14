@@ -101,7 +101,7 @@ Final report must include pass/fail counts and unexecuted cases, not “everythi
 
 ## Execution record: 15 November 2026
 
-Environment: public https://scopeshift.vercel.app, in-app Chromium browser, real anonymous session and real AI responses, wholly fictional text. Repository main `84f93d4` merged into the QA branch before checks. The deployed UI does not expose its SHA; observed new features match this release, but deployed commit identity was not independently attested. Mobile spot check: 390 x 844, document width 375, no horizontal overflow at that step. Tab from the response editor reached Copy response. This is not a complete accessibility audit.
+Environment: public https://scopeshift.vercel.app, in-app Chromium browser, real anonymous session and real AI responses, wholly fictional text. Captain supplied deployed SHA `126f1ffe98b1e94951b36b7e2dda1b51aa15f4fb`, merged as `84f93d4` via PR #15, and confirmed matching code. Repository main `84f93d4` was merged into the QA branch before checks; observed new features match that release. The deployed UI itself does not expose its SHA. Mobile spot check: 390 x 844, document width 375, no horizontal overflow at that step. Tab from the response editor reached Copy response. This is not a complete accessibility audit.
 
 ### Practice: advice, Replay and economics
 
@@ -128,7 +128,7 @@ Generated two separate live drafts (professional and friendly). Added different 
 
 After reload, opened the saved project/request and immediately found Copy proposed Change Order. **Did not press Calculate, Analyze or Generate again.** The restored document's full text equaled its pre-reload text; clipboard copy matched it too. It retained source/review references, all selected items, assumptions, open questions, fee, hours and dates. Both its heading and status said proposed/not accepted; the response drafts requested confirmation before work. Review confirmation, calculation, draft generation, explicit draft save and reload did not mutate the baseline.
 
-Evidence files in the delivered QA package: `results-advice.jpg`, `replay-before-send.jpg`, `attempt-comparison.jpg`, `independent-unsaved-drafts.jpg`, `restored-proposal-mobile.jpg`. The synthetic project and attempts are intentionally retained for review in the QA browser session; no real client data or client messages were sent.
+Evidence files in the delivered QA package: `results-advice.jpg`, `replay-before-send.jpg`, `attempt-comparison.jpg`, `independent-unsaved-drafts.jpg`, `restored-proposal-mobile.jpg`. The synthetic project and attempts are intentionally retained for review in the QA browser session. No real client data was used and nothing was sent to a real client.
 
 ### Checklist outcome, with strict coverage limits
 
@@ -151,6 +151,8 @@ Locally executed on copied current repository source: 58 focused tests passed ac
 
 Danila owns dedicated test DB/provider validation. Existing Playwright coaching tests use the rules backend; draft tests use explicit synthetic HTTP fixtures. Do not call either a real-provider browser test. Record final-head CI separately when available; earlier green CI is not evidence for an untested newer head.
 
+Verified QA-branch Node 22 CI on `30f61c3`: [run 43642220950](https://github.com/Dan1q-dev/scopeshift/actions/runs/43642220950) passed dependency install, typecheck, lint, unit suite, default production build and full browser suite. Its result includes the QA branch's additional corpus tests; do not confuse it with the captain's separate 392-unit release result. The final documentation-only follow-up has its own CI status in the PR.
+
 ### Content follow-ups, without changing implementation
 
 - **P2, Arsen: unsupported exclusivity on the landing.** Published headings/body say `Nobody teaches the conversation` and `Today the only place to practice is a live project`. These conflict with the pitch's acknowledgement of existing practice products. Suggested heading: `Practice before the real conversation`. Suggested body: `Rehearse client pushback, review your decisions, and try another reply before using it with a client.` Do not repeat the exclusivity claim in the presentation.
@@ -164,3 +166,11 @@ Checked the ten-page PDF against published Practice, Results/Replay, Real Projec
 Updated slide 4 to **Improve: Replay**, including exact-reply feedback and user-written replacement. Updated slide 5 cue and English notes for the observed counteroffer-to-Replay loop. The slide's complete paid/free routes still include the third scope-swap request; the short live walkthrough stops earlier and must retain its In progress label. PDF remains ten slides; all pages were rendered and visually inspected. Real Project's link opens the existing fictional scenario; it is not a new personalized scenario library. No learning gains, retention, legal certainty or willingness to pay were invented.
 
 Short demonstration speech and click sequence: `pitch/short-talk-ru.md`. Use a prepared saved fictional Real Project result for a short presentation; do not claim that opening it is a new model run. If a live reply is slow, say so and show a clearly identified saved result rather than implying instant generation.
+
+## Короткий отчет капитану: прошло / дефект / заблокировано
+
+**Прошло:** совет относится к точной реплике; отдельный Replay восстанавливает префикс и сохраняет исходную попытку; отправка замены ручная; суммы и сроки проверенного пути корректны; полный свежий Real Project анализ и две новые AI-генерации выполнены; черновики независимо удерживают несохраненный текст внутри проекта; явное сохранение и reload работают; Change Order восстановлен из истории без повторного Calculate; проверенные предложения нигде не стали принятым соглашением. Pitch и короткая речь приведены к наблюдаемому циклу Practice -> обратная связь -> Replay -> Real Project.
+
+**Дефект:** три неблокирующих замечания P2 выше: необоснованная исключительность в лендинге, неточное вступление/повтор вопросов в черновике, формулировка Practice handoff про booking. Изменения реализации оставлены владельцам. Ошибок арифметики или ложного принятия в проверенном пути не обнаружено.
+
+**Заблокировано:** ни один шаг основного прогона не заблокирован. Четырнадцать интеграционных проверок без выделенной БД пропущены; они и дополнительные живые кейсы остаются за Данилой. Отдельно **15 расширенных ручных кейсов NOT RUN**, а не FAIL или BLOCKED: негативные сетевые/конкурентные случаи, повторяющийся текст, некоторые исторические/межпроектные сценарии и полное завершение обеих попыток. Общий результат ручной матрицы остается 16 PASS / 0 FAIL / 0 BLOCKED / 15 NOT RUN. PR #11 остается на отдельном ревью, его слияние не выполнялось.
