@@ -8,6 +8,7 @@ import { StatusChip } from "@/components/ui/StatusChip";
 import { agreementsOf, evidenceParts, initialProject, normalizeLegacyScopeEvidence, readableIds } from "@/lib/client/derive";
 import { formatDays, formatHours, formatMoney, formatRate } from "@/lib/client/format";
 import { useSimulation } from "@/lib/client/use-simulation";
+import { improvementHref, practiceFocus } from "@/lib/client/practice-coaching";
 import type { EvaluationCategory } from "@/types/scope";
 
 const categoryLabels: Record<EvaluationCategory, string> = {
@@ -67,6 +68,7 @@ export function ResultsView() {
                 const project = response.project;
                 const agreements = agreementsOf(response);
                 const readable = (text: string) => readableIds(text, scenario, response);
+                const focus = practiceFocus(response);
                 return (
                   <section key={attempt.id} aria-label={label} className={`${panel} p-5 ${best !== null && project.effectiveHourlyRateCents === best && shown[0].attempt.response!.project.effectiveHourlyRateCents !== shown[1].attempt.response!.project.effectiveHourlyRateCents ? "border-emerald-400/40" : ""}`}>
                     <div className="flex items-center justify-between gap-2">
@@ -93,6 +95,14 @@ export function ResultsView() {
                       </ol>
                     )}
 
+                    {focus && <aside aria-label="Your next practice focus" className="mt-5 space-y-3 rounded-lg border border-emerald-300/25 bg-emerald-300/5 p-4 text-sm">
+                      <h3 className="m-0 font-semibold">Your next practice focus: {focus.title}</h3>
+                      <blockquote className="m-0 border-l-2 border-emerald-300/40 pl-3 whitespace-pre-wrap text-slate-300">{focus.turn.userMessage}</blockquote>
+                      <p className="m-0 text-slate-300">{focus.observation}</p>
+                      <p className="m-0 text-slate-400">{focus.challenge}</p>
+                      <Link href={improvementHref(attempt.id, focus.turn.turnId)} className={ghostButton}>Improve this reply</Link>
+                      <p className="m-0 text-xs text-slate-500">Creates a separate Replay attempt before this reply. Edit it yourself; your original attempt stays available.</p>
+                    </aside>}
                     <h3 className="mt-5 mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">Skills feedback</h3>
                     {response.evaluation.criteria.length === 0 && response.evaluation.strengths.length === 0 && response.evaluation.improvements.length === 0 ? (
                       <p className="m-0 text-sm text-slate-500">No assessed evidence yet. Unassessed skills are not a zero score.</p>

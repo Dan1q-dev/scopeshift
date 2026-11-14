@@ -73,9 +73,14 @@ export function Workspace() {
           )}
         </div>
       )}
+      {sim.coaching && <aside aria-label="Rewrite practice" role="note" className="space-y-1 border-b border-emerald-300/20 bg-emerald-300/5 px-4 py-3 text-sm sm:px-6">
+        <p className="m-0 font-semibold text-emerald-200">Improve this reply</p>
+        <p className="m-0 text-slate-300">{sim.coaching.challenge}</p>
+        <p className="m-0 text-xs text-slate-400">Your original reply is in the editor. Your rewritten reply is not sent until you press Send. Your original attempt is preserved.</p>
+      </aside>}
       <main key={active.id} className="stagger grid flex-1 gap-4 p-4 sm:p-6 lg:min-h-0 lg:grid-cols-[minmax(260px,320px)_minmax(0,1fr)_minmax(280px,340px)]">
         <div className="lg:overflow-y-auto"><ContractPanel scenario={scenario} project={project} /></div>
-        <ChatPanel scenario={scenario} turns={response?.turns ?? []} currentEventId={sim.currentEventId} completed={response?.completed ?? false}
+        <ChatPanel scenario={scenario} turns={response?.turns ?? []} currentEventId={sim.currentEventId} completed={response?.completed ?? false} initialDraft={sim.coaching?.originalReply}
           sending={sim.sending} pendingMessage={sim.pendingMessage} error={error} onSend={sim.send} onRetry={sim.retry} onReplay={sim.replayFrom} />
         <div className="lg:overflow-y-auto"><ImpactPanel scenario={scenario} project={project} agreements={agreementsOf(response)} /></div>
       </main>

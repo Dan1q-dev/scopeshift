@@ -17,6 +17,7 @@ type Props = {
   onSend: (message: string) => void;
   onRetry: () => void;
   onReplay: (turnIndex: number) => void;
+  initialDraft?: string;
 };
 
 const MAX_LENGTH = 2000;
@@ -30,8 +31,8 @@ function ClientBubble({ name, children }: { name: string; children: React.ReactN
   );
 }
 
-export function ChatPanel({ scenario, turns, currentEventId, completed, sending, pendingMessage, error, onSend, onRetry, onReplay }: Props) {
-  const [draft, setDraft] = useState("");
+export function ChatPanel({ scenario, turns, currentEventId, completed, sending, pendingMessage, error, onSend, onRetry, onReplay, initialDraft }: Props) {
+  const [draft, setDraft] = useState(initialDraft ?? "");
   const endRef = useRef<HTMLDivElement>(null);
   useEffect(() => { endRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" }); }, [turns.length, pendingMessage, error, currentEventId]);
 

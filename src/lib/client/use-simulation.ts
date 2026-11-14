@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { getScenario, getScenarios, getSessionInfo, getSavedAttempts, negotiate, type InterpreterMode } from "@/lib/client/api";
 import { describeError } from "@/lib/client/negotiation";
 import { hideAttempt, loadSession, newAttempt, removeAttempt, saveSession, type Attempt, type Session } from "@/lib/client/session";
+import { preparePracticeRewrite } from "./practice-coaching";
 import type { HistoryEntry, PublicScenario, ServerAttempt } from "@/types/scope";
 
 type Pending = { attemptId: string; history: HistoryEntry[]; message: string | null };
@@ -21,44 +22,8 @@ export function useSimulation() {
   const scenarioRef = useRef<PublicScenario | null>(null);
   const requestRef = useRef<AbortController | null>(null);
   const serverHistoryRef = useRef(false);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    (async () => {
-      try {
-        const [scenarios, info] = await Promise.all([getScenarios(controller.signal), getSessionInfo(controller.signal)]);
-        const [first] = scenarios;
-        if (!first) throw new Error("No scenarios are available.");
-        const loaded = await getScenario(first.id, controller.signal);
-        let saved: ServerAttempt[] = [];
-        let warning: string | null = null;
-        if (info.historyStorage === "postgres") {
-          try {
-            saved = await getSavedAttempts(loaded.id, controller.signal);
-          } catch {
-            if (controller.signal.aborted) return;
-            warning = "Saved server history could not be loaded. Browser attempts are still available; reload to retry.";
-          }
-        }
-        if (controller.signal.aborted) return;
-        scenarioRef.current = loaded;
-        serverHistoryRef.current = info.historyStorage === "postgres";
-        setScenario(loaded);
-        setInterpreterMode(info.mode);
-        setHistoryWarning(warning);
-        const restored = loadSession(loaded.id, saved);
-        setSession(restored);
-        saveSession(loaded.id, restored);
-        setLoadError(null);
-      } catch (error) {
-        if (!controller.signal.aborted) setLoadError(describeError(error));
-      }
-    })();
-    return () => {
-      controller.abort();
-      requestRef.current?.abort();
-    };
-  }, [reloadKey]);
+  const improvementHandled = useRef(false);
+  const [coaching, setCoaching] = useState<{ attemptId: string; originalReply: string; challenge: string } | null>(null);
 
   const update = useCallback((next: Session) => {
     setSession(next);
@@ -94,6 +59,7 @@ export function useSimulation() {
   const send = useCallback((message: string) => {
     if (!session || !active || !currentEventId || sending) return;
     const entry: HistoryEntry = { turnId: crypto.randomUUID(), eventId: currentEventId, userMessage: message };
+    setCoaching(null);
     void submit(session, { attemptId: active.id, history: [...active.history, entry], message });
   }, [session, active, currentEventId, sending, submit]);
 
@@ -104,6 +70,7 @@ export function useSimulation() {
   /** Replay: a new attempt that keeps the history before the chosen turn. The server recomputes that prefix. */
   const replayFrom = useCallback((turnIndex: number) => {
     if (!session || !active || sending) return;
+    setCoaching(null);
     const attempt: Attempt = newAttempt(active.history.slice(0, turnIndex));
     const next: Session = { attempts: [...session.attempts, attempt].slice(-20), activeId: attempt.id };
     update(next);
@@ -126,8 +93,63 @@ export function useSimulation() {
     update(removeAttempt(session, attemptId));
   }, [session, sending, update]);
 
+  useEffect(() => {
+    const controller = new AbortController();
+    (async () => {
+      try {
+        const [scenarios, info] = await Promise.all([getScenarios(controller.signal), getSessionInfo(controller.signal)]);
+        const [first] = scenarios;
+        if (!first) throw new Error("No scenarios are available.");
+        const loaded = await getScenario(first.id, controller.signal);
+        let saved: ServerAttempt[] = [];
+        let warning: string | null = null;
+        if (info.historyStorage === "postgres") {
+          try {
+            saved = await getSavedAttempts(loaded.id, controller.signal);
+          } catch {
+            if (controller.signal.aborted) return;
+            warning = "Saved server history could not be loaded. Browser attempts are still available; reload to retry.";
+          }
+        }
+        if (controller.signal.aborted) return;
+        scenarioRef.current = loaded;
+        serverHistoryRef.current = info.historyStorage === "postgres";
+        setScenario(loaded);
+        setInterpreterMode(info.mode);
+        let restored = loadSession(loaded.id, saved);
+        let rewrite: ReturnType<typeof preparePracticeRewrite> = null;
+        if (window.location.pathname === "/simulation" && !improvementHandled.current) {
+          improvementHandled.current = true;
+          const url = new URL(window.location.href);
+          const attemptId = url.searchParams.get("improveAttempt");
+          const turnId = url.searchParams.get("improveTurn");
+          if (attemptId && turnId) {
+            url.searchParams.delete("improveAttempt"); url.searchParams.delete("improveTurn");
+            window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`);
+            rewrite = preparePracticeRewrite(restored, attemptId, turnId);
+            if (rewrite) {
+              restored = rewrite.session;
+              setCoaching({ attemptId: rewrite.attempt.id, originalReply: rewrite.originalReply, challenge: rewrite.challenge });
+            } else warning = "That reply is no longer available. Open Results and choose another reply to improve.";
+          }
+        }
+        setHistoryWarning(warning);
+        setSession(restored);
+        saveSession(loaded.id, restored);
+        setLoadError(null);
+        if (rewrite?.attempt.history.length) await submit(restored, { attemptId: rewrite.attempt.id, history: rewrite.attempt.history, message: null });
+      } catch (error) {
+        if (!controller.signal.aborted) setLoadError(describeError(error));
+      }
+    })();
+    return () => {
+      controller.abort();
+      requestRef.current?.abort();
+    };
+  }, [reloadKey, submit]);
+
   return {
-    deleteAttempt,
+    deleteAttempt, coaching: coaching?.attemptId === active?.id ? coaching : null,
     scenario, interpreterMode, historyWarning, session, active, currentEventId, loadError, sending, failed,
     // A reply that failed to send stays visible next to the error until it is sent again.
     pendingMessage: [pending, failed].find((job) => job && job.attemptId === active?.id)?.message ?? null,

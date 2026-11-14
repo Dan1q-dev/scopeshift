@@ -1,6 +1,6 @@
 # Coaching and draft recovery: acceptance plan
 
-Prepared 15 November 2026 by Albina. **Status: prepared, not executed.** Implementation is being developed in `codex/coaching-and-draft-recovery`. This document does not claim that the features are shipped, tested or effective at improving learning. No implementation files were changed for this plan. Final acceptance begins when the captain supplies the deployed URL and commit.
+Prepared and executed in part on 15 November 2026 by Albina. **Status: core published walkthrough passed; extended failure/boundary matrix remains incomplete.** Implementation from `codex/coaching-and-draft-recovery` is now in main `84f93d46f2aead839c12dd66e095d3b7899d5e1d`. No implementation files were changed in this acceptance task. See the execution record below for actual results and limits. No learning-efficacy claim is made.
 
 ## Scope and test record
 
@@ -98,3 +98,69 @@ Create two separately identified saved response drafts D1 and D2 with different 
 Release blockers: original attempt overwritten; wrong Replay boundary; automatic submission; local edits lost solely through tab switching; implicit server save; false saved status; mixed/stale document presented as current; invented acceptance; wrong arithmetic or cross-session data disclosure.
 
 Final report must include pass/fail counts and unexecuted cases, not “everything works”. These checks establish behavior on tested cases, not learning efficacy. The new coaching demo can be called live only after the deployed walkthrough passes. Until then use the presentation language below as a demonstration plan.
+
+## Execution record: 15 November 2026
+
+Environment: public https://scopeshift.vercel.app, in-app Chromium browser, real anonymous session and real AI responses, wholly fictional text. Repository main `84f93d4` merged into the QA branch before checks. The deployed UI does not expose its SHA; observed new features match this release, but deployed commit identity was not independently attested. Mobile spot check: 390 x 844, document width 375, no horizontal overflow at that step. Tab from the response editor reached Copy response. This is not a complete accessibility audit.
+
+### Practice: advice, Replay and economics
+
+Original Attempt 1, ID `4f76e584-ef5a-4678-a5f3-bd53283ea804`:
+
+1. `I can add booking for an extra $400 and two more days.` Client explicitly accepted. State: $1,900 / 26h / day 9 / $73.08 per hour.
+2. `I can deliver two days earlier for an extra $900.` Client counteroffered +$150 and day 7. Agreement state remained $1,900 / 26h / day 9. The UI explicitly said the counteroffer was not yet accepted.
+3. Results quoted the exact $900 reply, identified `Respond to the negotiation`, stated that the client had not accepted it, and advised a clear defensible proposal or clarification. It did not supply a hidden budget or require an upsell.
+4. Improve this reply opened Attempt 2 before that second turn. Booking appeared exactly once, the $900 exchange was absent from the conversation, the editor contained the original $900 text, and the UI stated that the learner must press Send. State before sending: $1,900 / 26h / day 9.
+5. Manually replaced the text with `I can deliver two days earlier for an extra $150.` and pressed Send. Client explicitly accepted. New state: $2,050 / 26h / day 7 / $78.85 per hour.
+6. Results displayed both attempts as **In progress**. Attempt 1's complete displayed Results text was identical before and after creating/sending Attempt 2. The comparison is between two partial histories at the same request position, not two completed scenarios. The extra $150 accompanies a two-day acceleration; a higher fee alone does not prove a better business decision.
+
+Reproducible arithmetic: 1900/26 = 73.0769 -> $73.08; 2050/26 = 78.8462 -> $78.85. No rejected/pending fee was applied. Feedback referred to observable actions and accepted amendment records, not invented trust or competence percentages. The free-concession advice was separately checked by unit tests, not by another live free-work run here.
+
+### Real Project: drafts and restored Change Order
+
+Project `QA coaching recovery - fictional demo`, ID `e7300da2-80fb-4d4c-a85d-9abbc9d7d78e`; request `6d614533-46ce-4ecf-81d5-6efa41f3da31`; source 1 / confirmed interpretation 1.
+
+Used the built-in fictional sample: $1,500 / 20h / **2026-11-28**, with approved gallery/testimonials amendment. This walkthrough intentionally differs from the matrix's November 22 fixture. Requested booking, slot selection, name/email and confirmation, without payments or calendar sync. AI returned four related subfeatures: booking/slot selection excluded with an exact scheduling-exclusion quote; booking-specific data/email details not specified. A negative request about no payments did not become added work. User reviewed the classifications.
+
+Entered six hours **total for all four subfeatures**, fixed +$400, $20 expenses, +2 calendar days. Saved result: **proposed $1,900 / 26h / November 30 / $73.08 per hour / $380 incremental fee less expenses**. The original baseline stayed $1,500 / 20h / November 28. The $20 was not silently added to the client's fee, and overlapping subfeatures did not each receive another six hours.
+
+Generated two separate live drafts (professional and friendly). Added different unsaved sentinel sentences, switched repeatedly, and verified each retained its own text and Unsaved label. Copy response copied the visible dirty professional ending. Explicitly saved professional only: its dirty marker cleared; friendly remained locally edited. Refreshed saved drafts, then explicitly discarded the friendly local edit; its body equaled the originally generated friendly response. Reload later restored the saved professional sentinel and the untouched friendly server body. This demonstrates the tested absence of implicit persistence; a network/SQL audit of every tab switch was not performed. No client-send action was invoked.
+
+After reload, opened the saved project/request and immediately found Copy proposed Change Order. **Did not press Calculate, Analyze or Generate again.** The restored document's full text equaled its pre-reload text; clipboard copy matched it too. It retained source/review references, all selected items, assumptions, open questions, fee, hours and dates. Both its heading and status said proposed/not accepted; the response drafts requested confirmation before work. Review confirmation, calculation, draft generation, explicit draft save and reload did not mutate the baseline.
+
+Evidence files in the delivered QA package: `results-advice.jpg`, `replay-before-send.jpg`, `attempt-comparison.jpg`, `independent-unsaved-drafts.jpg`, `restored-proposal-mobile.jpg`. The synthetic project and attempts are intentionally retained for review in the QA browser session; no real client data or client messages were sent.
+
+### Checklist outcome, with strict coverage limits
+
+PASS below means the stated ordinary walkthrough passed. NOT RUN also covers a case for which only a subset was checked. Automated supporting checks are separate from the manual counts.
+
+| IDs | Status | Evidence / remaining coverage |
+| --- | --- | --- |
+| C01, C02, C03, C05, C07, C08, C09 | PASS | Exact reply/advice, later-turn prefix, manual replacement, unchanged original and partial-history comparison observed live |
+| C04, C06, C10, C11, C12 | NOT RUN | No first-turn/repeated-text/full-completion/failure/stale-reference browser runs; unit tests cover some prefix/invalid-reference boundaries |
+| D01, D02, D04, D05, D07, D09 | PASS | Independent dirty text, clipboard, explicit save, keyboard spot check and explicit discard observed |
+| D03, D06, D08, D10 | NOT RUN | No complete network-count audit, forced save failure, stale-review edit case or browser-tab retention matrix |
+| O01, O02, O03 | PASS | Full document equality after reload without Calculate, clipboard equality and proposed status |
+| O04, O05, O06, O07, O08, O09 | NOT RUN | No complete free/swap document, unsaved-input, historical/source, cross-project, malformed-storage or repeated-request matrix; production-function tests support several boundaries |
+
+Manual total: **16 PASS, 0 FAIL, 0 BLOCKED, 15 NOT RUN** out of 31. No blocker was observed in the tested core path. This is not full certification of the matrix or all production data.
+
+### Automated checks and responsibilities
+
+Locally executed on copied current repository source: 58 focused tests passed across `practice-coaching.test.ts`, `saved-change-order.test.ts`, `real-project-acceptance.test.ts` and `simulation-evaluation.test.ts`. Full unit suite: **434 passed / 14 skipped** (database integration unavailable). Node 24.22.1 local scratch environment; required Node 22 CI remains the reproducible release gate. The code tests verify source/prefix validation, original preservation at the 20-attempt limit, free-work trade-offs, proposal reconstruction and rejection of inconsistent saved data. They do not establish live model accuracy or physical database behavior.
+
+Danila owns dedicated test DB/provider validation. Existing Playwright coaching tests use the rules backend; draft tests use explicit synthetic HTTP fixtures. Do not call either a real-provider browser test. Record final-head CI separately when available; earlier green CI is not evidence for an untested newer head.
+
+### Content follow-ups, without changing implementation
+
+- **P2, Arsen: unsupported exclusivity on the landing.** Published headings/body say `Nobody teaches the conversation` and `Today the only place to practice is a live project`. These conflict with the pitch's acknowledgement of existing practice products. Suggested heading: `Practice before the real conversation`. Suggested body: `Rehearse client pushback, review your decisions, and try another reply before using it with a client.` Do not repeat the exclusivity claim in the presentation.
+- **P2, Danila: draft copy polish.** The professional opening says `Thank you for sharing this draft` although the input was a client request, and unresolved issues/questions are partly repetitive. Financial terms and proposed status remained correct. Prefer an opening about the request and deduplicate questions; this is a quality follow-up rather than an observed false agreement.
+- **P2, Arsen: Practice handoff wording.** Real Project says the Practice contract `does not describe` booking, while the Practice contact-form scope explicitly says `No appointment scheduling`. Prefer `does not include appointment scheduling`. No erroneous state change was observed.
+
+### Pitch versus published product
+
+Checked the ten-page PDF against published Practice, Results/Replay, Real Project and landing pricing. Baseline, six-hour booking, $73.08/$78.85 revenue rates, user-supplied estimates, pasted-text limit, editable proposals and separate client acceptance match observed behavior. Landing still shows hypothetical **$9/month and $19/pack**, with payments disabled. Free-work arithmetic remains $1,500/26h = $57.69; not rerun as a live negotiation in this session.
+
+Updated slide 4 to **Improve: Replay**, including exact-reply feedback and user-written replacement. Updated slide 5 cue and English notes for the observed counteroffer-to-Replay loop. The slide's complete paid/free routes still include the third scope-swap request; the short live walkthrough stops earlier and must retain its In progress label. PDF remains ten slides; all pages were rendered and visually inspected. Real Project's link opens the existing fictional scenario; it is not a new personalized scenario library. No learning gains, retention, legal certainty or willingness to pay were invented.
+
+Short demonstration speech and click sequence: `pitch/short-talk-ru.md`. Use a prepared saved fictional Real Project result for a short presentation; do not claim that opening it is a new model run. If a live reply is slow, say so and show a clearly identified saved result rather than implying instant generation.

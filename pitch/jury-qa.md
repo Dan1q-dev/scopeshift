@@ -8,7 +8,7 @@
 
 **Does excluded work automatically cost extra?** No. Exclusion means the requested item is outside the specified baseline. Its requirements, effort and commercial terms still need discussion. Included corrections and unused included revisions must not become automatic upsells. A bounded goodwill concession is allowed.
 
-**How do Practice and Real Project connect?** The live link opens the existing fictional Practice scenario without real project text. Personalized skill routing from clarification, scope exchange or deadline issues is future work. Benefits for learning and retention still need independent testing.
+**How do Practice and Real Project connect?** The live link opens the existing fictional Practice scenario without real project text. Separately, Practice Results selects an actual reply and observable coaching focus; Improve this reply branches before that turn and lets the learner rewrite it manually while preserving the original. Selection among a larger library of tailored scenarios remains future work. Benefits for learning and retention still need independent testing.
 
 **When does an estimate change the contract?** Confirming analysis or generating a reply does not mean the client accepted. Confirmed effort/rate inputs support a reproducible proposed quote. Only separately recorded acceptance of defined terms can establish a new agreed project state.
 

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { formatDate, formatHours, formatRate, formatSignedUsd, formatUsd, practiceSuggestion, type StepState } from "@/lib/client/real-project-ui";
 import type { ChangeOrder, DraftStyle, NegotiationDraft, RealClientRequest } from "@/types/real-project";
 import { checkboxClass, CopyButton, fieldClass, primaryClass, SectionCard, secondaryClass, Spinner } from "./ui";
@@ -16,17 +16,27 @@ const draftTime = (value: string) => new Date(value).toLocaleString("en-US", { m
 const toneLabel = (style: DraftStyle) => tones.find((item) => item.value === style)?.label ?? style;
 
 /** The editable draft. Snippets insert verified terms at the cursor; Ctrl/Cmd+S saves. */
-function DraftEditor({ draft, disabled, snippets, onSave }: {
+function DraftEditor({ draft, disabled, snippets, onSave, onDirtyChange }: {
   draft: NegotiationDraft;
   disabled: boolean;
   snippets: { label: string; text: string }[];
-  onSave: (body: string) => void;
+  onSave: (draft: NegotiationDraft, body: string) => void;
+  onDirtyChange: (id: string, dirty: boolean) => void;
 }) {
-  const [body, setBody] = useState(draft.body);
+  const [edit, setEdit] = useState(() => ({ draft, body: draft.body }));
+  const { body } = edit;
   const area = useRef<HTMLTextAreaElement>(null);
-  const dirty = body !== draft.body;
+  const dirty = body !== edit.draft.body;
+  // Keep the original version while dirty so a refresh cannot bypass a conflict.
+  // A matching saved body acknowledges this edit; clean editors follow the server.
+  if (edit.draft.updatedAt !== draft.updatedAt && (!dirty || body === draft.body)) {
+    setEdit({ draft, body: draft.body });
+  }
+  const setBody = (next: string) => setEdit((previous) => ({ ...previous, body: next }));
   const canSave = !disabled && Boolean(body.trim()) && dirty;
   const words = body.trim() ? body.trim().split(/\s+/).length : 0;
+
+  useEffect(() => { onDirtyChange(draft.id, dirty); }, [draft.id, dirty, onDirtyChange]);
 
   // Warn before leaving the page with unsaved edits.
   useEffect(() => {
@@ -78,17 +88,18 @@ function DraftEditor({ draft, disabled, snippets, onSave }: {
       <label className="block text-sm text-slate-200">Editable response
         <textarea ref={area} className={`${fieldClass} min-h-52 resize-y leading-6`} maxLength={12000} value={body} disabled={disabled}
           onChange={(event) => setBody(event.target.value)}
-          onKeyDown={(event) => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") { event.preventDefault(); if (canSave) onSave(body); } }} />
+          onKeyDown={(event) => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") { event.preventDefault(); if (canSave) onSave(edit.draft, body); } }} />
       </label>
       <div className="flex flex-wrap items-center gap-2">
-        <button type="button" className={secondaryClass} disabled={!canSave} onClick={() => onSave(body)}>Save edited draft</button>
+        <button type="button" className={secondaryClass} disabled={!canSave} onClick={() => onSave(edit.draft, body)}>Save edited draft</button>
         <CopyButton text={body} label="Copy response" />
-        {dirty && <button type="button" className="text-xs text-slate-400 underline-offset-2 hover:underline" onClick={() => setBody(draft.body)}>Discard edits</button>}
+        {dirty && <button type="button" className="text-xs text-slate-400 underline-offset-2 hover:underline" onClick={() => setEdit({ draft, body: draft.body })}>Discard edits</button>}
         <span className="tabular ml-auto text-xs text-slate-500">{words} words / {body.length.toLocaleString()} of 12,000 characters</span>
       </div>
       {dirty
         ? <p className="m-0 text-xs text-amber-200">Your edits are not saved yet.</p>
         : !disabled && <p className="m-0 text-[11px] text-slate-600">Tip: press Ctrl+S (Cmd+S on Mac) to save edits.</p>}
+      {dirty && edit.draft.updatedAt !== draft.updatedAt && <p role="status" className="m-0 text-xs text-amber-200">A newer saved version is available. Your unsaved text is preserved. Copy it before discarding edits to load the newer version.</p>}
       <details className="text-xs text-slate-500">
         <summary className="cursor-pointer">Original generated response</summary>
         <p className="m-0 mt-2 whitespace-pre-wrap">{draft.generatedBody}</p>
@@ -138,6 +149,10 @@ export function ResponseStudio(props: {
   const currentDrafts = props.drafts.filter(current);
   const earlierDrafts = props.drafts.filter((draft) => !current(draft));
   const [selectedDraftId, setSelectedDraftId] = useState<string | null>(null);
+  const [dirtyDrafts, setDirtyDrafts] = useState<Record<string, boolean>>({});
+  const onDirtyChange = useCallback((id: string, dirty: boolean) => {
+    setDirtyDrafts((previous) => previous[id] === dirty ? previous : { ...previous, [id]: dirty });
+  }, []);
   const activeDraft = currentDrafts.find((draft) => draft.id === selectedDraftId) ?? currentDrafts[0] ?? null;
   // Snippets come from the server-verified terms, never from the model.
   const feeDelta = impact.proposedFeeCents - impact.originalFeeCents;
@@ -201,14 +216,17 @@ export function ResponseStudio(props: {
                 <button key={draft.id} type="button" role="tab" aria-selected={draft.id === activeDraft?.id} onClick={() => setSelectedDraftId(draft.id)}
                   className={`chip rounded-full border px-3 py-1 text-xs ${draft.id === activeDraft?.id ? "border-emerald-300/50 bg-emerald-300/10 text-emerald-100" : "border-white/10 text-slate-400 hover:text-white"}`}>
                   {toneLabel(draft.style)} <span className="tabular opacity-70">{draftTime(draft.createdAt)}</span>
+                  {dirtyDrafts[draft.id] && <span className="ml-1 text-amber-200">Unsaved</span>}
                 </button>
               ))}
             </div>
           )}
-          {activeDraft && (
-            <DraftEditor key={`${activeDraft.id}-${activeDraft.updatedAt}`} draft={activeDraft} disabled={proposalLocked} snippets={snippets}
-              onSave={(body) => props.onSaveDraft(activeDraft, body)} />
-          )}
+          {currentDrafts.map((draft) => (
+            <div key={draft.id} hidden={draft.id !== activeDraft?.id}>
+              <DraftEditor draft={draft} disabled={proposalLocked} snippets={snippets}
+                onSave={props.onSaveDraft} onDirtyChange={onDirtyChange} />
+            </div>
+          ))}
         </div>
       )}
       {earlierDrafts.length > 0 && (

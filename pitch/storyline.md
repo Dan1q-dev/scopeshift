@@ -46,11 +46,11 @@ On slide: Connect negotiation practice with carefully reviewed project decisions
 
 - **Learn: Practice:** Negotiate with a fictional client; See verified project consequences.
 - **Apply: Real Project:** Review pasted agreement and request; Estimate and draft proposed terms.
-- **Improve: Practice:** Return to fictional practice; Real project text stays separate.
+- **Improve: Replay:** Review advice on your exact reply; Rewrite and compare two attempts.
 
-A Practice link is live. Personalized skill routing is future work.
+Real Project links to fictional Practice. Real project text stays separate.
 
-Say: Practice teaches through a realistic negotiation with validated economic consequences. Real Project applies the same discipline to pasted agreement text and a client message. Review the analysis, correct its interpretation, enter estimates and prepare an editable proposal. The Practice link takes you back to the fictional scenario without transferring real project text. Personalized matching to a specific skill is future work. We still need independent user evidence of learning and repeat value.
+Say: Practice teaches negotiation with verified economic consequences. Results identifies a concrete reply and an observable practice focus. Improve this reply opens a separate attempt before that turn. The original stays available. The learner rewrites the response and sends it deliberately, then compares outcomes. Real Project applies the discipline to pasted agreement text, reviewed interpretations and user-entered estimates. Its Practice link opens the existing fictional scenario without transferring real project text. Independent evidence of learning gains and repeat value is still needed.
 
 ## 5. One project. Two defensible outcomes. - 55 seconds
 
@@ -59,9 +59,9 @@ On slide: Start: $1,500 / 20h / day 7 / $75.00 per hour. Booking adds 6 hours.
 - **Paid path: $78.85 / hour:** Booking: +$400, +2 days; Rush: +$150, -2 days; Gallery -> testimonials: equal 4h; Final: $2,050 / 26h / day 7.
 - **Free path: $57.69 / hour:** Booking: no extra fee or days; Decline the earlier-delivery request; Gallery -> testimonials: equal 4h; Final: $1,500 / 26h / day 7.
 
-Replay the booking decision. Compare accepted outcomes, not promises.
+Get feedback. Rewrite a reply in Replay. Compare accepted outcomes.
 
-Say: Here is the active scenario. Start with fifteen hundred dollars, twenty hours and seven days. First propose booking for four hundred dollars and two more days. The client accepts: nineteen hundred dollars, twenty-six hours, day nine. Offer two-day acceleration for another hundred and fifty dollars. Finally exchange the four-hour gallery for the four-hour testimonials section. The result is twenty-fifty, twenty-six hours, day seven. Replay the booking decision and accept it for free. Decline acceleration, then make the same equal-effort swap. The result is fifteen hundred dollars for twenty-six hours. The simulator exposes the cost; it does not automatically call goodwill a mistake.
+Say: Here is the live practice loop. Booking for four hundred dollars and two more days is accepted: nineteen hundred dollars, twenty-six hours, day nine. Then propose nine hundred dollars for two-day acceleration. The client counters and the contract stays unchanged. In Results, the advice quotes that exact reply. Improve this reply opens a second attempt before it, preserving booking and the original attempt. Rewrite the offer to the one hundred fifty dollars the client previously offered, then press Send. If accepted, the second attempt becomes twenty-fifty, twenty-six hours, day seven. Both attempts are still in progress until the remaining request is resolved. The slide also shows complete paid and free routes with an equal four-hour scope swap. Free work can be a defensible decision; the lesson is to understand its consequences.
 
 ## 6. A focused workflow in an existing category. - 25 seconds
 
@@ -137,7 +137,7 @@ AI interprets actions and writes constrained client dialogue. The engine checks 
 
 ## Real Project demo limits
 
-Use fictional pasted text. PDF/DOCX/image upload and OCR are unavailable. Analysis requires source review and separate AI consent. User estimates determine proposed arithmetic. A generated draft, review confirmation or calculation never means client acceptance. The public Practice link opens the existing fictional scenario without real source text. Personalized skill routing is not implemented. Anonymous browser history is not cross-device recovery.
+Use fictional pasted text. PDF/DOCX/image upload and OCR are unavailable. Analysis requires source review and separate AI consent. User estimates determine proposed arithmetic. A generated draft, review confirmation or calculation never means client acceptance. The public Practice link opens the existing fictional scenario without real source text. Results provides targeted reply coaching; selection among additional practice scenarios is future work. Anonymous browser history is not cross-device recovery.
 
 ## Commercial and research caveats
 
