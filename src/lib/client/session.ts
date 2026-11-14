@@ -30,7 +30,40 @@ export function mergeSavedAttempts(local: Session, remote: readonly ServerAttemp
   return { attempts: merged, activeId: merged.some((attempt) => attempt.id === local.activeId) ? local.activeId : merged.at(-1)!.id };
 }
 
-export function loadSession(scenarioId: string, remote: readonly ServerAttempt[] = []): Session {
+const hiddenKey = (scenarioId: string) => `scopeshift:v2:hidden:${scenarioId}`;
+
+/** IDs of attempts the learner deleted in this browser. Server snapshots with these IDs are not restored. */
+function loadHiddenIds(scenarioId: string): string[] {
+  try {
+    const parsed = z.array(idSchema).max(500).safeParse(JSON.parse(window.localStorage.getItem(hiddenKey(scenarioId)) ?? "[]"));
+    return parsed.success ? parsed.data : [];
+  } catch {
+    return [];
+  }
+}
+
+export function hideAttempt(scenarioId: string, attemptId: string) {
+  try {
+    window.localStorage.setItem(hiddenKey(scenarioId), JSON.stringify([...new Set([...loadHiddenIds(scenarioId), attemptId])].slice(-500)));
+  } catch {
+    // Storage may be full or disabled. The attempt is still removed from the open session.
+  }
+}
+
+/** Removes one attempt. A session always keeps at least one attempt, so the last one is replaced by an empty attempt. */
+export function removeAttempt(session: Session, attemptId: string): Session {
+  const attempts = session.attempts.filter((attempt) => attempt.id !== attemptId);
+  if (attempts.length === session.attempts.length) return session;
+  if (attempts.length === 0) {
+    const attempt = newAttempt();
+    return { attempts: [attempt], activeId: attempt.id };
+  }
+  return { attempts, activeId: attempts.some((attempt) => attempt.id === session.activeId) ? session.activeId : attempts.at(-1)!.id };
+}
+
+export function loadSession(scenarioId: string, saved: readonly ServerAttempt[] = []): Session {
+  const hidden = new Set(loadHiddenIds(scenarioId));
+  const remote = saved.filter((attempt) => !hidden.has(attempt.id));
   try {
     const parsed = sessionSchema.safeParse(JSON.parse(window.localStorage.getItem(key(scenarioId)) ?? "null"));
     if (parsed.success && parsed.data.attempts.some((attempt) => attempt.id === parsed.data.activeId)) return mergeSavedAttempts(parsed.data, remote);

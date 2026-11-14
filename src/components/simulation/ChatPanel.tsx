@@ -40,6 +40,14 @@ export function ChatPanel({ scenario, turns, currentEventId, completed, sending,
   const canSend = !sending && !completed && !error && trimmed.length > 0 && trimmed.length <= MAX_LENGTH;
   const submit = () => { if (canSend) { onSend(trimmed); setDraft(""); } };
 
+  // One-click replies. Each sends ordinary reply text, so it is interpreted and shown like a typed message.
+  const offerPending = turns.filter((turn) => turn.eventId === currentEventId).at(-1)?.agreement?.status === "counteroffered";
+  const quickReplies = [
+    ...(offerPending ? [{ label: "Accept the offer", message: "I accept your offer." }] : []),
+    { label: "Decline this request", message: "I decline this request." },
+  ];
+  const canQuickReply = !sending && !completed && !error && currentEventId !== null;
+
   return (
     <section aria-labelledby="chat-title" className={`${panel} flex min-h-[28rem] flex-col lg:min-h-0`}>
       <h2 id="chat-title" className="m-0 border-b border-white/10 px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-400">Client conversation</h2>
@@ -73,7 +81,12 @@ export function ChatPanel({ scenario, turns, currentEventId, completed, sending,
           </div>
         ))}
         {pendingMessage && <div className="ml-auto max-w-[85%] rounded-2xl rounded-tr-sm bg-emerald-400/10 px-3.5 py-2.5 text-sm leading-6 whitespace-pre-wrap opacity-70">{pendingMessage}</div>}
-        {sending && <p className="m-0 text-sm text-slate-400" role="status">{scenario.clientName} is replying...</p>}
+        {sending && (
+          <p className="rise m-0 flex items-center gap-2 text-sm text-slate-400" role="status">
+            <span className="typing-dots" aria-hidden="true"><span /><span /><span /></span>
+            {scenario.clientName} is replying...
+          </p>
+        )}
         {error && (
           <div role="alert" className="rounded-lg border border-rose-400/30 bg-rose-400/10 px-3 py-2.5 text-sm">
             <p className="m-0 text-rose-100">{error}</p>
@@ -84,6 +97,17 @@ export function ChatPanel({ scenario, turns, currentEventId, completed, sending,
         <div ref={endRef} />
       </div>
       <form onSubmit={(event) => { event.preventDefault(); submit(); }} className="border-t border-white/10 p-3">
+        {canQuickReply && (
+          <div className="rise mb-2 flex flex-wrap items-center gap-2 text-xs" aria-label="Quick replies">
+            <span className="text-slate-500">Quick reply:</span>
+            {quickReplies.map((reply) => (
+              <button key={reply.label} type="button" onClick={() => { onSend(reply.message); setDraft(""); }}
+                className={`chip cursor-pointer rounded-full border px-3 py-1 ${reply.label === "Accept the offer" ? "border-emerald-400/50 bg-emerald-400/10 text-emerald-100" : "border-white/15 bg-transparent text-slate-300"}`}>
+                {reply.label}
+              </button>
+            ))}
+          </div>
+        )}
         <label htmlFor="reply" className="sr-only">Your reply to the client</label>
         <textarea id="reply" rows={3} value={draft} maxLength={MAX_LENGTH} disabled={completed || sending || Boolean(error)}
           onChange={(event) => setDraft(event.target.value)}
