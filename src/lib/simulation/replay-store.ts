@@ -6,7 +6,7 @@ import { setTimeout as delay } from "node:timers/promises";
 import { z } from "zod";
 import { historyEntrySchema, idSchema, negotiationTurnSchema, type HistoryEntry, type NegotiationTurn } from "@/types/scope";
 
-const MAX_RECEIPT_BYTES = 32_768;
+export const MAX_RECEIPT_BYTES = 32_768;
 const digestSchema = z.string().regex(/^[a-f0-9]{64}$/);
 const identitySchema = z.object({
   scope: z.string().min(1).max(512),
@@ -26,12 +26,18 @@ const receiptSchema = z.object({
   turn: negotiationTurnSchema,
 }).strict();
 
+const recordIdentitySchema = receiptSchema.omit({ formatVersion: true, turn: true });
+
 export interface ReplayIdentity {
   scope: string;
   version: string;
   scenarioId: string;
   entry: HistoryEntry;
   prefixHash: string;
+}
+
+export interface ReplayStore {
+  getOrCreate(identity: ReplayIdentity, produce: () => Promise<NegotiationTurn>): Promise<NegotiationTurn>;
 }
 
 export class ReplayConflictError extends Error {
@@ -60,12 +66,72 @@ function matchesEntry(turn: NegotiationTurn, entry: HistoryEntry) {
   return turn.turnId === entry.turnId && turn.eventId === entry.eventId && turn.userMessage === entry.userMessage;
 }
 
+export function parseReplayIdentity(input: ReplayIdentity): ReplayIdentity {
+  const parsed = identitySchema.safeParse(input);
+  if (!parsed.success) throw new ReplayStoreError("Replay record identity is invalid.");
+  return parsed.data;
+}
+
+/** Version stays in the identity so a changed model cannot reuse a turn ID. */
+export function replayKey(identity: ReplayIdentity) {
+  return digest(JSON.stringify([identity.scope, identity.scenarioId, identity.entry.turnId]));
+}
+
+/** Persist a scope digest, never the anonymous session identifier itself. */
+export function replayRecordIdentity(identity: ReplayIdentity) {
+  return {
+    scopeHash: digest(identity.scope),
+    scenarioId: identity.scenarioId,
+    version: identity.version,
+    prefixHash: identity.prefixHash,
+    entry: identity.entry,
+  };
+}
+
+export function assertReplayRecordIdentity(value: unknown, identity: ReplayIdentity): void {
+  const parsed = recordIdentitySchema.safeParse(value);
+  if (!parsed.success) throw new ReplayStoreError("The stored replay identity is invalid.");
+  const record = parsed.data;
+  if (record.scopeHash !== digest(identity.scope) || record.scenarioId !== identity.scenarioId
+    || record.version !== identity.version || record.prefixHash !== identity.prefixHash
+    || record.entry.turnId !== identity.entry.turnId || record.entry.eventId !== identity.entry.eventId
+    || record.entry.userMessage !== identity.entry.userMessage) throw new ReplayConflictError();
+}
+
+function checkReceiptSize(value: unknown) {
+  let contents: string | undefined;
+  try { contents = JSON.stringify(value); } catch { throw new ReplayStoreError("The replay receipt is invalid."); }
+  if (!contents || Buffer.byteLength(contents, "utf8") > MAX_RECEIPT_BYTES) {
+    throw new ReplayStoreError("The replay receipt exceeds the supported size.");
+  }
+}
+
+export function createReplayReceipt(identity: ReplayIdentity, turn: NegotiationTurn) {
+  const validated = negotiationTurnSchema.safeParse(turn);
+  if (!validated.success || !matchesEntry(validated.data, identity.entry)) {
+    throw new ReplayStoreError("The produced turn does not match its replay identity.");
+  }
+  const receipt = receiptSchema.parse({ formatVersion: 1, ...replayRecordIdentity(identity), turn: validated.data });
+  checkReceiptSize(receipt);
+  return receipt;
+}
+
+export function readReplayReceipt(value: unknown, identity: ReplayIdentity): NegotiationTurn {
+  checkReceiptSize(value);
+  const parsed = receiptSchema.safeParse(value);
+  if (!parsed.success || !matchesEntry(parsed.data.turn, parsed.data.entry)) {
+    throw new ReplayStoreError("The stored replay receipt is invalid.");
+  }
+  assertReplayRecordIdentity(recordIdentitySchema.strip().parse(parsed.data), identity);
+  return parsed.data.turn;
+}
+
 /** Local durable receipts for validated, server-created turns.
  * Receipts are written before returning a result. A shared persistent volume is
  * required across instances; an ephemeral serverless directory is not durable.
  * Stale lock files intentionally fail closed and need operator investigation.
  */
-export class FileReplayStore {
+export class FileReplayStore implements ReplayStore {
   private readonly directory: string;
   private readonly lockTimeoutMs: number;
   private readonly lockPollMs: number;
@@ -82,12 +148,10 @@ export class FileReplayStore {
   }
 
   async getOrCreate(input: ReplayIdentity, produce: () => Promise<NegotiationTurn>): Promise<NegotiationTurn> {
-    const parsed = identitySchema.safeParse(input);
-    if (!parsed.success) throw new ReplayStoreError("Replay record identity is invalid.");
-    const identity = parsed.data;
+    const identity = parseReplayIdentity(input);
     // Version is checked inside the record, so changing models cannot silently
     // reinterpret the same turn ID. Every path component comes from a digest.
-    const key = digest(JSON.stringify([identity.scope, identity.scenarioId, identity.entry.turnId]));
+    const key = replayKey(identity);
     const file = resolve(this.directory, `${key}.json`);
     const lock = resolve(this.directory, `${key}.lock`);
     try {
@@ -100,25 +164,10 @@ export class FileReplayStore {
         if (existing) return existing;
         // Provider errors propagate without persisting a partial interpretation.
         const produced = await produce();
-        const validated = negotiationTurnSchema.safeParse(produced);
-        if (!validated.success || !matchesEntry(validated.data, identity.entry)) {
-          throw new ReplayStoreError("The produced turn does not match its replay identity.");
-        }
-        const receipt = receiptSchema.parse({
-          formatVersion: 1,
-          scopeHash: digest(identity.scope),
-          scenarioId: identity.scenarioId,
-          version: identity.version,
-          prefixHash: identity.prefixHash,
-          entry: identity.entry,
-          turn: validated.data,
-        });
+        const receipt = createReplayReceipt(identity, produced);
         const contents = JSON.stringify(receipt);
-        if (Buffer.byteLength(contents, "utf8") > MAX_RECEIPT_BYTES) {
-          throw new ReplayStoreError("The replay receipt exceeds the supported size.");
-        }
         await this.writeAtomic(file, contents);
-        return validated.data;
+        return receipt.turn;
       } finally {
         await this.releaseLock(lock, nonce);
       }
@@ -157,16 +206,7 @@ export class FileReplayStore {
       } catch {
         throw new ReplayStoreError("The stored replay receipt is invalid.");
       }
-      const parsed = receiptSchema.safeParse(json);
-      if (!parsed.success || !matchesEntry(parsed.data.turn, parsed.data.entry)) {
-        throw new ReplayStoreError("The stored replay receipt is invalid.");
-      }
-      const receipt = parsed.data;
-      if (receipt.scopeHash !== digest(identity.scope) || receipt.scenarioId !== identity.scenarioId
-        || receipt.version !== identity.version || receipt.prefixHash !== identity.prefixHash
-        || receipt.entry.turnId !== identity.entry.turnId || receipt.entry.eventId !== identity.entry.eventId
-        || receipt.entry.userMessage !== identity.entry.userMessage) throw new ReplayConflictError();
-      return receipt.turn;
+      return readReplayReceipt(json, identity);
     } finally {
       await handle.close();
     }

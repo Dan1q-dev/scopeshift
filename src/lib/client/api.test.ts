@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { websiteProjectScenario } from "@/data/scenarios/website-project";
 import { negotiateHistory } from "@/lib/simulation/negotiate";
-import { getSessionMode, negotiate } from "./api";
+import { getSavedAttempts, getSessionInfo, getSessionMode, negotiate } from "./api";
 
 const request = { scenarioId: "web-project-01", history: [{ turnId: "client-bootstrap", eventId: "booking-request", userMessage: "I can add booking for an extra $400 and two more days." }] };
 const result = negotiateHistory(websiteProjectScenario, request.history);
@@ -9,6 +9,19 @@ const result = negotiateHistory(websiteProjectScenario, request.history);
 afterEach(() => vi.unstubAllGlobals());
 
 describe("client session bootstrap", () => {
+  it("returns the advertised history backend without changing legacy mode callers", async () => {
+    vi.stubGlobal("fetch", vi.fn<typeof fetch>().mockResolvedValue(Response.json({ mode: "openai", historyStorage: "postgres" })));
+    expect(await getSessionInfo()).toEqual({ mode: "openai", historyStorage: "postgres" });
+  });
+
+  it("loads validated saved attempts through the private no-store endpoint", async () => {
+    const attempt = { id: "saved-attempt", createdAt: 1, history: request.history, response: result };
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(Response.json({ attempts: [attempt] }));
+    vi.stubGlobal("fetch", fetchMock);
+    expect(await getSavedAttempts(request.scenarioId)).toEqual([attempt]);
+    expect(fetchMock.mock.calls[0]).toEqual(["/api/attempts?scenarioId=web-project-01", { cache: "no-store", signal: undefined }]);
+  });
+
   it("loads the actual mode and shares initialization with a negotiation", async () => {
     let resolveSession!: (response: Response) => void;
     const session = new Promise<Response>((resolve) => { resolveSession = resolve; });

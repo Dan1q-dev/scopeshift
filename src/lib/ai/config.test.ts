@@ -19,4 +19,12 @@ describe("AI configuration", () => {
     expect(readAiConfig(configured)).toMatchObject({ mode: "openai", model: "gpt-5.4-mini", timeoutMs: 20_000 });
     expect(readAiConfig({ ...configured, OPENAI_MODEL: "gpt-4.1-mini", OPENAI_TIMEOUT_MS: "30000" })).toMatchObject({ model: "gpt-4.1-mini", timeoutMs: 30_000 });
   });
+  it("allows managed storage on Vercel only with a dedicated valid database URL", () => {
+    const managed = { ...configured, VERCEL: "1", SCOPESHIFT_STORAGE: "postgres", SCOPESHIFT_DATABASE_URL: "postgresql://user:password@example.neon.tech/scopeshift" };
+    expect(readAiConfig(managed)).toMatchObject({ mode: "openai", storage: { kind: "postgres", connectionString: managed.SCOPESHIFT_DATABASE_URL }, dailyAiCallLimit: 200 });
+    expect(() => readAiConfig({ ...managed, SCOPESHIFT_DATABASE_URL: "" })).toThrow(/dedicated/);
+    expect(() => readAiConfig({ ...managed, SCOPESHIFT_DATABASE_URL: "https://example.com/db" })).toThrow(/PostgreSQL/);
+    expect(() => readAiConfig({ ...managed, SCOPESHIFT_DAILY_AI_CALL_LIMIT: "0" })).toThrow(/10000/);
+    expect(() => readAiConfig({ ...managed, SCOPESHIFT_STORAGE: "temporary" })).toThrow(/file or postgres/);
+  });
 });
