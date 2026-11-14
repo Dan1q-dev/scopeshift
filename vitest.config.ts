@@ -8,5 +8,5 @@ export default defineConfig({
       "server-only": fileURLToPath(new URL("./tests/helpers/server-only.ts", import.meta.url)),
     },
   },
-  test: { environment: "node", include: ["tests/**/*.test.ts", "src/lib/**/*.test.ts"], exclude: ["tests/e2e/**"] },
+  test: { environment: "node", env: { SCOPESHIFT_AI_MODE: "rules" }, include: ["tests/**/*.test.ts", "src/lib/**/*.test.ts"], exclude: ["tests/e2e/**"] },
 });
