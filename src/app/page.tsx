@@ -119,7 +119,7 @@ export default function Home() {
               </div>
               <div className={`${panel} flex flex-col p-5`}>
                 <div className="flex items-center justify-between gap-2"><h3 className="m-0 text-base font-semibold">Membership</h3><span className="rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-slate-400">Coming soon</span></div>
-                <p className="tabular mt-3 mb-0 text-3xl font-semibold">$9<span className="text-base font-normal text-slate-400"> / month</span></p>
+                <p className="tabular mt-3 mb-0 text-3xl font-semibold">$12<span className="text-base font-normal text-slate-400"> / month</span></p>
                 <p className="mt-2 mb-0 flex-1 text-sm leading-6 text-slate-400">New client scenarios across freelance professions.</p>
               </div>
               <div className={`${panel} flex flex-col p-5`}>
