@@ -1,4 +1,5 @@
-# Pitch workspace
+# Pitch draft
 
-Owner: Albina. Prepare an English pitch of at most 10 slides and a PDF export.
-Use docs/tasks/albina.md and the shared brief. Mark pricing and market estimates as hypotheses until supported.
+English ten-slide PDF: scopeshift-pitch.pdf. Storyline and five-minute speech: storyline.md. Jury preparation: jury-qa.md.
+
+The PDF was rendered and visually checked. It remains a project draft, not proof of a working demo. Its four-hour booking example comes from docs/design-drafts/website-project.json. The active Sarah Mitchell scenario uses six hours: reconcile demo numbers before final submission. Sources and assumptions are attributed in the storyline. No traction or willingness-to-pay evidence is claimed.
