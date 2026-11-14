@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { formatDate, formatHours, formatRate, formatUsd, practiceSuggestion, type StepState } from "@/lib/client/real-project-ui";
+import { useEffect, useRef, useState } from "react";
+import { formatDate, formatHours, formatRate, formatSignedUsd, formatUsd, practiceSuggestion, type StepState } from "@/lib/client/real-project-ui";
 import type { ChangeOrder, DraftStyle, NegotiationDraft, RealClientRequest } from "@/types/real-project";
 import { checkboxClass, CopyButton, fieldClass, primaryClass, SectionCard, secondaryClass, Spinner } from "./ui";
 
@@ -12,35 +12,103 @@ const tones: { value: DraftStyle; label: string; hint: string }[] = [
   { value: "firm", label: "Firm but respectful", hint: "Holds the boundary" },
 ];
 
-function DraftEditor({ draft, disabled, readOnlyReason, onSave }: { draft: NegotiationDraft; disabled: boolean; readOnlyReason: string | null; onSave: (body: string) => void }) {
+const draftTime = (value: string) => new Date(value).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+const toneLabel = (style: DraftStyle) => tones.find((item) => item.value === style)?.label ?? style;
+
+/** The editable draft. Snippets insert verified terms at the cursor; Ctrl/Cmd+S saves. */
+function DraftEditor({ draft, disabled, snippets, onSave }: {
+  draft: NegotiationDraft;
+  disabled: boolean;
+  snippets: { label: string; text: string }[];
+  onSave: (body: string) => void;
+}) {
   const [body, setBody] = useState(draft.body);
+  const area = useRef<HTMLTextAreaElement>(null);
   const dirty = body !== draft.body;
-  const tone = tones.find((item) => item.value === draft.style);
+  const canSave = !disabled && Boolean(body.trim()) && dirty;
+  const words = body.trim() ? body.trim().split(/\s+/).length : 0;
+
+  // Warn before leaving the page with unsaved edits.
+  useEffect(() => {
+    if (!dirty) return;
+    const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [dirty]);
+  // Grow with the text so the whole reply is visible while editing.
+  useEffect(() => {
+    const element = area.current;
+    if (!element) return;
+    element.style.height = "auto";
+    element.style.height = `${Math.min(Math.max(element.scrollHeight + 2, 208), 640)}px`;
+  }, [body]);
+
+  function insert(text: string) {
+    const element = area.current;
+    const start = element?.selectionStart ?? body.length;
+    const end = element?.selectionEnd ?? body.length;
+    const before = body.slice(0, start);
+    const spacer = before && !before.endsWith("\n") ? "\n\n" : "";
+    const next = `${before}${spacer}${text}${body.slice(end)}`;
+    setBody(next);
+    requestAnimationFrame(() => {
+      element?.focus();
+      const caret = before.length + spacer.length + text.length;
+      element?.setSelectionRange(caret, caret);
+    });
+  }
+
   return (
     <article className="rise space-y-3 rounded-xl border border-white/10 bg-black/20 p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="m-0 text-sm font-semibold">{tone?.label ?? draft.style} response</h3>
+        <h3 className="m-0 text-sm font-semibold">{toneLabel(draft.style)} response</h3>
         <span className="flex flex-wrap items-center gap-2 text-[11px]">
           <span className="rounded-full border border-amber-300/30 px-2 py-0.5 text-amber-200">Draft proposal</span>
-          <span className="tabular text-slate-500">Source {draft.sourceRevision} / review {draft.reviewRevision}</span>
+          <span className="tabular text-slate-500">Source {draft.sourceRevision} / review {draft.reviewRevision} / {draftTime(draft.updatedAt)}</span>
         </span>
       </div>
-      {readOnlyReason && <p className="m-0 text-xs text-amber-200">{readOnlyReason}</p>}
+      {snippets.length > 0 && !disabled && (
+        <div className="flex flex-wrap items-center gap-2 text-xs" aria-label="Insert into the response">
+          <span className="text-slate-500">Insert:</span>
+          {snippets.map((snippet) => (
+            <button key={snippet.label} type="button" className="chip rounded-full border border-white/15 px-2.5 py-1 text-slate-300 hover:border-emerald-300/40 hover:text-emerald-100" onClick={() => insert(snippet.text)}>+ {snippet.label}</button>
+          ))}
+        </div>
+      )}
       <label className="block text-sm text-slate-200">Editable response
-        <textarea className={`${fieldClass} min-h-52 leading-6`} maxLength={12000} value={body} disabled={disabled} onChange={(event) => setBody(event.target.value)} />
+        <textarea ref={area} className={`${fieldClass} min-h-52 resize-y leading-6`} maxLength={12000} value={body} disabled={disabled}
+          onChange={(event) => setBody(event.target.value)}
+          onKeyDown={(event) => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") { event.preventDefault(); if (canSave) onSave(body); } }} />
       </label>
       <div className="flex flex-wrap items-center gap-2">
-        <button type="button" className={secondaryClass} disabled={disabled || !body.trim() || !dirty} onClick={() => onSave(body)}>Save edited draft</button>
+        <button type="button" className={secondaryClass} disabled={!canSave} onClick={() => onSave(body)}>Save edited draft</button>
         <CopyButton text={body} label="Copy response" />
         {dirty && <button type="button" className="text-xs text-slate-400 underline-offset-2 hover:underline" onClick={() => setBody(draft.body)}>Discard edits</button>}
-        <span className="tabular ml-auto text-xs text-slate-500">{body.length.toLocaleString()} / 12,000</span>
+        <span className="tabular ml-auto text-xs text-slate-500">{words} words / {body.length.toLocaleString()} of 12,000 characters</span>
       </div>
-      {dirty && <p className="m-0 text-xs text-amber-200">Your edits are not saved yet.</p>}
+      {dirty
+        ? <p className="m-0 text-xs text-amber-200">Your edits are not saved yet.</p>
+        : !disabled && <p className="m-0 text-[11px] text-slate-600">Tip: press Ctrl+S (Cmd+S on Mac) to save edits.</p>}
       <details className="text-xs text-slate-500">
         <summary className="cursor-pointer">Original generated response</summary>
         <p className="m-0 mt-2 whitespace-pre-wrap">{draft.generatedBody}</p>
+        {draft.generatedBody !== body && <button type="button" className="mt-2 p-0 text-emerald-200/90 underline-offset-2 hover:underline disabled:opacity-40" disabled={disabled} onClick={() => setBody(draft.generatedBody)}>Restore the generated text</button>}
       </details>
     </article>
+  );
+}
+
+/** A draft written for an earlier review or calculation. Kept for reference only. */
+function EarlierDraft({ draft }: { draft: NegotiationDraft }) {
+  return (
+    <li className="space-y-2 rounded-lg border border-white/10 p-3">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+        <span className="font-medium text-slate-300">{toneLabel(draft.style)}</span>
+        <span className="tabular text-slate-500">Source {draft.sourceRevision} / review {draft.reviewRevision} / {draftTime(draft.updatedAt)}</span>
+      </div>
+      <p className="m-0 line-clamp-4 text-xs leading-5 whitespace-pre-wrap text-slate-400">{draft.body}</p>
+      <CopyButton text={draft.body} label="Copy" className="text-xs text-emerald-200/90 underline-offset-2 hover:underline disabled:opacity-40" />
+    </li>
   );
 }
 
@@ -67,6 +135,17 @@ export function ResponseStudio(props: {
   const openQuestions = [...new Set(selected.flatMap((item) => item.clarificationQuestions))];
   const practice = practiceSuggestion(request);
   const current = (draft: NegotiationDraft) => draft.reviewRevision === request.review?.revision && draft.impactHash === request.impactHash;
+  const currentDrafts = props.drafts.filter(current);
+  const earlierDrafts = props.drafts.filter((draft) => !current(draft));
+  const [selectedDraftId, setSelectedDraftId] = useState<string | null>(null);
+  const activeDraft = currentDrafts.find((draft) => draft.id === selectedDraftId) ?? currentDrafts[0] ?? null;
+  // Snippets come from the server-verified terms, never from the model.
+  const feeDelta = impact.proposedFeeCents - impact.originalFeeCents;
+  const snippets = [
+    { label: "Proposed terms", text: `Proposed terms: ${formatUsd(impact.proposedFeeCents)} in total (${formatSignedUsd(feeDelta)} on the agreed fee), delivery by ${formatDate(impact.proposedDeadline)}. These terms apply once you confirm them.` },
+    ...(openQuestions.length > 0 ? [{ label: "Open questions", text: `Before I start, could you confirm:\n${openQuestions.map((question) => `- ${question}`).join("\n")}` }] : []),
+    ...(impact.input.assumptions.length > 0 ? [{ label: "Assumptions", text: `This proposal assumes:\n${impact.input.assumptions.map((note) => `- ${note}`).join("\n")}` }] : []),
+  ];
 
   return (
     <SectionCard step="respond" index={4} state={props.state} eyebrow="Respond clearly" title="Prepare the conversation"
@@ -114,15 +193,29 @@ export function ResponseStudio(props: {
         <button type="button" className={secondaryClass} disabled={proposalLocked} onClick={props.onPrepareNewDraft}>Prepare a new draft</button>
       </div>
 
-      {props.drafts.length > 0 && (
-        <div className="space-y-4">
-          {props.drafts.map((draft) => (
-            <DraftEditor key={`${draft.id}-${draft.updatedAt}`} draft={draft}
-              disabled={proposalLocked || !current(draft)}
-              readOnlyReason={current(draft) ? null : "Earlier proposal (read-only): it was written for a previous review or calculation."}
-              onSave={(body) => props.onSaveDraft(draft, body)} />
-          ))}
+      {currentDrafts.length > 0 && (
+        <div className="space-y-3">
+          {currentDrafts.length > 1 && (
+            <div role="tablist" aria-label="Drafts for these terms" className="flex flex-wrap gap-1.5">
+              {currentDrafts.map((draft) => (
+                <button key={draft.id} type="button" role="tab" aria-selected={draft.id === activeDraft?.id} onClick={() => setSelectedDraftId(draft.id)}
+                  className={`chip rounded-full border px-3 py-1 text-xs ${draft.id === activeDraft?.id ? "border-emerald-300/50 bg-emerald-300/10 text-emerald-100" : "border-white/10 text-slate-400 hover:text-white"}`}>
+                  {toneLabel(draft.style)} <span className="tabular opacity-70">{draftTime(draft.createdAt)}</span>
+                </button>
+              ))}
+            </div>
+          )}
+          {activeDraft && (
+            <DraftEditor key={`${activeDraft.id}-${activeDraft.updatedAt}`} draft={activeDraft} disabled={proposalLocked} snippets={snippets}
+              onSave={(body) => props.onSaveDraft(activeDraft, body)} />
+          )}
         </div>
+      )}
+      {earlierDrafts.length > 0 && (
+        <details className="rounded-xl border border-white/10 p-3 text-sm">
+          <summary className="cursor-pointer text-slate-300">Earlier drafts ({earlierDrafts.length}), written for a previous review or calculation</summary>
+          <ul className="m-0 mt-3 list-none space-y-2 p-0">{earlierDrafts.map((draft) => <EarlierDraft key={`${draft.id}-${draft.updatedAt}`} draft={draft} />)}</ul>
+        </details>
       )}
 
       <div className="space-y-3 border-t border-white/10 pt-5">

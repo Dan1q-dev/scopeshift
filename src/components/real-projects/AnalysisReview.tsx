@@ -43,10 +43,24 @@ export function AnalysisReview({ request, state, disabled, saving, onConfirm, on
     return saved ?? { itemId: item.id, classification: item.classification, reason: "" };
   }));
   const [confirmed, setConfirmed] = useState(false);
-  const missingReasons = items.filter((item) => item.classification !== analysis.items.find((original) => original.id === item.itemId)?.classification && !item.reason.trim()).length;
+  // Compact by default: short analyses stay fully open; longer ones open the first item that needs a decision.
+  const [open, setOpen] = useState<Set<string>>(() => {
+    if (analysis.items.length <= 2) return new Set(analysis.items.map((item) => item.id));
+    const first = analysis.items.find((item) => item.classification !== "included") ?? analysis.items[0];
+    return new Set([first.id]);
+  });
+  const [filter, setFilter] = useState<ScopeClassification | null>(null);
+  const needsReason = (itemId: string) => {
+    const reviewed = items.find((item) => item.itemId === itemId)!;
+    return reviewed.classification !== analysis.items.find((original) => original.id === itemId)?.classification && !reviewed.reason.trim();
+  };
+  const missingReasonIds = items.filter((item) => needsReason(item.itemId)).map((item) => item.itemId);
+  const missingReasons = missingReasonIds.length;
   const canConfirm = confirmed && missingReasons === 0;
   const counts = classificationCounts(items);
   const corrections = items.filter((item, index) => item.classification !== analysis.items[index].classification).length;
+  const allOpen = open.size === analysis.items.length;
+  const toggle = (id: string) => setOpen((previous) => { const next = new Set(previous); if (next.has(id)) next.delete(id); else next.add(id); return next; });
 
   function change(id: string, patch: { classification?: ScopeClassification; reason?: string }) {
     setItems((previous) => previous.map((item) => item.itemId === id ? { ...item, ...patch } : item));
@@ -65,34 +79,60 @@ export function AnalysisReview({ request, state, disabled, saving, onConfirm, on
         <div className="flex h-2 overflow-hidden rounded-full bg-white/5" aria-hidden="true">
           {classificationOrder.map((key) => counts[key] > 0 && <span key={key} className={`grow-bar ${classificationStyle[key].bar}`} style={{ width: `${(counts[key] / items.length) * 100}%` }} />)}
         </div>
-        <p className="m-0 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-400">
-          <span className="font-medium text-slate-300">{items.length} {items.length === 1 ? "item" : "items"}</span>
-          {classificationOrder.map((key) => counts[key] > 0 && (
-            <span key={key} className="inline-flex items-center gap-1.5"><span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${classificationStyle[key].dot}`} />{counts[key]} {classificationStyle[key].short}</span>
-          ))}
-          {corrections > 0 && <span className="text-amber-200">{corrections} corrected by you</span>}
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-1.5 text-xs" role="group" aria-label="Filter items by your classification">
+            <span className="mr-1 font-medium text-slate-300">{items.length} {items.length === 1 ? "item" : "items"}</span>
+            {classificationOrder.map((key) => counts[key] > 0 && (
+              <button key={key} type="button" aria-pressed={filter === key} onClick={() => setFilter(filter === key ? null : key)}
+                className={`chip inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 ${filter === key ? classificationStyle[key].pill : "border-white/10 text-slate-400 hover:text-white"}`}>
+                <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${classificationStyle[key].dot}`} />{counts[key]} {classificationStyle[key].short}
+              </button>
+            ))}
+            {corrections > 0 && <span className="ml-1 text-amber-200">{corrections} corrected by you</span>}
+          </div>
+          {analysis.items.length > 1 && (
+            <button type="button" className="text-xs text-emerald-200/90 underline-offset-2 hover:underline" onClick={() => setOpen(allOpen ? new Set() : new Set(analysis.items.map((item) => item.id)))}>
+              {allOpen ? "Collapse all" : "Expand all"}
+            </button>
+          )}
+        </div>
+        {filter && <p className="m-0 text-xs text-slate-500">Showing {counts[filter]} of {items.length}. Hidden items keep their review choices. <button type="button" className="p-0 text-emerald-200/90 underline-offset-2 hover:underline" onClick={() => setFilter(null)}>Show all</button></p>}
       </div>
 
-      <ol className="stagger m-0 list-none space-y-4 p-0">
+      <ol className="stagger m-0 list-none space-y-3 p-0">
         {analysis.items.map((item, index) => {
           const reviewed = items[index];
           const changed = reviewed.classification !== item.classification;
+          if (filter && reviewed.classification !== filter) return null;
+          const isOpen = open.has(item.id);
+          const bodyId = `review-item-${item.id}`;
           return (
             <li key={item.id}>
-              <article className="relative overflow-hidden rounded-xl border border-white/10 bg-[#0b1115]/70 p-4 pl-5">
+              <article className="relative overflow-hidden rounded-xl border border-white/10 bg-[#0b1115]/70 pl-1">
                 <span aria-hidden="true" className={`absolute inset-y-0 left-0 w-1 ${classificationStyle[reviewed.classification].bar} transition-colors`} />
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <h3 className="m-0 text-base font-semibold">{item.title}</h3>
-                  <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap items-start justify-between gap-2 p-4 pb-0">
+                  <h3 className="m-0 min-w-0 flex-1 text-base font-semibold">
+                    <button type="button" aria-expanded={isOpen} aria-controls={bodyId} onClick={() => toggle(item.id)} className="group flex w-full items-start gap-2 text-left">
+                      <span aria-hidden="true" className={`mt-1.5 inline-block h-2 w-2 shrink-0 border-r-2 border-b-2 border-slate-500 transition-transform ${isOpen ? "rotate-45" : "-rotate-45"}`} />
+                      <span className="min-w-0">
+                        <span className="block group-hover:text-emerald-100">{item.title}</span>
+                        <span className={`block text-sm font-normal text-slate-400 ${isOpen ? "" : "line-clamp-1"}`}>{item.requestedWork}</span>
+                      </span>
+                    </button>
+                  </h3>
+                  <div className="flex flex-wrap items-center gap-1.5">
                     <ClassificationPill classification={item.classification} prefix="AI: " />
                     {changed && <ClassificationPill classification={reviewed.classification} prefix="You: " />}
+                    {!isOpen && needsReason(item.id) && <span className="rounded-full border border-amber-300/40 px-2 py-0.5 text-[11px] text-amber-200">Reason needed</span>}
+                    {!isOpen && item.clarificationQuestions.length > 0 && <span className="rounded-full border border-sky-300/30 px-2 py-0.5 text-[11px] text-sky-200">{item.clarificationQuestions.length} {item.clarificationQuestions.length === 1 ? "question" : "questions"}</span>}
                   </div>
                 </div>
-                <p className="m-0 mt-2 text-sm text-slate-300">{item.requestedWork}</p>
-                <p className="m-0 mt-1 text-sm leading-6 text-slate-400">{item.explanation}</p>
+                {!isOpen && <div className="h-4" />}
+                {isOpen && (
+                <div id={bodyId} className="rise p-4 pt-2">
+                <p className="m-0 text-sm leading-6 text-slate-400">{item.explanation}</p>
 
-                <div className="mt-4 grid gap-4 md:grid-cols-2">
+                <div className="mt-3 grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <h4 className="m-0 text-xs font-semibold uppercase tracking-wider text-slate-400">Originally agreed source</h4>
                     {item.contractEvidence.length
@@ -122,6 +162,8 @@ export function AnalysisReview({ request, state, disabled, saving, onConfirm, on
                     <textarea className={`${fieldClass} min-h-20`} value={reviewed.reason} disabled={disabled} maxLength={2000} aria-invalid={changed && !reviewed.reason.trim()} onChange={(event) => change(item.id, { reason: event.target.value })} />
                   </label>
                 </div>
+                </div>
+                )}
               </article>
             </li>
           );
@@ -140,7 +182,12 @@ export function AnalysisReview({ request, state, disabled, saving, onConfirm, on
           <input type="checkbox" className={checkboxClass} checked={confirmed} disabled={disabled} onChange={(event) => setConfirmed(event.target.checked)} />
           <span>I checked every item and the quoted sources. This records my interpretation, not the client&apos;s acceptance.</span>
         </label>
-        {missingReasons > 0 && <p className="m-0 text-xs text-amber-200">Add a reason for {missingReasons === 1 ? "your correction" : `each of your ${missingReasons} corrections`} before confirming.</p>}
+        {missingReasons > 0 && (
+          <p className="m-0 text-xs text-amber-200">
+            Add a reason for {missingReasons === 1 ? "your correction" : `each of your ${missingReasons} corrections`} before confirming.{" "}
+            <button type="button" className="p-0 text-amber-100 underline underline-offset-2" onClick={() => { setFilter(null); setOpen((previous) => new Set([...previous, ...missingReasonIds])); }}>Show {missingReasons === 1 ? "it" : "them"}</button>
+          </p>
+        )}
         <div className="flex flex-wrap items-center gap-3">
           <button type="button" className={primaryClass} disabled={disabled || !canConfirm} onClick={() => onConfirm({ sourceRevision: request.sourceRevision, expectedReviewRevision: request.review?.revision ?? 0, items })}>
             {saving && <Spinner />}{request.review ? "Save updated review" : "Confirm reviewed scope"}
