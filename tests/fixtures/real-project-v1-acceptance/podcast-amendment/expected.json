@@ -1,0 +1,55 @@
+{
+  "status": "Human QA oracle, not claimed model output",
+  "items": [
+    {
+      "request": "English transcript",
+      "allowed": [
+        "included"
+      ],
+      "quote": "One edited episode and one English transcript remain."
+    },
+    {
+      "request": "editing error",
+      "allowed": [
+        "included"
+      ],
+      "quote": "Correcting editing errors against approved timecodes is included."
+    },
+    {
+      "request": "episode two",
+      "allowed": [
+        "excluded"
+      ],
+      "quote": "Remove editing of episode two"
+    },
+    {
+      "request": "video clips",
+      "allowed": [
+        "excluded"
+      ],
+      "quote": "Transcription and video clips are excluded from the original package."
+    },
+    {
+      "request": "background music",
+      "allowed": [
+        "not_specified",
+        "ambiguous"
+      ],
+      "quote": null
+    },
+    {
+      "request": "November 20",
+      "allowed": [
+        "ambiguous",
+        "not_specified"
+      ],
+      "quote": null
+    }
+  ],
+  "atomicRequestCount": 6,
+  "skills": [
+    "explicit_agreement",
+    "feasibility"
+  ],
+  "automaticAdditionalFeeCents": null
+}

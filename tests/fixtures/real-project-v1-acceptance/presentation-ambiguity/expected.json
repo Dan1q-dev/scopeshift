@@ -1,0 +1,61 @@
+{
+  "status": "Human QA oracle, not claimed model output",
+  "items": [
+    {
+      "request": "editable PPTX",
+      "allowed": [
+        "included"
+      ],
+      "quote": "Deliver editable PPTX and a PDF export."
+    },
+    {
+      "request": "introduced typo",
+      "allowed": [
+        "included"
+      ],
+      "quote": "Corrections of designer-introduced typographical errors are included."
+    },
+    {
+      "request": "minor updates",
+      "allowed": [
+        "ambiguous"
+      ],
+      "quote": "One round of minor updates is included; minor is not defined."
+    },
+    {
+      "request": "chart data",
+      "allowed": [
+        "not_specified",
+        "ambiguous"
+      ],
+      "quote": null
+    },
+    {
+      "request": "talk script",
+      "allowed": [
+        "excluded"
+      ],
+      "quote": "Writing a new talk script and conducting new market research are explicitly excluded."
+    },
+    {
+      "request": "unnamed exchange",
+      "allowed": [
+        "ambiguous"
+      ],
+      "quote": null
+    },
+    {
+      "request": "caption",
+      "allowed": [
+        "included"
+      ],
+      "quote": "The exact display caption is \"Launch 🚀\"."
+    }
+  ],
+  "atomicRequestCount": 7,
+  "skills": [
+    "clarification",
+    "scope_management"
+  ],
+  "automaticAdditionalFeeCents": null
+}

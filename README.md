@@ -44,6 +44,8 @@ npm run dev
 - [Подключение backend и текущие ограничения](docs/BACKEND_INTEGRATION.md)
 - [Публичный деплой и проверенные результаты](docs/PUBLIC_DEPLOYMENT.md)
 - [Настройка OpenAI и постоянной истории](docs/OPENAI_SETUP.md)
+- [Real Project Mode: спецификация](docs/REAL_PROJECT_MODE_SPEC.md), [API](docs/REAL_PROJECT_API.md), [настройка и проверки](docs/REAL_PROJECT_RELEASE.md)
+- Real Project Mode: [задачи Арсену](docs/REAL_PROJECT_HANDOFF_ARSEN.md) и [задачи Альбине](docs/REAL_PROJECT_HANDOFF_ALBINA.md)
 - Задания: [Данила](docs/tasks/danila.md), [Арсен](docs/tasks/arsen.md), [Альбина](docs/tasks/albina.md)
 
 ## Проверки

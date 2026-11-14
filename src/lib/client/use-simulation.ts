@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getScenario, getScenarios, getSessionInfo, getSavedAttempts, negotiate, type InterpreterMode } from "@/lib/client/api";
 import { describeError } from "@/lib/client/negotiation";
-import { loadSession, newAttempt, saveSession, type Attempt, type Session } from "@/lib/client/session";
+import { hideAttempt, loadSession, newAttempt, removeAttempt, saveSession, type Attempt, type Session } from "@/lib/client/session";
 import type { HistoryEntry, PublicScenario, ServerAttempt } from "@/types/scope";
 
 type Pending = { attemptId: string; history: HistoryEntry[]; message: string | null };
@@ -118,7 +118,16 @@ export function useSimulation() {
     }
   }, [session, sending, update]);
 
+  /** Deletes an attempt from this browser. A server snapshot, if one exists, is hidden here but not erased. */
+  const deleteAttempt = useCallback((attemptId: string) => {
+    if (!session || sending || !scenarioRef.current) return;
+    hideAttempt(scenarioRef.current.id, attemptId);
+    setFailed(null);
+    update(removeAttempt(session, attemptId));
+  }, [session, sending, update]);
+
   return {
+    deleteAttempt,
     scenario, interpreterMode, historyWarning, session, active, currentEventId, loadError, sending, failed,
     // A reply that failed to send stays visible next to the error until it is sent again.
     pendingMessage: [pending, failed].find((job) => job && job.attemptId === active?.id)?.message ?? null,

@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parent
 OUTPUT = ROOT / "scopeshift-pitch.pdf"
 PUBLIC = "https://scopeshift.vercel.app"
 REPO = "https://github.com/Dan1q-dev/scopeshift"
-DATE = "14 NOV 2026"
+DATE = "15 NOV 2026"
 SOURCES = {
     "BLS": "https://www.bls.gov/news.release/archives/conemp_11082024.htm",
     "Yoodli": "https://support.yoodli.ai/en/articles/15862405-create-chat-based-roleplays",
@@ -26,11 +26,12 @@ SLIDES = [{'seconds': 25,
   'intro': 'Learn it. Apply it. Improve it.',
   'cards': [('$75.00 / hour', ['$1,500 fixed fee', '20 estimated hours']),
             ('$57.69 / hour', ['Same fee after free booking', '26 estimated hours: +6 hours'])],
-  'bottom': 'Skills is live. Real Project Mode is a planned extension.',
-  'note': 'ScopeShift helps freelancers practice difficult scope conversations. Our next step connects '
-          'practice to actual work: understand a client request, review its evidence and prepare a response. '
-          'Learn it. Apply it. Improve it. Today Skills is live; Real Project Mode is being designed and has '
-          'not yet been validated end to end.'},
+  'bottom': 'Practice teaches negotiation. Real Project helps apply it to work.',
+  'note': 'ScopeShift helps freelancers stop giving away time without understanding the trade-off. Six extra '
+          'hours on a fifteen-hundred-dollar project reduce revenue per hour from seventy-five dollars to '
+          'fifty-seven sixty-nine. Practice lets people rehearse that conversation. Real Project helps them '
+          'review an actual request, inspect evidence and prepare their own proposed response. Both modes '
+          'are publicly available. Learn it. Apply it. Improve it.'},
  {'seconds': 25,
   'tag': 'THE PROBLEM',
   'title': 'Before pricing a request, understand it.',
@@ -39,10 +40,10 @@ SLIDES = [{'seconds': 25,
             ('Unclear', ['Missing requirements', 'Conflicting or changed terms']),
             ('Outside scope', ['Clarify the requested change', 'Negotiate before committing'])],
   'bottom': 'A contract-analysis suggestion is not a legal conclusion or an accepted amendment.',
-  'note': 'A client request may already be included, may be an included correction, or may be outside the '
-          'agreed scope. Silence in a contract is not the same as an exclusion. The practical task is to '
-          'establish what the documents say and what still needs clarification before discussing a price. We '
-          'are designing Real Project Mode around that distinction.'},
+  'note': 'A request may already be included, may be an included correction, or may need a new scope '
+          'agreement. Silence is not an exclusion. Our analysis separates included, excluded, unspecified '
+          'and ambiguous work. It shows supporting quotations where available and asks the user to review '
+          'them. The system does not decide legal rights or automatically make extra work billable.'},
  {'seconds': 25,
   'tag': 'INITIAL CUSTOMER',
   'title': 'Start with fixed-fee web professionals.',
@@ -56,18 +57,20 @@ SLIDES = [{'seconds': 25,
           'July twenty twenty-three. That is broad context. It does not measure our age range, profession, '
           'demand or willingness to pay.'},
  {'seconds': 35,
-  'tag': 'PRODUCT LOOP / VERIFIED VS PLANNED',
+  'tag': 'TWO PUBLIC MODES',
   'title': 'Learn it. Apply it. Improve it.',
   'intro': 'Connect negotiation practice with carefully reviewed project decisions.',
-  'cards': [('Learn: live', ['Skills simulations', 'Validated project consequences']),
-            ('Apply: planned', ['Review a contract and request', 'Confirm findings and estimates']),
-            ('Improve: planned', ['Recommend a relevant skill', 'Return to a synthetic practice'])],
-  'bottom': 'The new contract-analysis workflow is not yet implemented or tested.',
-  'note': 'Skills already lets the learner negotiate in natural language, reach an accepted agreement and '
-          'compare economic outcomes. Real Project Mode is the planned application layer: review a contract '
-          'and client request, inspect source evidence, confirm assumptions and draft a reply. A later '
-          'opt-in handoff recommends a relevant synthetic exercise. None of the new workflow is claimed as '
-          'shipped today.'},
+  'cards': [('Learn: Practice', ['Negotiate with a fictional client', 'See verified project consequences']),
+            ('Apply: Real Project',
+             ['Review pasted agreement and request', 'Estimate and draft proposed terms']),
+            ('Improve: Practice', ['Return to fictional practice', 'Real project text stays separate'])],
+  'bottom': 'A Practice link is live. Personalized skill routing is future work.',
+  'note': 'Practice teaches through a realistic negotiation with validated economic consequences. Real '
+          'Project applies the same discipline to pasted agreement text and a client message. Review the '
+          'analysis, correct its interpretation, enter estimates and prepare an editable proposal. The '
+          'Practice link takes you back to the fictional scenario without transferring real project text. '
+          'Personalized matching to a specific skill is future work. We still need independent user evidence '
+          'of learning and repeat value.'},
  {'seconds': 55,
   'tag': 'DEMO / ACTIVE SIX-HOUR SCENARIO',
   'title': 'One project. Two defensible outcomes.',
@@ -97,27 +100,31 @@ SLIDES = [{'seconds': 25,
   'intro': 'AI negotiation practice and scope-management assistance already exist.',
   'cards': [('The Deep Brief', ['Client-scope roleplay', 'Expanding requests and pricing']),
             ('Human Dynamics', ['Scope-creep practice', 'Contract-term scenarios']),
-            ('Our focus', ['Skills: validated economics', 'Real Project Mode: planned'])],
-  'bottom': 'Our combined learning-to-application workflow still needs user validation.',
+            ('Our focus', ['Practice: verified economics', 'Real Project: reviewed proposals'])],
+  'bottom': 'Two connected workflows. Learning gains and retention still need validation.',
   'sources': [('The Deep Brief', 'https://www.thedeepbrief.co.uk/practice/client_scope'),
               ('Human Dynamics', 'https://tryhumandynamics.com/scenarios/')],
-  'note': 'There are direct alternatives. The Deep Brief offers practice with client scope renegotiation. '
-          'Human Dynamics lists scope-creep and contract-term scenarios. Our focus is linking verified '
-          'project consequences to learning and, next, to a carefully confirmed practical workflow. We do '
-          'not claim that no alternatives exist or that the future combination is already proven.'},
+  'note': 'Direct alternatives exist. The Deep Brief offers client-scope practice. Human Dynamics lists '
+          'scope-creep and contract-term scenarios. Our focus combines practice with project economics and '
+          "an evidence-review workflow for a freelancer's own situation. We do not claim category "
+          'exclusivity, legal certainty or proven learning gains. The next step is testing whether this '
+          'combination improves real decisions and brings freelancers back.'},
  {'seconds': 25,
-  'tag': 'REAL PROJECT MODE / PLANNED',
+  'tag': 'REAL PROJECT / PUBLIC DEMO',
   'title': 'Review evidence. Confirm. Then estimate.',
-  'intro': 'Contract + client message -> analysis -> confirmation -> calculation -> draft reply.',
-  'cards': [('Read the evidence', ['Included or excluded?', 'Unspecified or clarify?']),
-            ('Confirm assumptions', ['User reviews findings', 'User confirms effort and rate']),
-            ('Prepare a draft', ['Calculate a proposed quote', 'Client acceptance is separate'])],
-  'bottom': 'Three fictional QA cases prepared. Live AI and the full flow await the API.',
-  'note': 'We have prepared three fictional contracts and expected analyses. A website case separates '
-          'promised email notifications from excluded booking and unspecified analytics. A design case '
-          'protects an included revision from an automatic upsell. A writing case distinguishes an accepted '
-          'amendment from an unaccepted quote. The user must confirm findings and estimation inputs. The '
-          'output is a draft, not legal advice, a bill or a client agreement.'},
+  'intro': 'Paste agreement and request. Review analysis. Estimate. Edit your response.',
+  'cards': [('Review scope', ['Included, excluded or unclear', 'Inspect quotes and correct findings']),
+            ('Calculate a proposal', ['$1,500 + $400 = $1,900', '20h + 6h = 26h / $73.08 per hour']),
+            ('Prepare the response', ['Draft, edit, save and copy', 'Client acceptance remains separate'])],
+  'bottom': 'Live AI path checked with fictional text. Text paste only. No legal conclusions.',
+  'note': 'In our public acceptance check, one mixed request became five separate items. The agreed contact '
+          'form was included, calendar synchronization was excluded, booking and extra pages were '
+          'unspecified, and minor updates needed clarification. We corrected booking to ambiguous and '
+          'selected it alone for a proposal. User-entered estimates of six hours and four hundred dollars '
+          'produced nineteen hundred dollars over twenty-six hours. Twenty dollars of new expenses left '
+          'three hundred eighty dollars of additional compensation after those expenses. The original '
+          'contract stayed unchanged. We generated, edited, copied and reopened a proposed reply. This is '
+          'planning assistance with human review, not legal advice or client acceptance.'},
  {'seconds': 25,
   'tag': 'PRICING HYPOTHESES',
   'title': 'Prove repeated value before charging.',
@@ -147,16 +154,17 @@ SLIDES = [{'seconds': 25,
  {'seconds': 30,
   'tag': 'BEYOND HORIZON / TEAM',
   'title': 'Learn it. Apply it. Improve it.',
-  'intro': 'Beyond Horizon: a live Skills demo and a clearly scoped next step.',
+  'intro': 'Beyond Horizon: learn safely, apply carefully, practice again.',
   'cards': [('Danila', ['Backend + simulation engine', 'OpenAI, integration and deployment']),
             ('Arsen', ['Frontend + user experience', 'Workspace, Replay and comparison']),
             ('Albina', ['Scenarios + evaluation', 'Quality checks and pitch'])],
-  'bottom': 'Try the live Skills demo. Real Project Mode remains planned until verified.',
-  'note': 'We are Beyond Horizon: Danila, Arsen and Albina. Our public Skills demo works today. We have '
-          'prepared a fictional quality corpus and acceptance rules for Real Project Mode; backend contracts '
-          'and end-to-end validation are still pending. Our next proof is that freelancers can review a real '
-          'situation, make an informed decision and practice the skill they need. Learn it. Apply it. '
-          'Improve it.'}]
+  'bottom': 'Try both public modes at scopeshift.vercel.app.',
+  'note': 'We are Beyond Horizon. Danila builds the backend and simulation engine. Arsen builds the user '
+          'experience. Albina owns scenarios, evaluation and quality. Practice and Real Project are public. '
+          'We have verified the practical workflow using fictional data and prepared additional contract '
+          'cases for regression checks. Next we need independent freelancer testing, clearer contextual '
+          'training and evidence of repeat value. Try the demo and challenge it with a request that is '
+          'already included. Learn it. Apply it. Improve it.'}]
 
 W, H = 960, 540
 BG, CARD, WHITE, MUTED, MINT, LINE = [HexColor(c) for c in ("#0d1b25", "#1a303c", "#f2f5f4", "#b6c4cb", "#a6ed90", "#3a4b55")]
@@ -177,7 +185,7 @@ def build_pdf():
     c = canvas.Canvas(str(OUTPUT), pagesize=(W, H), pageCompression=1)
     c.setTitle("ScopeShift | Beyond Horizon | Public demo pitch")
     c.setAuthor("Beyond Horizon: Danila, Arsen, Albina")
-    c.setSubject("Business Cup 2.0 / Skills live / Real Project Mode planned")
+    c.setSubject("Business Cup 2.0 / Practice and Real Project public")
     for index, slide in enumerate(SLIDES, 1):
         c.setFillColor(BG)
         c.rect(0, 0, W, H, fill=1, stroke=0)
@@ -223,7 +231,7 @@ def build_pdf():
 def build_notes():
     lines = ["# ScopeShift - five-minute pitch", "",
              "Current public app: https://scopeshift.vercel.app. Repository: https://github.com/Dan1q-dev/scopeshift.", "",
-             "English ten-slide expansion deck: Skills is live; Real Project Mode is planned, awaiting API and end-to-end verification. The active Skills scenario remains the six-hour Sarah Mitchell project. Team: Danila, Arsen and Albina / Beyond Horizon. Prepared 14 November 2026. Total allocated time: 300 seconds. Rehearse to fit the speaker's actual pace.", ""]
+             "English ten-slide deck: Practice and Real Project are public. Real Project desktop acceptance was checked with fictional data on 15 November. The active Practice scenario remains the six-hour Sarah Mitchell project. Team: Danila, Arsen and Albina / Beyond Horizon. Prepared 15 November 2026. Total allocated time: 300 seconds. Rehearse to fit the speaker's actual pace.", ""]
     for i, slide in enumerate(SLIDES, 1):
         lines += [f"## {i}. {slide['title']} - {slide['seconds']} seconds", "", "On slide: " + slide["intro"], ""]
         for heading, details in slide["cards"]:
@@ -234,7 +242,9 @@ def build_notes():
     lines += ["## Demo cues and limits", "",
               "Use the public app, not a canned conversation. The active baseline is $1,500 / 20h / day 7. Booking is a six-hour addition. The paid booking step is $1,900 / 26h / day 9; the full paid path is $2,050 / 26h / day 7. A free booking path with declined rush and equal-effort swap is $1,500 / 26h / day 7. The gallery and testimonials are both four-hour items.", "",
               "Optional named exchange: contact form + portfolio gallery replaced by booking gives $1,500 / 18h / day 7 / $83.33 per hour. Do not use the archived four-hour booking or separate About-page draft for the live demo.", "",
-              "OpenAI interprets actions. The engine forms client replies, checks agreements and computes project state. Booking field and reservation details are partly open; asking a question does not prove requirements were fully resolved. Saved attempts use an anonymous signed browser cookie and Postgres; loss of that cookie prevents recovery without an account. A shared daily AI quota limits the public demo.", "",
+              "AI interprets actions and writes constrained client dialogue. The engine checks agreements and computes project state. Booking field and reservation details are partly open; asking a question does not prove requirements were fully resolved. Saved attempts use an anonymous signed browser cookie and Postgres; loss of that cookie prevents recovery without an account. A shared daily AI quota limits the public demo.", "",
+              "## Real Project demo limits", "",
+              "Use fictional pasted text. PDF/DOCX/image upload and OCR are unavailable. Analysis requires source review and separate AI consent. User estimates determine proposed arithmetic. A generated draft, review confirmation or calculation never means client acceptance. The public Practice link opens the existing fictional scenario without real source text. Personalized skill routing is not implemented. Anonymous browser history is not cross-device recovery.", "",
               "## Commercial and research caveats", "",
               "The BLS statistic is dated July 2023 and covers main-job independent contractors. It is not a 2026 forecast or a count of our exact target segment. Do not multiply it by price to claim TAM. Competitor descriptions establish adjacent categories, not a feature-exclusivity audit. Pricing, acquisition rates and costs are hypotheses. No interviews, paid demand, retention or measured learning gains are claimed.", "",
               "Illustrative contribution math: $19 - (3% x $19 + $0.30) - $2 usage - $1 support = $15.13 before acquisition and fixed costs. These are assumptions, not processor quotes or measured OpenAI costs. Refunds, taxes and fraud are excluded.", "",

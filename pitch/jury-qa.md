@@ -2,17 +2,17 @@
 
 ## Real Project Mode expansion
 
-**Is Real Project Mode live?** No. Skills is live. Three fictional contract cases, ground-truth analyses and a test-only checker are prepared. Shared API contracts and the implementation are pending. No upload, live-model grounding or full Real Project flow has yet been verified.
+**Is Real Project Mode live?** Yes. We checked a fictional mixed request through live AI analysis, reviewed correction, calculation, draft/edit/copy, history/reload, the Practice link and deletion. See `docs/REAL_PROJECT_ACCEPTANCE.md` for scope and limits. Input is pasted text. PDF/DOCX/OCR and personalized training selection are unavailable.
 
-**Is this legal advice?** The planned feature supports document review and business communication. It must cite the actual text, distinguish omissions and ambiguity, and ask the user to confirm facts. It must not claim legal validity, enforceability or entitlement to payment. The demo documents are fictional QA inputs, not templates for signing.
+**Is this legal advice?** The feature supports document review and business communication. Source quotation checks establish text correspondence, not legal truth or semantic correctness. The user reviews interpretations and estimates. We do not establish legal validity, enforceability or entitlement to payment. Demo documents are fictional QA inputs, not templates for signing.
 
 **Does excluded work automatically cost extra?** No. Exclusion means the requested item is outside the specified baseline. Its requirements, effort and commercial terms still need discussion. Included corrections and unused included revisions must not become automatic upsells. A bounded goodwill concession is allowed.
 
-**How do Skills and Real Project connect?** A planned opt-in handoff recommends a related synthetic exercise from an observed issue: requirements clarification, scope exchange, deadline feasibility or explicit agreement. It must not silently transfer a real contract or personal data into public practice content.
+**How do Practice and Real Project connect?** The live link opens the existing fictional Practice scenario without real project text. Personalized skill routing from clarification, scope exchange or deadline issues is future work. Benefits for learning and retention still need independent testing.
 
 **When does an estimate change the contract?** Confirming analysis or generating a reply does not mean the client accepted. Confirmed effort/rate inputs support a reproducible proposed quote. Only separately recorded acceptance of defined terms can establish a new agreed project state.
 
-**Is the practical helper unique?** No exclusivity claim. Both negotiation practice and tools for scope changes already exist. Our proposed extension links reviewed practical decisions back to learning; its benefit remains to be validated.
+**Is the practical helper unique?** No exclusivity claim. Negotiation practice and scope-management tools already exist. Our focus joins verified practice economics and reviewed practical proposals; the user benefit of that combination still needs validation.
 
 The questions below describe the current live Skills mode.
 
@@ -20,7 +20,7 @@ The questions below describe the current live Skills mode.
 
 **Why not a general chatbot?** Our intended value is an explicit contract, constrained client decisions, validated amendments and replayable economics. A chatbot can also support practice. Whether this workflow teaches better decisions still needs learner evidence.
 
-**What does OpenAI do?** It extracts a structured action from free text. The deterministic engine validates it, decides acceptance, forms client replies and computes consequences. We do not claim unrestricted model-generated client conversation.
+**What does AI do?** In current main, structured interpretation and constrained natural client replies are separate. The engine validates agreements and owns project economics. The model cannot change accepted contract state. In Real Project, AI suggests scope interpretations and draft language, while users confirm interpretations and estimate inputs. The public provider and configuration can change; do not claim a provider-specific deployment without verifying it.
 
 **When does a proposal change the contract?** Only after the engine's client explicitly accepts it. A counteroffer leaves the project unchanged until accepted. Clarification, rejection and refusal do not add fees or work. Accepted changes are reconstructed from trusted scenario facts and validated history.
 

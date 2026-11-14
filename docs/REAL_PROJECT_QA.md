@@ -1,6 +1,6 @@
 # Real Project Mode: QA and integration handoff
 
-Status: fictional corpus, test-only oracle checker and acceptance plan. No Real Project API, upload UI or production implementation was available in main 07a7ad7. Existing Skills remains the verified mode. The tests validate fixture integrity and the checker, not a live LLM or a completed end-to-end flow. Do not present these artifacts as shipped functionality.
+Historical preparation record for main 07a7ad7. Superseded for release status by [Real Project acceptance](REAL_PROJECT_ACCEPTANCE.md). Real Project is now public; the current API is `src/types/real-project.ts`. The three original fixtures and their test-only checker remain useful QA material, but are not the production response schema. References below to pending APIs or uploads describe the earlier plan. P0 supports pasted text, not document uploads.
 
 ## Demo corpus
 

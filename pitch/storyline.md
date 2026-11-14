@@ -2,7 +2,7 @@
 
 Current public app: https://scopeshift.vercel.app. Repository: https://github.com/Dan1q-dev/scopeshift.
 
-English ten-slide expansion deck: Skills is live; Real Project Mode is planned, awaiting API and end-to-end verification. The active Skills scenario remains the six-hour Sarah Mitchell project. Team: Danila, Arsen and Albina / Beyond Horizon. Prepared 14 November 2026. Total allocated time: 300 seconds. Rehearse to fit the speaker's actual pace.
+English ten-slide deck: Practice and Real Project are public. Real Project desktop acceptance was checked with fictional data on 15 November. The active Practice scenario remains the six-hour Sarah Mitchell project. Team: Danila, Arsen and Albina / Beyond Horizon. Prepared 15 November 2026. Total allocated time: 300 seconds. Rehearse to fit the speaker's actual pace.
 
 ## 1. ScopeShift - 25 seconds
 
@@ -11,9 +11,9 @@ On slide: Learn it. Apply it. Improve it.
 - **$75.00 / hour:** $1,500 fixed fee; 20 estimated hours.
 - **$57.69 / hour:** Same fee after free booking; 26 estimated hours: +6 hours.
 
-Skills is live. Real Project Mode is a planned extension.
+Practice teaches negotiation. Real Project helps apply it to work.
 
-Say: ScopeShift helps freelancers practice difficult scope conversations. Our next step connects practice to actual work: understand a client request, review its evidence and prepare a response. Learn it. Apply it. Improve it. Today Skills is live; Real Project Mode is being designed and has not yet been validated end to end.
+Say: ScopeShift helps freelancers stop giving away time without understanding the trade-off. Six extra hours on a fifteen-hundred-dollar project reduce revenue per hour from seventy-five dollars to fifty-seven sixty-nine. Practice lets people rehearse that conversation. Real Project helps them review an actual request, inspect evidence and prepare their own proposed response. Both modes are publicly available. Learn it. Apply it. Improve it.
 
 ## 2. Before pricing a request, understand it. - 25 seconds
 
@@ -25,7 +25,7 @@ On slide: An extra request is not automatically extra paid work.
 
 A contract-analysis suggestion is not a legal conclusion or an accepted amendment.
 
-Say: A client request may already be included, may be an included correction, or may be outside the agreed scope. Silence in a contract is not the same as an exclusion. The practical task is to establish what the documents say and what still needs clarification before discussing a price. We are designing Real Project Mode around that distinction.
+Say: A request may already be included, may be an included correction, or may need a new scope agreement. Silence is not an exclusion. Our analysis separates included, excluded, unspecified and ambiguous work. It shows supporting quotations where available and asks the user to review them. The system does not decide legal rights or automatically make extra work billable.
 
 ## 3. Start with fixed-fee web professionals. - 25 seconds
 
@@ -44,13 +44,13 @@ Source: [BLS, released 8 Nov 2024](https://www.bls.gov/news.release/archives/con
 
 On slide: Connect negotiation practice with carefully reviewed project decisions.
 
-- **Learn: live:** Skills simulations; Validated project consequences.
-- **Apply: planned:** Review a contract and request; Confirm findings and estimates.
-- **Improve: planned:** Recommend a relevant skill; Return to a synthetic practice.
+- **Learn: Practice:** Negotiate with a fictional client; See verified project consequences.
+- **Apply: Real Project:** Review pasted agreement and request; Estimate and draft proposed terms.
+- **Improve: Practice:** Return to fictional practice; Real project text stays separate.
 
-The new contract-analysis workflow is not yet implemented or tested.
+A Practice link is live. Personalized skill routing is future work.
 
-Say: Skills already lets the learner negotiate in natural language, reach an accepted agreement and compare economic outcomes. Real Project Mode is the planned application layer: review a contract and client request, inspect source evidence, confirm assumptions and draft a reply. A later opt-in handoff recommends a relevant synthetic exercise. None of the new workflow is claimed as shipped today.
+Say: Practice teaches through a realistic negotiation with validated economic consequences. Real Project applies the same discipline to pasted agreement text and a client message. Review the analysis, correct its interpretation, enter estimates and prepare an editable proposal. The Practice link takes you back to the fictional scenario without transferring real project text. Personalized matching to a specific skill is future work. We still need independent user evidence of learning and repeat value.
 
 ## 5. One project. Two defensible outcomes. - 55 seconds
 
@@ -69,11 +69,11 @@ On slide: AI negotiation practice and scope-management assistance already exist.
 
 - **The Deep Brief:** Client-scope roleplay; Expanding requests and pricing.
 - **Human Dynamics:** Scope-creep practice; Contract-term scenarios.
-- **Our focus:** Skills: validated economics; Real Project Mode: planned.
+- **Our focus:** Practice: verified economics; Real Project: reviewed proposals.
 
-Our combined learning-to-application workflow still needs user validation.
+Two connected workflows. Learning gains and retention still need validation.
 
-Say: There are direct alternatives. The Deep Brief offers practice with client scope renegotiation. Human Dynamics lists scope-creep and contract-term scenarios. Our focus is linking verified project consequences to learning and, next, to a carefully confirmed practical workflow. We do not claim that no alternatives exist or that the future combination is already proven.
+Say: Direct alternatives exist. The Deep Brief offers client-scope practice. Human Dynamics lists scope-creep and contract-term scenarios. Our focus combines practice with project economics and an evidence-review workflow for a freelancer's own situation. We do not claim category exclusivity, legal certainty or proven learning gains. The next step is testing whether this combination improves real decisions and brings freelancers back.
 
 Source: [The Deep Brief](https://www.thedeepbrief.co.uk/practice/client_scope), checked 14 November 2026.
 
@@ -81,15 +81,15 @@ Source: [Human Dynamics](https://tryhumandynamics.com/scenarios/), checked 14 No
 
 ## 7. Review evidence. Confirm. Then estimate. - 25 seconds
 
-On slide: Contract + client message -> analysis -> confirmation -> calculation -> draft reply.
+On slide: Paste agreement and request. Review analysis. Estimate. Edit your response.
 
-- **Read the evidence:** Included or excluded?; Unspecified or clarify?.
-- **Confirm assumptions:** User reviews findings; User confirms effort and rate.
-- **Prepare a draft:** Calculate a proposed quote; Client acceptance is separate.
+- **Review scope:** Included, excluded or unclear; Inspect quotes and correct findings.
+- **Calculate a proposal:** $1,500 + $400 = $1,900; 20h + 6h = 26h / $73.08 per hour.
+- **Prepare the response:** Draft, edit, save and copy; Client acceptance remains separate.
 
-Three fictional QA cases prepared. Live AI and the full flow await the API.
+Live AI path checked with fictional text. Text paste only. No legal conclusions.
 
-Say: We have prepared three fictional contracts and expected analyses. A website case separates promised email notifications from excluded booking and unspecified analytics. A design case protects an included revision from an automatic upsell. A writing case distinguishes an accepted amendment from an unaccepted quote. The user must confirm findings and estimation inputs. The output is a draft, not legal advice, a bill or a client agreement.
+Say: In our public acceptance check, one mixed request became five separate items. The agreed contact form was included, calendar synchronization was excluded, booking and extra pages were unspecified, and minor updates needed clarification. We corrected booking to ambiguous and selected it alone for a proposal. User-entered estimates of six hours and four hundred dollars produced nineteen hundred dollars over twenty-six hours. Twenty dollars of new expenses left three hundred eighty dollars of additional compensation after those expenses. The original contract stayed unchanged. We generated, edited, copied and reopened a proposed reply. This is planning assistance with human review, not legal advice or client acceptance.
 
 ## 8. Prove repeated value before charging. - 25 seconds
 
@@ -117,15 +117,15 @@ Say: This is a small proposed experiment, not a forecast. The assumed funnel yie
 
 ## 10. Learn it. Apply it. Improve it. - 30 seconds
 
-On slide: Beyond Horizon: a live Skills demo and a clearly scoped next step.
+On slide: Beyond Horizon: learn safely, apply carefully, practice again.
 
 - **Danila:** Backend + simulation engine; OpenAI, integration and deployment.
 - **Arsen:** Frontend + user experience; Workspace, Replay and comparison.
 - **Albina:** Scenarios + evaluation; Quality checks and pitch.
 
-Try the live Skills demo. Real Project Mode remains planned until verified.
+Try both public modes at scopeshift.vercel.app.
 
-Say: We are Beyond Horizon: Danila, Arsen and Albina. Our public Skills demo works today. We have prepared a fictional quality corpus and acceptance rules for Real Project Mode; backend contracts and end-to-end validation are still pending. Our next proof is that freelancers can review a real situation, make an informed decision and practice the skill they need. Learn it. Apply it. Improve it.
+Say: We are Beyond Horizon. Danila builds the backend and simulation engine. Arsen builds the user experience. Albina owns scenarios, evaluation and quality. Practice and Real Project are public. We have verified the practical workflow using fictional data and prepared additional contract cases for regression checks. Next we need independent freelancer testing, clearer contextual training and evidence of repeat value. Try the demo and challenge it with a request that is already included. Learn it. Apply it. Improve it.
 
 ## Demo cues and limits
 
@@ -133,7 +133,11 @@ Use the public app, not a canned conversation. The active baseline is $1,500 / 2
 
 Optional named exchange: contact form + portfolio gallery replaced by booking gives $1,500 / 18h / day 7 / $83.33 per hour. Do not use the archived four-hour booking or separate About-page draft for the live demo.
 
-OpenAI interprets actions. The engine forms client replies, checks agreements and computes project state. Booking field and reservation details are partly open; asking a question does not prove requirements were fully resolved. Saved attempts use an anonymous signed browser cookie and Postgres; loss of that cookie prevents recovery without an account. A shared daily AI quota limits the public demo.
+AI interprets actions and writes constrained client dialogue. The engine checks agreements and computes project state. Booking field and reservation details are partly open; asking a question does not prove requirements were fully resolved. Saved attempts use an anonymous signed browser cookie and Postgres; loss of that cookie prevents recovery without an account. A shared daily AI quota limits the public demo.
+
+## Real Project demo limits
+
+Use fictional pasted text. PDF/DOCX/image upload and OCR are unavailable. Analysis requires source review and separate AI consent. User estimates determine proposed arithmetic. A generated draft, review confirmation or calculation never means client acceptance. The public Practice link opens the existing fictional scenario without real source text. Personalized skill routing is not implemented. Anonymous browser history is not cross-device recovery.
 
 ## Commercial and research caveats
 

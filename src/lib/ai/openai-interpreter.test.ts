@@ -20,7 +20,7 @@ describe("OpenAI structured interpretation adapter", () => {
     const request = mockFetch(json(completed(proposal)));
     const interpret = createOpenAIInterpreter(config, { fetch: request });
     expect(await interpret(context)).toEqual(proposal);
-    expect(OPENAI_INTERPRETER_VERSION).toBe("openai-v1");
+    expect(OPENAI_INTERPRETER_VERSION).toBe("openai-v2");
     const [url, init] = request.mock.calls[0];
     expect(url).toBe("https://api.openai.com/v1/responses");
     expect(init?.headers).toMatchObject({ Authorization: "Bearer test-secret-key", "Content-Type": "application/json" });
@@ -101,6 +101,32 @@ describe("OpenAI structured interpretation adapter", () => {
     }));
     await expect(createOpenAIInterpreter({ ...config, timeoutMs: 5 }, { fetch: request })(context)).rejects.toMatchObject({ kind: "timeout" });
     expect(request.mock.calls[0][1]!.signal!.aborted).toBe(true);
+  });
+
+  it("passes up to 12 prior turns and instructs offer questions and deadline preservation without leaking private rules", async () => {
+    const request = mockFetch(json(completed({ kind: "propose", change: { feeDeltaCents: 30_000, deadlineDeltaDays: 1, addScopeItemIds: ["consultation-booking"], removeScopeItemIds: [] } })));
+    const turns = Array.from({ length: 14 }, (_, index) => ({
+      turnId: `t-${index + 1}`,
+      eventId: "booking-request",
+      userMessage: `Turn ${index + 1}`,
+      action: { kind: "clarify" as const, question: `Question ${index + 1}` },
+      clientReply: `Reply ${index + 1}`,
+      agreement: null,
+    }));
+    await createOpenAIInterpreter(config, { fetch: request })({
+      ...context,
+      turns,
+      message: "Would you accept an extra $300 and one additional day?",
+    });
+    const body = JSON.parse(request.mock.calls[0][1]!.body as string);
+    const payload = JSON.parse(body.input[0].content);
+    expect(payload.recentTurns).toHaveLength(12);
+    expect(payload.recentTurns[0].userMessage).toBe("Turn 3");
+    expect(body.instructions).toContain("Would you accept an extra $300 and one additional day?");
+    expect(body.instructions).toContain("do NOT assume deadlineDeltaDays is 0");
+    for (const privateValue of ["clientRules", "maxAdditionalFeeCents", "evaluationRules", config.apiKey]) {
+      expect(JSON.stringify(body)).not.toContain(privateValue);
+    }
   });
 
   it("requires valid server credentials and configuration before making requests", () => {
