@@ -9,6 +9,7 @@ import { FileReplayStore, ReplayConflictError, ReplayStoreError } from "@/lib/si
 import { signedSession, signedSessionCookie } from "@/lib/simulation/signed-session";
 import { scenarioRevision, simulationSessions, SimulationRequestError } from "@/lib/simulation/session-store";
 import { negotiateRequestSchema, type ApiError } from "@/types/scope";
+import { evaluateSimulation, EVALUATOR_VERSION } from "@/lib/evaluation/simulation-evaluator";
 
 export const runtime = "nodejs";
 const MAX_BODY_BYTES = 131_072;
@@ -63,11 +64,12 @@ export async function POST(request: Request) {
     simulationSessions.validate(session, scenario, parsed.data.history, interpreterVersion);
     let modelCalls = 0;
     const interpret = config.mode === "openai" ? createOpenAIInterpreter(config) : null;
-    const result = config.mode === "rules" ? negotiateHistory(scenario, parsed.data.history) : await negotiateWithLlm(scenario, parsed.data.history, {
+    const result = config.mode === "rules" ? negotiateHistory(scenario, parsed.data.history, evaluateSimulation) : await negotiateWithLlm(scenario, parsed.data.history, {
       scope: identity!.id,
       version: interpreterVersion,
       store: new FileReplayStore(config.replayDirectory),
       interpret: async (context) => { modelCalls += 1; return interpret!(context); },
+      evaluate: evaluateSimulation,
     });
     simulationSessions.commit(session, scenario, parsed.data.history, interpreterVersion);
     return Response.json(result, {
@@ -76,7 +78,7 @@ export async function POST(request: Request) {
         "Vary": "Cookie",
         "X-ScopeShift-Interpreter": config.mode === "openai" ? OPENAI_INTERPRETER_VERSION : INTERPRETER_VERSION,
         ...(config.mode === "openai" ? { "X-ScopeShift-LLM-Model": config.model, "X-ScopeShift-OpenAI-Calls": String(modelCalls) } : {}),
-        "X-ScopeShift-Evaluation": "pending",
+        "X-ScopeShift-Evaluation": EVALUATOR_VERSION,
         "X-ScopeShift-Scenario-Revision": scenarioRevision(scenario, interpreterVersion).slice(0, 16),
         "Set-Cookie": cookie,
       },

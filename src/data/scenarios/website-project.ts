@@ -37,7 +37,9 @@ export const websiteProjectScenario = scenarioSchema.parse({
         validStrategies: ["clarify", "paid_change", "free_change", "scope_swap", "decline"],
         facts: ["Booking is outside the original contract and adds six hours.", "Sarah can approve at most $400 extra for this request.", "A revised delivery date up to day nine is acceptable.", "A free addition is allowed if the freelancer explicitly accepts the economic cost and can deliver."],
         evaluationRules: [
-          { id: "booking-scope", category: "scope_management", observableCriterion: "Identify booking as additional scope rather than silently changing the original contract." },
+          { id: "booking-inquiry", category: "clarification", observableCriterion: "Ask a specific question about fields, reservation behavior or the included scope; this checks inquiry, not resolution." },
+          { id: "booking-capacity", category: "feasibility", observableCriterion: "Accept only a commitment within four estimated hours per scenario day." },
+          { id: "booking-scope", category: "scope_management", observableCriterion: "Propose a defined catalog booking addition and apply it only on client acceptance." },
           { id: "booking-documentation", category: "explicit_agreement", observableCriterion: "Apply fee, scope, and deadline changes only after explicit acceptance of a defined proposal." },
         ],
       },
@@ -57,6 +59,7 @@ export const websiteProjectScenario = scenarioSchema.parse({
         validStrategies: ["clarify", "paid_change", "scope_swap", "decline", "keep_contract"],
         facts: ["The requested date is the current agreed deadline minus two days, never before day five.", "Freelancer capacity is at most four estimated hours per scenario day.", "Sarah can fund up to $150 extra but payment does not create extra work capacity.", "If the request is infeasible, keeping the existing contract is a valid result."],
         evaluationRules: [
+          { id: "rush-documentation", category: "explicit_agreement", observableCriterion: "Record the accepted earlier date and fee only after explicit client acceptance." },
           { id: "rush-capacity", category: "feasibility", observableCriterion: "Do not accept a deadline where active estimated hours exceed four times the proposed deadline days." },
           { id: "rush-clarification", category: "clarification", observableCriterion: "Clarify the required date or explain feasibility using the current contract before committing." },
         ],
@@ -79,8 +82,10 @@ export const websiteProjectScenario = scenarioSchema.parse({
         validStrategies: ["clarify", "scope_swap", "decline", "keep_contract"],
         facts: ["A static testimonials section takes four hours, equal to the baseline gallery.", "The gallery must still be active to exchange it; it may already have been removed in an earlier agreement.", "There is no additional budget for an equal-effort replacement.", "Removing the gallery and adding testimonials together preserves total hours and can preserve fee and date."],
         evaluationRules: [
+          { id: "swap-documentation", category: "explicit_agreement", observableCriterion: "Record a defined exchange only after explicit client acceptance." },
+          { id: "swap-capacity", category: "feasibility", observableCriterion: "Keep the accepted replacement within four estimated hours per scenario day." },
           { id: "swap-active-scope", category: "scope_management", observableCriterion: "Only remove the gallery if it is still in the currently active scope." },
-          { id: "swap-economics", category: "economic_decision", observableCriterion: "Explain an equal-effort swap without treating a no-fee decision as an automatic failure." },
+          { id: "swap-economics", category: "economic_decision", observableCriterion: "Propose an explicitly no-fee equal-effort swap that preserves total estimated hours." },
         ],
       },
     },

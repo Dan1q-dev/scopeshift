@@ -14,7 +14,10 @@ async function negotiate(history, expectedStatus = 200) {
   if (response.headers.has("set-cookie")) cookie = response.headers.get("set-cookie").split(";")[0];
   const body = await response.json();
   assert.equal(response.status, expectedStatus, JSON.stringify(body));
-  if (expectedStatus === 200) assert.equal(response.headers.get("x-scopeshift-interpreter"), "rules-v1");
+  if (expectedStatus === 200) {
+    assert.match(response.headers.get("x-scopeshift-interpreter"), /^rules-v\d+$/);
+    assert.equal(response.headers.get("x-scopeshift-evaluation"), "evidence-v2");
+  }
   return body;
 }
 
@@ -54,7 +57,21 @@ assert.equal(result.project.totalFeeCents, 205_000);
 assert.equal(result.project.estimatedHours, 26);
 assert.equal(result.project.deadlineDays, 7);
 assert.equal(result.project.acceptedAgreementIds.length, 3);
-assert.deepEqual(result.evaluation.criteria, []);
+assert.equal(result.evaluation.criteria.reduce((sum, criterion) => sum + criterion.earnedPoints, 0), 9);
+assert.equal(new Set(result.evaluation.criteria.map((criterion) => criterion.category)).size, result.evaluation.criteria.length);
+assert.ok(result.evaluation.criteria.every((criterion) => criterion.evidence.every((evidence) => result.turns.some((turn) => turn.turnId === evidence.turnId))));
+
+const multiple = await negotiate([turn("booking-request", "Replace contact form and portfolio gallery with booking at the same price and deadline.")]);
+assert.equal(multiple.turns[0].agreement.status, "accepted");
+assert.equal(multiple.project.estimatedHours, 18);
+assert.equal(multiple.project.totalFeeCents, 150_000);
+const fields = await negotiate([turn("booking-request", "Which exact fields should be in the booking form?")]);
+assert.match(fields.turns[0].clientReply, /name, email/);
+assert.match(fields.turns[0].clientReply, /not yet agreed/);
+assert.equal(fields.project.estimatedHours, 20);
+const included = await negotiate([turn("booking-request", "This change is already included in our contract. Why are we discussing an extra fee?")]);
+assert.match(included.turns[0].clientReply, /original contract.*contact form/i);
+assert.equal(included.project.totalFeeCents, 150_000);
 
 const ambiguous = await negotiate([turn("booking-request", "Sure.")]);
 assert.equal(ambiguous.project.totalFeeCents, 150_000);

@@ -4,13 +4,13 @@ import { basename, dirname, join, resolve } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { websiteProjectScenario as scenario } from "@/data/scenarios/website-project";
 import type { HistoryEntry, NegotiationAction } from "@/types/scope";
-import { EngineHistoryError } from "./engine";
+import { ENGINE_VERSION, EngineHistoryError } from "./engine";
 import { negotiateWithLlm, type LlmNegotiationOptions } from "./llm-negotiate";
 import { FileReplayStore, ReplayConflictError, ReplayStoreError } from "./replay-store";
 
 const directories: string[] = [];
 const directoryPrefix = "scopeshift-llm-driver-";
-const version = "openai-v1:test-model:simulation-v1";
+const version = `openai-v1:test-model:${ENGINE_VERSION}`;
 const scope = "verified-signed-session-fixture";
 const booking: HistoryEntry = { turnId: "booking", eventId: "booking-request", userMessage: "I can add booking for an extra $400 and two more days." };
 const keepDate: HistoryEntry = { turnId: "keep-date", eventId: "earlier-delivery", userMessage: "I cannot deliver earlier. Please retain our agreed date." };

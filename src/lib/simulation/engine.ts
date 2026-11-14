@@ -11,8 +11,9 @@ import {
   type Scenario,
   type ScopeChange,
 } from "@/types/scope";
+import { clarificationReply, unresolvedReply } from "./client-replies";
 
-export const ENGINE_VERSION = "simulation-v1";
+export const ENGINE_VERSION = "simulation-v2";
 
 export interface EngineSnapshot {
   readonly scenarioId: string;
@@ -187,10 +188,10 @@ export function processTurn(scenario: Scenario, state: EngineSnapshot, input: Tr
 
   switch (action.kind) {
     case "clarify":
-      clientReply = `Here is the defined request: ${event.clientMessage} ${event.availableScopeItems.map((item) => item.description).join(" ")} Please confirm the scope, fee and delivery terms before we agree to a change.`;
+      clientReply = clarificationReply(scenario, event, `${entry.userMessage}\n${action.question}`);
       break;
     case "unresolved":
-      clientReply = "I am not sure which terms you are proposing. Please state the work to add or remove, any additional fee, and the delivery date. Our current contract remains unchanged.";
+      clientReply = unresolvedReply(event, state.project, entry.userMessage);
       break;
     case "decline":
       if (!event.clientRules.validStrategies.includes("decline") && !event.clientRules.validStrategies.includes("keep_contract")) {

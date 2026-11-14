@@ -3,6 +3,8 @@ import { GET as listScenarios } from "@/app/api/scenarios/route";
 import { GET as getScenario } from "@/app/api/scenarios/[scenarioId]/route";
 import { POST } from "@/app/api/negotiate/route";
 import { negotiateResponseSchema, publicScenarioSchema, scenarioSummarySchema } from "@/types/scope";
+import { INTERPRETER_VERSION } from "@/lib/ai/rules-interpreter";
+import { EVALUATOR_VERSION } from "@/lib/evaluation/simulation-evaluator";
 
 const valid = {
   scenarioId: "web-project-01",
@@ -30,10 +32,10 @@ describe("simulation API", () => {
     expect(result.project).toMatchObject({ totalFeeCents: 150_000, estimatedHours: 20, deadlineDays: 7 });
     expect(result.turns[0].action.kind).toBe("clarify");
     expect(result.turns[0].agreement).toBeNull();
-    expect(response.headers.get("X-ScopeShift-Interpreter")).toBe("rules-v1");
-    expect(response.headers.get("X-ScopeShift-Evaluation")).toBe("pending");
+    expect(response.headers.get("X-ScopeShift-Interpreter")).toBe(INTERPRETER_VERSION);
+    expect(response.headers.get("X-ScopeShift-Evaluation")).toBe(EVALUATOR_VERSION);
     expect(response.headers.get("Cache-Control")).toBe("no-store");
-    expect(result.evaluation.criteria).toEqual([]);
+    expect(result.evaluation.criteria).toContainEqual(expect.objectContaining({ category: "clarification", evidence: [expect.objectContaining({ turnId: "turn-1" })] }));
   });
 
   it("applies a real accepted change once and rejects changing an existing turn", async () => {
@@ -43,6 +45,8 @@ describe("simulation API", () => {
     expect(first.status).toBe(200);
     expect(result.project).toMatchObject({ totalFeeCents: 190_000, estimatedHours: 26, deadlineDays: 9, effectiveHourlyRateCents: 7308 });
     expect(result.turns[0].agreement.status).toBe("accepted");
+    expect(result.evaluation.criteria).toHaveLength(3);
+    expect(result.evaluation.criteria.every((criterion: { evidence: { turnId: string }[] }) => criterion.evidence.every((item) => item.turnId === body.history[0].turnId))).toBe(true);
     const headers = { cookie: first.headers.get("set-cookie")!.split(";")[0] };
     const again = await POST(new Request("http://localhost/api/negotiate", { method: "POST", headers, body: JSON.stringify(body) }));
     expect(again.status).toBe(200);

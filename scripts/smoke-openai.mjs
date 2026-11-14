@@ -15,6 +15,7 @@ async function post(history, expectedCalls, expectedStatus = 200) {
   if (expectedStatus === 200) {
     assert.equal(response.headers.get("x-scopeshift-interpreter"), "openai-v1");
     assert.equal(response.headers.get("x-scopeshift-openai-calls"), String(expectedCalls));
+    assert.equal(response.headers.get("x-scopeshift-evaluation"), "evidence-v2");
   }
   return result;
 }
@@ -44,6 +45,7 @@ if (process.argv.includes("--retry")) {
   assert.equal(result.completed, true);
   assert.deepEqual([result.project.totalFeeCents, result.project.estimatedHours, result.project.deadlineDays], [205_000, 26, 7]);
   assert.equal(result.project.effectiveHourlyRateCents, 7_885);
+  assert.equal(result.evaluation.criteria.reduce((sum, criterion) => sum + criterion.earnedPoints, 0), 9);
   const question = await post([entry("booking-request", "Before I commit, which details would visitors need to provide when booking?")], 1);
   assert.equal(question.turns[0].action.kind, "clarify");
   assert.equal(question.project.totalFeeCents, 150_000);

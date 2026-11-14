@@ -4,7 +4,7 @@ PR #1 уже слит в `main` с рабочим `rules-v1`. Подключен
 
 ## Что делает модель
 
-OpenAI интерпретирует свободный текст пользователя в существующий `NegotiationAction`. Ответ проходит Zod-валидацию, затем engine проверяет предложение по сценарию и рассчитывает договор. Принятие, отказ, counteroffer, деньги, часы и сроки определяет engine. `clientReply` пока формируется шаблоном из фактического решения, а не отдельным генератором реплик LLM. Evaluator остается `pending`.
+OpenAI интерпретирует свободный текст пользователя в существующий `NegotiationAction`. Ответ проходит Zod-валидацию, затем engine проверяет предложение по сценарию и рассчитывает договор. Принятие, отказ, counteroffer, деньги, часы и сроки определяет engine. `clientReply` формируется из фактического решения и публичных фактов сценария. Оценщик `evidence-v2` подключен и в OpenAI-режиме.
 
 Интеграция использует [Responses API](https://developers.openai.com/api/reference/resources/responses/methods/create) и [Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs?api-mode=responses). Запросы идут только на фиксированный `https://api.openai.com/v1/responses`; произвольный base URL не настраивается. Модель по умолчанию - [gpt-5.4-mini](https://developers.openai.com/api/docs/models/gpt-5.4-mini). Наличие ключа и доступ к модели не заменяют проверку реального запроса; результат smoke-проверки капитан сообщает отдельно.
 
@@ -58,7 +58,7 @@ Receipts связывают подписанную сессию, сценари�
 
 Неполная конфигурация, недоступный provider, таймаут, отказ, невалидный структурированный ответ или недоступность replay storage дают `503 AI_UNAVAILABLE`. Лимит provider дает `429 RATE_LIMITED` с `Retry-After: 60`. Ключи и raw body ошибок provider не возвращаются клиенту. Договор при неуспешном ходе не меняется; клиент показывает ошибку и предлагает retry того же хода.
 
-Успешный OpenAI-ответ содержит `X-ScopeShift-Interpreter: openai-v1` и `X-ScopeShift-LLM-Model` с настроенной моделью. `X-ScopeShift-OpenAI-Calls` показывает число новых интерпретаций именно этого запроса: новый ход обычно дает `1`, точный retry - `0`. `X-ScopeShift-Evaluation: pending` сохраняется до подключения evaluator. Метка `X-ScopeShift-Scenario-Revision` связывает сценарий с моделью и версиями engine/prompt.
+Успешный OpenAI-ответ содержит `X-ScopeShift-Interpreter: openai-v1` и `X-ScopeShift-LLM-Model` с настроенной моделью. `X-ScopeShift-OpenAI-Calls` показывает число новых интерпретаций именно этого запроса: новый ход обычно дает `1`, точный retry - `0`. Оценка помечена `X-ScopeShift-Evaluation: evidence-v2`. Метка `X-ScopeShift-Scenario-Revision` связывает сценарий с моделью и версиями engine/prompt. После обновления engine до `simulation-v2` нужны новые попытки; старые receipts не переинтерпретируются под новыми ответами клиента.
 
 Файловое хранилище обеспечивает сохранение receipts на локальной файловой системе. Это не общий storage для serverless-инстансов. При `VERCEL=1` режим `openai` закрыт до подключения подходящего общего постоянного хранилища. Не представляй локальную интеграцию как готовый LLM-деплой на Vercel.
 

@@ -2,7 +2,7 @@
 
 Источник типов и Zod-схем: `src/types/scope.ts`. Денежные поля содержат целые центы USD: `150000` = $1,500. Часы допускают дробные значения, дни целочисленные. UI переводит центы в доллары только при отображении.
 
-Контракт запроса и успешного ответа v1 сохранен. Режим `rules-v1` доступен в `main` после слияния PR #1. Подключение OpenAI находится отдельно в `feat/backend-simulation`, настройка: `docs/OPENAI_SETUP.md`. Модель извлекает `NegotiationAction`; принятие условий, экономику и `clientReply` определяет engine. Evaluator не подключен, его массивы пусты. Не представляй `rules-v1` как живой AI. Примеры подключения: `docs/BACKEND_INTEGRATION.md`.
+Контракт запроса и успешного ответа v1 сохранен. Текущий backend-срез использует `rules-v2` или `openai-v1` и подключает оценщик `evidence-v2` в обоих режимах. Модель извлекает `NegotiationAction`; принятие условий, экономику и `clientReply` определяет engine. Пустые критерии означают отсутствие оцененного evidence, не отключенный оценщик. Настройка: `docs/OPENAI_SETUP.md`, подключение: `docs/BACKEND_INTEGRATION.md`.
 
 ## Общие типы
 
@@ -104,10 +104,10 @@ Replay отправляет префикс истории до выбранно�
 
 | Заголовок | Значение |
 | --- | --- |
-| `X-ScopeShift-Interpreter` | `rules-v1` или `openai-v1` |
+| `X-ScopeShift-Interpreter` | `rules-v2` или `openai-v1` |
 | `X-ScopeShift-LLM-Model` | Имя настроенной модели, только в `openai` |
 | `X-ScopeShift-OpenAI-Calls` | Новые интерпретации OpenAI в успешном запросе: обычно `1` для нового хода, `0` для retry |
-| `X-ScopeShift-Evaluation` | `pending` |
+| `X-ScopeShift-Evaluation` | `evidence-v2` |
 | `X-ScopeShift-Scenario-Revision` | 16-символьная метка сценария и версии обработки; в `openai` учитывает модель, engine и prompt |
 | `Cache-Control` | `no-store` |
 | `Vary` | `Cookie` |
@@ -133,7 +133,9 @@ Replay отправляет префикс истории до выбранно�
 
 `Agreement.status`: proposed, accepted, rejected, counteroffered. Договор меняет только accepted. `sourceTurnId` и `eventId` связывают решение с наблюдаемым действием. `effectiveHourlyRateCents` сервер вычисляет как `Math.round(totalFeeCents / estimatedHours)`; не суммировать округлённые ставки.
 
-`EvaluationResult.criteria` содержит категорию, `earnedPoints`, `maxPoints`, evidence с `turnId`, `ruleId`, `observation` и практический advice. Каждый балл должен иметь проверяемое доказательство. Бесплатная правка или равноценный обмен сами по себе не означают ошибку. Пока evaluator не подключен, возвращается `{ criteria: [], strengths: [], improvements: [] }`; это незавершенная оценка, а не нулевой результат ученика.
+`EvaluationResult.criteria` содержит категорию, `earnedPoints`, `maxPoints`, evidence с `turnId`, `ruleId`, `observation` и практический advice. HTTP API передает `evaluateSimulation` в оба driver. Каждый балл должен иметь проверяемое доказательство. Бесплатная правка или равноценный обмен сами по себе не означают ошибку. Критерии без наблюдений не оцениваются; общий процент из частичного набора не выводится. Pure driver без переданного evaluator по-прежнему допускает пустую оценку для изолированных тестов.
+
+`rules-v2` распознает несколько явно названных активных задач в обмене, например `Replace contact form and portfolio gallery with booking at the same price and deadline.` Неизвестные задачи, альтернативы с `or` и обратное направление не принимаются частично. Уточнения объясняют исходный contact form и дополнительный booking. Name/email предложены как поля; автоматическая или ручная бронь и источник слотов остаются несогласованными, пока не определены сценарием. Уточнение не меняет договор. После обновления `simulation-v2` начинайте новые попытки, не переиспользуя receipts прежней версии.
 
 ## Формат ошибки
 
