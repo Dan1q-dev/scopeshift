@@ -14,8 +14,13 @@ export function initialProject(scenario: PublicScenario): ProjectState {
   };
 }
 
+/**
+ * Decisions to list for an attempt. A client counteroffer that a later decision on the same request
+ * replaced is left out, so one request is not listed twice. The chat keeps the full history.
+ */
 export function agreementsOf(response: NegotiateResponse | null): Agreement[] {
-  return response ? response.turns.flatMap((turn) => (turn.agreement ? [turn.agreement] : [])) : [];
+  const all = response ? response.turns.flatMap((turn) => (turn.agreement ? [turn.agreement] : [])) : [];
+  return all.filter((agreement, index) => agreement.status !== "counteroffered" || !all.slice(index + 1).some((later) => later.eventId === agreement.eventId));
 }
 
 export type ScopeDiffEntry = { item: ScopeItem; state: "original" | "added" | "removed" };
