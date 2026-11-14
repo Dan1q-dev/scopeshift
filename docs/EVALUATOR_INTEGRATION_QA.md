@@ -1,5 +1,7 @@
 # Evaluator integration and scenario QA
 
+Latest sync: frontend PR #5 and PR #6 were also merged during reconciliation (main 94e4388). Retained the current main frontend smoke test when resolving its overlap. The final full run passed 123 tests in 18 files, without skips or expected failures; typecheck and lint passed. The three targeted regression tests below already passed after PR #3 and remain in the full suite. A fresh isolated production build completed after PR #5; no additional production-build or browser pass is claimed after PR #6.
+
 ## Reconciled after PR #3
 
 PR #3 was verified merged into main as f4bb038. main was merged into feat/scenarios-quality. Five conflicts were resolved by retaining the current main implementation of the API route, evaluator, API tests, simulation evaluation tests and this report, then updating this report with actual results. The older quality-branch default-driver wiring and its source tests were restored to main to avoid overriding Danila's explicit evaluation injection. Both HTTP modes keep the main implementation and evidence-v2. No backend defect fix was reverted.
