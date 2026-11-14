@@ -1,13 +1,17 @@
 import Link from "next/link";
+import { ModeSwitch } from "@/components/ui/ModeSwitch";
 
 export function SiteHeader({ children }: { children?: React.ReactNode }) {
   return (
-    <header className="flex items-center justify-between gap-4 border-b border-white/10 px-4 py-3 sm:px-6">
-      <Link href="/" className="flex items-baseline gap-2 no-underline">
-        <span className="text-lg font-semibold tracking-tight">Scope<span className="text-emerald-300">Shift</span></span>
-        <span className="hidden text-[11px] uppercase tracking-[0.2em] text-slate-500 sm:inline">Project simulator</span>
-      </Link>
-      <nav className="flex items-center gap-2 text-sm">{children}</nav>
+    <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-white/10 px-4 py-3 sm:px-6">
+      <div className="flex min-w-0 items-center gap-4">
+        <Link href="/" className="flex items-baseline gap-2 no-underline">
+          <span className="text-lg font-semibold tracking-tight">Scope<span className="text-emerald-300">Shift</span></span>
+          <span className="hidden text-[11px] uppercase tracking-[0.2em] text-slate-500 xl:inline">Negotiation workspace</span>
+        </Link>
+        <nav aria-label="Modes"><ModeSwitch /></nav>
+      </div>
+      {children && <nav aria-label="Page" className="flex items-center gap-2 text-sm">{children}</nav>}
     </header>
   );
 }

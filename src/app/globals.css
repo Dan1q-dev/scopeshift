@@ -33,6 +33,22 @@ a { color: inherit; }
   .reveal { animation: reveal linear both; animation-timeline: view(); animation-range: entry 0% entry 45%; }
 }
 
+/* Real Project Mode */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { animation: spin 0.7s linear infinite; }
+@keyframes shimmer { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+.skeleton { background: linear-gradient(90deg, rgb(255 255 255 / 0.03) 25%, rgb(255 255 255 / 0.08) 50%, rgb(255 255 255 / 0.03) 75%); background-size: 200% 100%; animation: shimmer 1.4s ease-in-out infinite; }
+@keyframes section-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+.section-enter { animation: section-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes grow-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.grow-bar { transform-origin: left; animation: grow-x 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes pop { 0% { transform: scale(0.4); opacity: 0; } 70% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); } }
+.pop { animation: pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.paper { background: linear-gradient(180deg, rgb(255 255 255 / 0.035), rgb(255 255 255 / 0.01)); }
+.step-pill { transition: background-color 0.25s ease-out, color 0.25s ease-out; }
+.source-doc[open] > summary { color: #e7eeed; }
+.source-doc[open] > pre { animation: rise 0.25s ease-out; }
+
 /* Results: collapsible evaluation evidence */
 .evidence > summary { list-style: none; }
 .evidence > summary::-webkit-details-marker { display: none; }
@@ -50,7 +66,10 @@ a { color: inherit; }
 .lift:hover { transform: translateY(-2px); border-color: rgb(255 255 255 / 0.2); background-color: rgb(255 255 255 / 0.05); }
 
 @media (prefers-reduced-motion: reduce) {
-  .value-flash, .rise, .stagger > *, .typing-dots > span, .evidence[open] > ul, .reveal { animation: none; }
+  .value-flash, .rise, .stagger > *, .typing-dots > span, .evidence[open] > ul, .reveal, .section-enter, .grow-bar, .pop, .source-doc[open] > pre { animation: none; }
+  .spinner { animation-duration: 1.6s; }
+  .skeleton { animation: none; }
+  .grow-bar, .step-pill { transition: none; }
   .chip, .chip:hover:not(:disabled), .chip:active:not(:disabled) { transition: none; transform: none; }
   .lift, .lift:hover { transition: none; transform: none; }
 }
