@@ -1,0 +1,48 @@
+{
+  "status": "Human QA oracle, not claimed model output",
+  "items": [
+    {
+      "request": "retain contact form",
+      "allowed": [
+        "included"
+      ],
+      "quote": "a contact form with name, email, message and an inbox notification are included"
+    },
+    {
+      "request": "appointment booking",
+      "allowed": [
+        "not_specified",
+        "ambiguous"
+      ],
+      "quote": null
+    },
+    {
+      "request": "calendar synchronization",
+      "allowed": [
+        "excluded"
+      ],
+      "quote": "Calendar synchronization is explicitly excluded."
+    },
+    {
+      "request": "two more pages",
+      "allowed": [
+        "not_specified",
+        "ambiguous"
+      ],
+      "quote": null
+    },
+    {
+      "request": "minor copy updates",
+      "allowed": [
+        "ambiguous"
+      ],
+      "quote": "One round of minor updates is included. Minor is not defined."
+    }
+  ],
+  "atomicRequestCount": 5,
+  "skills": [
+    "clarification",
+    "scope_management"
+  ],
+  "automaticAdditionalFeeCents": null
+}

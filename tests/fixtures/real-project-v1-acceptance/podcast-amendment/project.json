@@ -1,0 +1,8 @@
+{
+  "originalFeeCents": 150000,
+  "originalEstimatedHours": 20,
+  "originalDeadline": "2026-11-22",
+  "name": "Fictional QA - podcast amendment",
+  "agreementText": "FICTIONAL DEMO: Sparrow Quay Audio and Paper Comet Media are invented entities.\n\nC1. Original terms: edit two podcast episodes, each up to 30 minutes, including noise reduction, levels and intro/outro placement. Delivery November 20, 2026. Fee USD 1500; estimate 20 hours.\n\nC2. Transcription and video clips are excluded from the original package. Music licensing and sourcing are not specified.\n\nC3. Correcting editing errors against approved timecodes is included. New editorial choices after approval need discussion.\n\nC4. Only explicit acceptance of defined amendment terms changes scope, fee or delivery.",
+  "amendmentsText": "APPROVED A1: Remove editing of episode two and replace it with an English transcript of episode one. One edited episode and one English transcript remain. Fee USD 1500 and estimate 20 hours are unchanged; delivery is November 22, 2026. Client: \"I accept these exact A1 terms.\" Freelancer: \"Confirmed, I accept A1.\" A1 overrides the conflicting original deliverables and date.\n\nPENDING A2: Add two video clips for USD 200, delivery November 23. Client: \"Thanks, I will review this.\" A2 has not been accepted."
+}
