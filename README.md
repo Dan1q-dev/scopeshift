@@ -1,54 +1,89 @@
 # ScopeShift
 
-**Stop working for free. Learn to negotiate.**
+**Practice client negotiations. Understand scope changes. Protect your time.**
 
-Учебный симулятор переговоров для фрилансеров. Команда Beyond Horizon, Business Cup 2.0, трек Skills.
+ScopeShift is a negotiation simulator and project workspace for freelancers working on fixed-fee projects. Practice responding to extra requests, then turn a real client's request into a clear proposal with a defined scope, price and delivery date.
 
-Публичное демо: [scopeshift.vercel.app](https://scopeshift.vercel.app), без регистрации. Vercel запускает OpenAI-режим с постоянной базой Neon Postgres; полный сценарий, Replay, сравнение и сохранение после повторного деплоя проверены. Подробности и границы проверок: [отчет о публикации](docs/PUBLIC_DEPLOYMENT.md).
+**[Try the live demo](https://scopeshift.vercel.app)** | [Practice](https://scopeshift.vercel.app/simulation) | [Real Project](https://scopeshift.vercel.app/real-projects)
 
-Проект объединяет frontend Арсена, детерминированный engine, `rules-v2` и серверный OpenAI-режим. HTTP API использует общий контракт и оценщик Альбины `evidence-v2`; production fixtures удалены. Обмен нескольких явно названных задач поддерживается, уточняющие ответы отделяют публичные факты от несогласованных деталей. OpenAI интерпретирует предложения, а решения и реплики клиента формирует engine.
+No registration is required. The public demo uses OpenAI and PostgreSQL.
 
-## Быстрый старт
+## Practice
 
-Нужны Git и Node.js 22 (>=22.12, в пределах ветки 22.x) с npm.
+Negotiate with a fictional client who asks for more work, an earlier deadline or a scope swap.
 
-Клонирование открывает `main` с рабочим backend. Перед разработкой переключись на свою ветку по [командной инструкции](docs/TEAM_QUICKSTART.md), затем подтяни в нее `origin/main`.
+- Reply in your own words and receive an English client response.
+- See the agreed fee, estimated hours, deadline and effective hourly rate change when an agreement is accepted.
+- Get feedback tied to your actual reply and the resulting project decisions.
+- Use **Improve this reply** or **Replay from here** to create a separate attempt, rewrite your response and compare outcomes.
+
+For example, a $1,500 project estimated at 20 hours starts at **$75/hour**. Accepting six extra hours for free reduces that to **$57.69/hour**. Agreeing on an extra $400 instead produces **$73.08/hour** over 26 hours. ScopeShift makes these trade-offs visible.
+
+## Real Project
+
+Apply the same discipline to your own project before replying to a client.
+
+1. Paste the agreed scope and any approved amendments, then add the client's new request.
+2. Review each requested change alongside exact quotations from your source text. Correct the AI's classifications where needed.
+3. Enter your own effort estimates, price adjustment, expenses, removed work and delivery extension.
+4. Calculate proposed terms, generate an English response, edit it, and copy the reply or proposed Change Order.
+
+Analysis, calculation and draft generation do not record client acceptance. You decide what to propose and what to send. Real Project currently accepts pasted text, not PDF, DOCX or image uploads.
+
+## How it works
+
+OpenAI interprets messages and writes client dialogue. A deterministic TypeScript engine checks the Practice scenario rules and calculates project outcomes. Only accepted agreements change the Practice contract, and retrying a saved turn does not apply it twice.
+
+In Real Project, the server verifies that cited text exists in the supplied sources. Classifications require your review, and financial calculations use the estimates and terms you enter. The analysis is planning assistance, not a legal conclusion.
+
+History is private to an anonymous browser session. Clearing its cookie, switching browsers or losing the session can prevent recovery. Accounts and cross-device recovery are not available.
+
+## Run locally
+
+Requires **Node.js 22.12 or later within Node 22.x**, npm and Git.
 
 ```sh
 git clone https://github.com/Dan1q-dev/scopeshift.git
 cd scopeshift
 npm ci
+cp .env.example .env.local
 npm run dev
 ```
 
-Открой `http://localhost:3000`. Для режима `rules` ключ не нужен. Если копия уже существует, сохрани текущую работу, выполни `git fetch origin` и `git merge origin/main` в своей рабочей ветке. Для fork используй общий репозиторий как `upstream`.
+Open [localhost:3000](http://localhost:3000).
 
-## Команда
+The default `rules` mode needs no API key or database. It runs Practice with a bounded English interpreter and scripted client replies. OpenAI dialogue and Real Project require the server configuration below.
 
-| Участник | GitHub | Рабочая ветка | Зона |
-| --- | --- | --- | --- |
-| Данила | [Dan1q-dev](https://github.com/Dan1q-dev) | `feat/backend-simulation` | Backend, AI, engine, CI, интеграция |
-| Арсен | [arsengabdrahmanov7-ux](https://github.com/arsengabdrahmanov7-ux) | `feat/frontend-experience` | Frontend и UX |
-| Альбина | [albina2nik-crypto](https://github.com/albina2nik-crypto) | `feat/scenarios-quality` | Сценарии, оценка, QA, pitch |
+### Enable OpenAI and persistent history
 
-`main` - общая ветка для слияния проверенных PR. Интеграцию ведет Данила.
+Set these server-side values in `.env.local`:
 
-## Документы
+```dotenv
+SCOPESHIFT_AI_MODE=openai
+OPENAI_API_KEY=your_openai_api_key
+OPENAI_MODEL=gpt-5.4-mini
+SCOPESHIFT_SESSION_SECRET=your_random_secret_of_at_least_32_characters
+SCOPESHIFT_STORAGE=postgres
+SCOPESHIFT_DATABASE_URL=postgresql://user:password@host/database
+SCOPESHIFT_DAILY_AI_CALL_LIMIT=200
+```
 
-- [Правила для участников и AI-агентов](AGENTS.md)
-- [Короткая инструкция команде](docs/TEAM_QUICKSTART.md)
-- [Готовое сообщение для командного чата](docs/TEAM_MESSAGE.md)
-- [Синхронизация fork Арсена и работы Альбины](docs/TEAM_SYNC_MESSAGE.md)
-- [Общее описание продукта](docs/PROJECT_BRIEF.md)
-- [API-контракт](docs/API_CONTRACT.md) и [общие типы](src/types/scope.ts)
-- [Подключение backend и текущие ограничения](docs/BACKEND_INTEGRATION.md)
-- [Публичный деплой и проверенные результаты](docs/PUBLIC_DEPLOYMENT.md)
-- [Настройка OpenAI и постоянной истории](docs/OPENAI_SETUP.md)
-- [Real Project Mode: спецификация](docs/REAL_PROJECT_MODE_SPEC.md), [API](docs/REAL_PROJECT_API.md), [настройка и проверки](docs/REAL_PROJECT_RELEASE.md)
-- Real Project Mode: [задачи Арсену](docs/REAL_PROJECT_HANDOFF_ARSEN.md) и [задачи Альбине](docs/REAL_PROJECT_HANDOFF_ALBINA.md)
-- Задания: [Данила](docs/tasks/danila.md), [Арсен](docs/tasks/arsen.md), [Альбина](docs/tasks/albina.md)
+Create a random session secret, for example:
 
-## Проверки
+```sh
+node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
+```
+
+Apply both database migrations before starting the app:
+
+```sh
+node --env-file=.env.local scripts/migrate-postgres.mjs --real-project-mode
+npm run dev
+```
+
+Migrations require a direct PostgreSQL connection, not a pooler URL. The application can use a pooled connection after migration. Keep the session secret stable across deployments and keep credentials on the server. `.env.local` is excluded from Git.
+
+## Development
 
 ```sh
 npm run typecheck
@@ -57,17 +92,36 @@ npm test
 npm run build
 ```
 
-Для HTTP smoke-проверки backend сначала запусти сервер, затем в другом терминале:
-
-```sh
-node scripts/smoke-backend.mjs http://127.0.0.1:3000
-```
-
-Опциональная smoke-проверка каркаса в браузере:
+Browser tests use Playwright:
 
 ```sh
 npx playwright install chromium
 npm run test:e2e
 ```
 
-Серверные секреты настраивает капитан. Ключи не передаются в браузер и не попадают в Git.
+Database integration tests run when `SCOPESHIFT_TEST_DATABASE_URL` points to a dedicated test database. They are skipped otherwise. Use a disposable test database for these checks.
+
+## Project structure
+
+| Directory | Contents |
+| --- | --- |
+| `src/app` | Pages and HTTP API routes |
+| `src/components` | Practice, Results and Real Project interfaces |
+| `src/lib/ai` | OpenAI adapters and rules-based interpretation |
+| `src/lib/simulation` | Negotiation engine, session history and replay storage |
+| `src/lib/real-projects` | Source verification, proposals, calculations and persistence |
+| `src/lib/evaluation` | Evidence-based Practice feedback |
+| `src/types` | Shared TypeScript types and validation schemas |
+| `tests` | API, scenario and browser tests with fictional fixtures |
+| `migrations` | PostgreSQL schema migrations |
+| `scripts` | Database, deployment and smoke-check utilities |
+
+Built with Next.js, React, TypeScript, Tailwind CSS, Zod, OpenAI and PostgreSQL. The public demo is hosted on Vercel with Neon Postgres.
+
+## Team
+
+Built by **Beyond Horizon** for Business Cup 2.0, Skills track.
+
+- **Danila**: backend, simulation engine, AI integration and deployment.
+- **Arsen**: frontend, user experience, Replay and comparison.
+- **Albina**: scenarios, evaluation and quality assurance.

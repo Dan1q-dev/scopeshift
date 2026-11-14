@@ -8,3 +8,7 @@ coverage
 test-results
 playwright-report
 *.log
+output
+AGENTS.md
+.agents
+.codex

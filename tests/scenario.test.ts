@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-const scenario = JSON.parse(readFileSync(new URL('../docs/design-drafts/website-project.json', import.meta.url), 'utf8'));
+const scenario = JSON.parse(readFileSync(new URL('./fixtures/legacy-website-project.json', import.meta.url), 'utf8'));
 test('baseline effort sums to contract and identifiers are unique', () => {
   const contract = scenario.learnerVisible.initialContract;
   assert.equal(contract.scope.reduce((sum: number, item: {minutes: number}) => sum + item.minutes, 0), contract.estimatedMinutes);

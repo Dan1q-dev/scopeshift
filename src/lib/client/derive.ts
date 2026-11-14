@@ -1,6 +1,6 @@
 import type { Agreement, NegotiateResponse, NegotiationTurn, ProjectState, PublicScenario, ScopeItem } from "@/types/scope";
 
-/** Project state before any negotiation. Mirrors the documented rate formula from docs/API_CONTRACT.md. */
+/** Initial contract state; hourly revenue is the fee in cents divided by estimated hours. */
 export function initialProject(scenario: PublicScenario): ProjectState {
   const contract = scenario.initialContract;
   return {
