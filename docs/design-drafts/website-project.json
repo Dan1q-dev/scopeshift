@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "proposal-0.1",
+  "id": "website-studio-01",
+  "title": "A small website, three growing requests",
+  "locale": "en-US",
+  "currency": "USD",
+  "units": {"money": "integer cents", "effort": "integer minutes", "deadline": "calendar day from project start; start is day 0"},
+  "learnerVisible": {
+    "role": "Independent web developer",
+    "client": "Maya, owner of a neighborhood fitness studio",
+    "initialContract": {
+      "feeCents": 150000,
+      "estimatedMinutes": 1200,
+      "deliveryDay": 7,
+      "scope": [
+        {"id": "foundation", "description": "Responsive implementation, navigation, deployment and basic browser checks", "minutes": 480, "removable": false},
+        {"id": "home", "description": "Home page using approved client copy and images", "minutes": 180, "removable": false},
+        {"id": "services", "description": "Services page listing classes and prices; no live availability", "minutes": 180, "removable": false},
+        {"id": "about", "description": "Separate About page", "minutes": 120, "removable": true},
+        {"id": "gallery", "description": "Six-image static gallery section", "minutes": 120, "removable": true},
+        {"id": "contact", "description": "Contact form: name, email, message; validation, success message, email to studio; no booking reservation", "minutes": 120, "removable": false}
+      ],
+      "exclusions": ["Booking/calendar availability", "Payments", "Accounts", "CMS", "Writing copy", "External vendor fees"],
+      "dependencies": "Client provides approved copy, images and inbox access on day 0. One consolidated correction round within the defined scope is included in the estimates.",
+      "changeControl": "Changes require explicit client acceptance of itemized scope, total fee and delivery day. Existing terms continue until accepted."
+    },
+    "capacity": {"minutesPerDay": 240, "availableFromDay": 0, "definition": "Capacity through delivery day D equals D * 240. All requests occur in one pre-production planning session on day 0; no elapsed work. This is a teaching estimate, not a real work calendar."},
+    "rateDefinition": "Estimated effective hourly revenue = feeCents / 100 / (estimatedMinutes / 60). Excludes expenses and taxes; not profit or actual earnings."
+  },
+  "serverOnly": {
+    "warning": "Never send this object to the browser. Provide only current client dialogue and disclosed requirements.",
+    "additionalBudgetCents": 70000,
+    "latestDeliveryDay": 10,
+    "disclosurePolicy": "Reveal fields on clarification; reveal budget and hard launch limit only when relevant or asked. Never score the learner against undisclosed constraints.",
+    "clientPolicy": "Stay commercially consistent, not maximally compliant. Each offer must fit remaining cumulative budget and launch priorities. Prices at or below budget are eligible for consideration, not automatic acceptance. Return clarification, rejection or a concrete counteroffer when terms conflict. No legalistic trap, invented urgency, arbitrary trust score or hidden concession target. Only explicit acceptance naming the current terms can request engine validation.",
+    "sequencePolicy": "Present requests in order after a request is accepted, declined or explicitly deferred. Rejection of a price does not silently terminate negotiation. A bounded decline is a valid terminal outcome. Later requests use the current accepted scope and fee; do not re-add removed items implicitly."
+  },
+  "requests": [
+    {
+      "id": "r1-booking",
+      "message": "Could we turn the contact form into a booking form? I'd love people to pick a class and tell us when they'd like to come. Can we keep the same launch date?",
+      "requirementsToClarify": ["Which fields?", "Does selecting a time reserve a place, or just request one?", "Is live availability needed?"],
+      "answerOnClarification": "Name, email, class type and preferred date. A request is fine: we'll confirm by email ourselves. No accounts, payments, live calendar or guaranteed places.",
+      "options": [
+        {"id": "booking-request", "description": "Replace contact form with booking request fields and pending-confirmation notice; keep email delivery", "incrementalMinutes": 240, "excludes": ["live availability", "reservation guarantee", "payments"]},
+        {"id": "booking-link", "description": "Keep included contact form and add link to client's existing externally hosted booking page", "incrementalMinutes": 60, "requires": "Client supplies tested working URL; vendor fees excluded"}
+      ],
+      "hiddenConstraints": {"preferredSpendCents": 30000, "priority": "Collect leads; automatic reservation is unnecessary", "counteroffer": "Could we do the request-only form for $250 extra and keep day 7?"},
+      "validStrategies": ["Clarify before quoting", "Offer paid request-only form", "Exchange About and Gallery for 4 hours of booking work, subject to explicit approval", "Keep baseline and defer booking", "Offer a bounded goodwill link after reviewing its impact"],
+      "exampleAgreements": [
+        {"description": "Paid request-only form", "addedOptionIds": ["booking-request"], "removedScopeIds": [], "feeDeltaCents": 30000, "deliveryDay": 7, "resultFromBaseline": {"feeCents": 180000, "minutes": 1440, "rateUSDPerHour": 75}},
+        {"description": "Equal-effort exchange", "addedOptionIds": ["booking-request"], "removedScopeIds": ["about", "gallery"], "feeDeltaCents": 0, "deliveryDay": 7, "resultFromBaseline": {"feeCents": 150000, "minutes": 1200, "rateUSDPerHour": 75}},
+        {"description": "Free booking work with explicit cost awareness", "addedOptionIds": ["booking-request"], "removedScopeIds": [], "feeDeltaCents": 0, "deliveryDay": 7, "resultFromBaseline": {"feeCents": 150000, "minutes": 1440, "rateUSDPerHour": 62.5}}
+      ],
+      "learningObjectives": ["Separate request collection from reservation automation", "Trade scope rather than promising undefined work"],
+      "evaluationCriteria": ["fields", "baseline", "boundaries", "impact", "choice", "acceptance", "record", "capacity"]
+    },
+    {
+      "id": "r2-testimonials",
+      "message": "A few members sent lovely reviews. Could we add a rotating testimonial section, and let me update the quotes myself later?",
+      "requirementsToClarify": ["How many reviews?", "Is self-service editing essential for launch?", "Who provides approved copy and permission to publish?"],
+      "answerOnClarification": "Three approved text quotes, no photos. I can email updates after launch. Self-editing would be nice but isn't essential. I will provide approved quotes before work starts.",
+      "options": [
+        {"id": "static-quotes", "description": "Three static text testimonials; updates by developer; no CMS or rotation", "incrementalMinutes": 120},
+        {"id": "rotating-quotes", "description": "Three text testimonials with accessible manual controls and reduced-motion support; no CMS", "incrementalMinutes": 180},
+        {"id": "cms-quotes", "description": "Editable quotes with hosted CMS setup and basic editor handoff; static display", "incrementalMinutes": 480, "requires": "Client supplies approved account access; vendor fees excluded"}
+      ],
+      "hiddenConstraints": {"preferredSpendCents": 15000, "priority": "Publish social proof rather than self-service editing", "counteroffer": "Can we use three static quotes for $150 extra instead?"},
+      "validStrategies": ["Reduce to static content", "Quote CMS separately for phase two", "Swap a still-present 2-hour Gallery or About item for static quotes", "Decline or defer", "Offer bounded goodwill with documented impact"],
+      "exampleAgreements": [
+        {"description": "After the paid r1 example, add static quotes", "addedOptionIds": ["static-quotes"], "removedScopeIds": [], "feeDeltaCents": 15000, "deliveryDay": 7, "resultAfterPaidR1": {"feeCents": 195000, "minutes": 1560, "rateUSDPerHour": 75}},
+        {"description": "After r1 removed About and Gallery, do not offer them as an exchange again", "outcome": "Request a different exchange, paid amendment or decline; no state mutation on invalid removal"}
+      ],
+      "learningObjectives": ["Separate launch needs from maintenance convenience", "Track cumulative scope and avoid reusing an already removed item"],
+      "evaluationCriteria": ["priority", "boundaries", "impact", "choice", "record", "dependencies", "capacity"]
+    },
+    {
+      "id": "r3-launch",
+      "message": "Our promotion now goes live on day 5. Can we launch everything by then? I can send final wording on day 4. Surely it's mostly done already?",
+      "requirementsToClarify": ["Is day 5 a hard public launch?", "Can approved copy arrive on day 0?", "Would a phased launch or promotional link work?"],
+      "answerOnClarification": "Day 5 is fixed for the promotion. I can approve existing copy today if we skip the new wording. A smaller site on day 5 with the rest on day 8 could work. Otherwise use an existing social profile for the promotion and finish the site by day 10.",
+      "options": [
+        {"id": "existing-copy", "description": "Use already approved baseline copy; no new copywriting", "incrementalMinutes": 0},
+        {"id": "phase-launch", "description": "Scope-specific day-5 subset and day-8 remainder; separately itemize deliverables and capacity for each milestone", "incrementalMinutes": 0, "requires": "Backend milestone contract; unsupported until implemented. Never treat as a single delivery-day amendment."}
+      ],
+      "hiddenConstraints": {"hardPromotionDay": 5, "latestSiteDay": 10, "remainingBudgetPolicy": "70000 minus accepted cumulative fee increases", "counteroffer": "Can we move the full site to day 8 and use our existing social profile for day 5?"},
+      "validStrategies": ["Keep day 7 and use existing promotion channel if client accepts", "Extend full site to day 8", "Remove enough optional work for a feasible day-5 scope", "Offer phased delivery only if the actual engine supports milestones", "Reject an infeasible rush promise and propose alternatives"],
+      "exampleAgreements": [
+        {"description": "After paid r1 and static r2, full site day 8", "feeDeltaCents": 0, "deliveryDay": 8, "resultAfterPaidR1StaticR2": {"feeCents": 195000, "minutes": 1560, "rateUSDPerHour": 75, "capacityMinutes": 1920}},
+        {"description": "Same 26-hour scope by day 5 is infeasible", "deliveryDay": 5, "expected": "Reject commitment: 1560 required minutes exceeds 1200 available; paying a rush fee does not create hours"}
+      ],
+      "learningObjectives": ["Make feasibility explicit", "Resolve client approval dependencies", "Offer alternatives without promising impossible delivery"],
+      "evaluationCriteria": ["priority", "boundaries", "impact", "choice", "acceptance", "record", "capacity", "dependencies"]
+    }
+  ],
+  "replayPolicy": "Fork immutable accepted event history at a decision boundary. New proposal IDs in a new run. Preserve original run, scenario version and recorded client replies. Compare actual validated branches; never promise the same LLM response on rerun."
+}

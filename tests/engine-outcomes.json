@@ -1,0 +1,20 @@
+{
+  "status": "Oracles awaiting actual engine adapter; not executed engine tests",
+  "baseline": {"feeCents": 150000, "minutes": 1200, "deliveryDay": 7},
+  "cases": [
+    {"id": "accepted-paid", "action": "Explicitly accept current r1 booking-request proposal +30000 cents", "expected": {"feeCents": 180000, "minutes": 1440, "deliveryDay": 7, "rateUSDPerHour": 75}},
+    {"id": "rejected-offer", "action": "Reject +30000-cent proposal", "expected": {"feeCents": 150000, "minutes": 1200, "deliveryDay": 7}},
+    {"id": "free-work", "action": "Explicitly accept booking-request for no extra fee", "expected": {"feeCents": 150000, "minutes": 1440, "rateUSDPerHour": 62.5}},
+    {"id": "exchange", "action": "Explicitly accept booking-request while removing about and gallery", "expected": {"feeCents": 150000, "minutes": 1200, "removedIds": ["about", "gallery"]}},
+    {"id": "extension", "action": "Accept only delivery-day amendment to 8", "expected": {"feeCents": 150000, "minutes": 1200, "deliveryDay": 8}},
+    {"id": "duplicate", "action": "Replay the same accepted-paid agreement ID", "expected": {"feeCents": 180000, "minutes": 1440, "appliedAgreementCount": 1}},
+    {"id": "impossible", "action": "Try to commit booking-request by day 5", "expected": {"error": "infeasible", "unchanged": true, "requiredMinutes": 1440, "capacityMinutes": 1200}},
+    {"id": "ambiguous", "action": "Client says Sounds interesting, let me check", "expected": {"unchanged": true, "agreementCount": 0}},
+    {"id": "counteroffer", "action": "Client proposes +25000 cents instead of learner's +30000", "expected": {"unchanged": true, "newPendingRevision": true}},
+    {"id": "stale-acceptance", "action": "Accept revision 1 after revision 2 supersedes it", "expected": {"error": "stale-proposal", "unchanged": true}},
+    {"id": "double-removal", "action": "After exchange, try to remove about again for r2", "expected": {"error": "scope-item-not-present", "unchanged": true}},
+    {"id": "included-work", "action": "Clarify that contact name/email/message is already included", "expected": {"unchanged": true, "noMandatoryUpsell": true}},
+    {"id": "unknown-scope", "action": "Model proposes a noncatalog scope ID or fabricated effort", "expected": {"error": "invalid-scope", "unchanged": true}},
+    {"id": "sequential-budget", "action": "Accept +30000 for r1 then +15000 for r2", "expected": {"feeCents": 195000, "minutes": 1560, "remainingClientBudgetCents": 25000, "rateUSDPerHour": 75}}
+  ]
+}
