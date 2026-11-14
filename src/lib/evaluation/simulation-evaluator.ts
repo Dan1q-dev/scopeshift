@@ -4,6 +4,12 @@ import { initialState, processTurn } from "@/lib/simulation/engine";
 
 export const EVALUATOR_VERSION = "evidence-v2";
 
+// Keep the full learner message while bounding rule and verified summaries
+// within the shared observation limit (4000 characters).
+function boundedEvidence(value: string) {
+  return value.length <= 900 ? value : `${value.slice(0, 897)}...`;
+}
+
 /** Scores verified outcomes, not inferred personality or hidden willingness to pay.
  * Each emitted criterion is one observable check worth one point. Missing checks
  * are unassessed; consumers must not turn the returned subset into an overall grade.
@@ -24,7 +30,7 @@ export const evaluateSimulation: SimulationEvaluator = ({ scenario, turns, proje
       if (!rule || criteria.some(c => c.evidence.some(e => e.ruleId === ruleId))) return;
       criteria.push({ category, earnedPoints: 1, maxPoints: 1,
         evidence: [{ turnId: turn.turnId, ruleId,
-          observation: `Action: ${turn.userMessage} Rule: ${rule.observableCriterion} Verified: ${observation}` }], advice });
+          observation: `Action: ${turn.userMessage} Rule: ${boundedEvidence(rule.observableCriterion)} Verified: ${boundedEvidence(observation)}` }], advice });
     };
     if (turn.action.kind === "clarify" && /\b(fields?|requirements?|included|scope|reser\w*|confirm\w*|deadline|date)\b/i.test(turn.userMessage)) {
       // One inquiry check per event; no claim that the client's answer resolved it.
@@ -49,7 +55,7 @@ export const evaluateSimulation: SimulationEvaluator = ({ scenario, turns, proje
     const impact = `Agreement ${turn.agreement.id}: $${(before.totalFeeCents / 100).toFixed(2)} / ${before.estimatedHours}h to $${(after.totalFeeCents / 100).toFixed(2)} / ${after.estimatedHours}h; estimated revenue $${rate}/hour, before expenses and taxes.`;
     improvements.push(`Review the cost of this choice. ${impact} Compare the scope and time trade-off; a higher fee alone does not prove better judgment.`);
     if (change.feeDeltaCents === 0 && change.addScopeItemIds.length && change.removeScopeItemIds.length && before.estimatedHours === after.estimatedHours) {
-      if (/same (?:price|fee)|no (?:extra|additional) (?:fee|cost)/i.test(turn.userMessage)) {
+      if (/same (?:price|fee)|no (?:extra|additional) (?:fee|cost)|(?:price|fee)\s+(?:and\s+(?:the\s+)?(?:delivery(?:\s+(?:day|date))?|deadline)\s+)?unchanged|(?:price|fee)\s+(?:stays|remains)\s+(?:the\s+)?same/i.test(turn.userMessage)) {
         add("economic_decision", "swap-economics", `Explicit no-fee exchange preserves ${after.estimatedHours} hours.`,
           "An equal-effort exchange can preserve price; check both deliverables and client acceptance.");
       }

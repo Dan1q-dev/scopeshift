@@ -1,6 +1,6 @@
 import type { Agreement, NegotiationAction, ProjectState, Scenario, ScopeItem } from "@/types/scope";
 
-export const INTERPRETER_VERSION = "rules-v1";
+export const INTERPRETER_VERSION = "rules-v2";
 
 export interface InterpretationContext {
   message: string;
@@ -218,12 +218,14 @@ export function interpretMessage(context: InterpretationContext): NegotiationAct
         return unresolved("Please state the swap as replace the active item with the requested new item.");
       }
       const removed = project.activeScopeItems.filter((item) => references(direction[1], item));
-      if (removed.length !== 1) return unresolved("Please name exactly one active scope item to replace.");
+      if (!removed.length) return unresolved("Please name the active scope items to replace.");
       removeScopeItemIds = removed.map((item) => item.id);
       let removal = direction[1];
-      for (const alias of aliases(removed[0])) removal = removal.replace(new RegExp(`\\b${escapeRegex(alias)}\\b`, "g"), " ");
-      removal = removal.replace(/\b(?:the|a|an|current|existing|agreed)\b/g, " ").replace(/[^a-z0-9]+/g, "");
-      if (removal) return unresolved("Please name only the single active scope item being replaced.");
+      for (const item of removed) {
+        for (const alias of aliases(item)) removal = removal.replace(new RegExp(`\\b${escapeRegex(alias)}\\b`, "g"), " ");
+      }
+      removal = removal.replace(/\b(?:the|a|an|current|existing|agreed|and|plus|both)\b/g, " ").replace(/[^a-z0-9]+/g, "");
+      if (removal) return unresolved("Please name only existing active scope items being replaced, without unspecified tasks or alternatives.");
       let replacement = direction[2];
       for (const item of items) {
         for (const alias of aliases(item)) replacement = replacement.replace(new RegExp(`\\b${escapeRegex(alias)}\\b`, "g"), " ");

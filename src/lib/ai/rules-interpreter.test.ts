@@ -17,9 +17,9 @@ function interpret(message: string, event: Scenario["events"][number] = scenario
   return interpretMessage({ message, scenario, event, project, pendingProposal });
 }
 
-describe("rules-v1 English interpreter", () => {
+describe("bounded English interpreter", () => {
   it("identifies its deterministic implementation", () => {
-    expect(INTERPRETER_VERSION).toBe("rules-v1");
+    expect(INTERPRETER_VERSION).toBe("rules-v2");
   });
 
   it("extracts a paid booking offer with an explicit deadline extension", () => {

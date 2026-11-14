@@ -14,7 +14,7 @@
 - Видимое различие между предложением и принятым соглашением.
 - Итоговый экран с объяснимой обратной связью.
 
-Каталог и публичный сценарий доступны через GET API. Используй готовый адаптер `src/lib/client/api.ts`: `getScenarios`, `getScenario`, `negotiate`, `ScopeShiftApiError`. В `feat/backend-simulation` корректная история переговоров возвращает HTTP 200 по прежнему контракту, engine использует ограниченный английский `rules-v1` без live LLM. Evaluator пока возвращает пустые массивы. До слияния PR `main` остается прежним каркасом; после слияния подтяни его в свою ветку. Порядок сообщений, retry и Replay описаны в `docs/BACKEND_INTEGRATION.md`. Fixtures помечай явно и не представляй как живой AI.
+Каталог и публичный сценарий доступны через GET API. Используй готовый адаптер `src/lib/client/api.ts`: `getScenarios`, `getScenario`, `negotiate`, `ScopeShiftApiError`. PR #1 уже слит в `main`: корректная история переговоров возвращает HTTP 200 по прежнему контракту, engine использует ограниченный английский `rules-v1` без live LLM. Сохрани свою работу и подтяни `origin/main` в frontend-ветку. OpenAI-режим находится отдельно в `feat/backend-simulation` до следующего слияния. Evaluator пока возвращает пустые массивы. Порядок сообщений, retry и Replay описаны в `docs/BACKEND_INTEGRATION.md`. Fixtures помечай явно и не представляй как живой AI.
 
 Для запуска ключ не нужен. Motion и shadcn/ui пока не установлены; согласуй нужные зависимости с Данилой до изменения `package.json` и lockfile.
 

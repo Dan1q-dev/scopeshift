@@ -30,12 +30,12 @@ function hash(value: string) {
   return createHash("sha256").update(value).digest("hex");
 }
 
-export function scenarioRevision(scenario: Scenario) {
-  return hash(`${INTERPRETER_VERSION}\n${JSON.stringify(scenario)}`);
+export function scenarioRevision(scenario: Scenario, interpreterVersion = INTERPRETER_VERSION) {
+  return hash(`${interpreterVersion}\n${JSON.stringify(scenario)}`);
 }
 
-function fingerprintHistory(scenario: Scenario, history: readonly HistoryEntry[]): HistoryFingerprint[] {
-  let prefix = scenarioRevision(scenario);
+function fingerprintHistory(scenario: Scenario, history: readonly HistoryEntry[], interpreterVersion?: string): HistoryFingerprint[] {
+  let prefix = scenarioRevision(scenario, interpreterVersion);
   return history.map((entry) => {
     prefix = hash(`${prefix}\n${JSON.stringify([entry.turnId, entry.eventId, entry.userMessage])}`);
     return { key: `${scenario.id}:${entry.turnId}`, digest: prefix };
@@ -51,14 +51,15 @@ export class SimulationSessionStore {
 
   constructor(private readonly now: () => number = Date.now) {}
 
-  acquire(cookieHeader: string | null): Session {
+  acquire(cookieHeader: string | null, verifiedSessionId?: string): Session {
     const now = this.now();
     for (const [id, session] of this.sessions) {
       if (now - session.lastSeen >= SESSION_TTL_MS) this.sessions.delete(id);
     }
     const candidate = cookieHeader?.split(";").map((item) => item.trim()).find((item) => item.startsWith(`${SESSION_COOKIE}=`))?.slice(SESSION_COOKIE.length + 1);
-    const known = candidate ? this.sessions.get(candidate) : undefined;
-    const session = known ?? { id: randomUUID(), lastSeen: now, windowStart: now, requests: 0, fingerprints: new Map<string, string>() };
+    const candidateId = verifiedSessionId ?? candidate;
+    const known = candidateId ? this.sessions.get(candidateId) : undefined;
+    const session = known ?? { id: verifiedSessionId ?? randomUUID(), lastSeen: now, windowStart: now, requests: 0, fingerprints: new Map<string, string>() };
     if (now - session.windowStart >= 60_000) {
       session.windowStart = now;
       session.requests = 0;
@@ -70,8 +71,8 @@ export class SimulationSessionStore {
     return session;
   }
 
-  validate(session: Session, scenario: Scenario, history: readonly HistoryEntry[]) {
-    for (const fingerprint of fingerprintHistory(scenario, history)) {
+  validate(session: Session, scenario: Scenario, history: readonly HistoryEntry[], interpreterVersion?: string) {
+    for (const fingerprint of fingerprintHistory(scenario, history, interpreterVersion)) {
       const previous = session.fingerprints.get(fingerprint.key);
       if (previous && previous !== fingerprint.digest) {
         throw new SimulationRequestError(409, "INVALID_HISTORY", "A turn ID was reused with different text or history. Use new turn IDs when replaying a decision.");
@@ -79,10 +80,10 @@ export class SimulationSessionStore {
     }
   }
 
-  commit(session: Session, scenario: Scenario, history: readonly HistoryEntry[]) {
+  commit(session: Session, scenario: Scenario, history: readonly HistoryEntry[], interpreterVersion?: string) {
     // Recheck after replay as concurrent requests may have committed the same ID.
-    this.validate(session, scenario, history);
-    for (const { key, digest } of fingerprintHistory(scenario, history)) {
+    this.validate(session, scenario, history, interpreterVersion);
+    for (const { key, digest } of fingerprintHistory(scenario, history, interpreterVersion)) {
       session.fingerprints.delete(key);
       session.fingerprints.set(key, digest);
     }

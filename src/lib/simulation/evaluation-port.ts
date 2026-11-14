@@ -1,6 +1,8 @@
 import type { EvaluationResult, NegotiationTurn, ProjectState, Scenario } from "@/types/scope";
 
-/** Typed dependency-injection boundary for evidence-based evaluation. */
+/** Albina's evaluator plugs into negotiateHistory through this interface.
+ * The default is explicitly pending, with no invented scores or feedback.
+ */
 export interface EvaluationContext {
   scenario: Scenario;
   turns: readonly NegotiationTurn[];
@@ -11,5 +13,3 @@ export interface EvaluationContext {
 export type SimulationEvaluator = (context: EvaluationContext) => EvaluationResult;
 
 export const pendingEvaluation: SimulationEvaluator = () => ({ criteria: [], strengths: [], improvements: [] });
-
-export { evaluateSimulation as defaultEvaluation } from "@/lib/evaluation/simulation-evaluator";
