@@ -84,6 +84,7 @@ async function createProject(page: Page) {
 }
 
 test("synthetic UI flow requires consent and review, calculates a proposal, edits history, and deletes", async ({ page }) => {
+  test.setTimeout(60_000); // Full desktop/mobile journey includes reload and screenshots.
   const fixture = await syntheticApi(page);
   await createProject(page);
   await page.getByLabel("Client request text", { exact: true }).fill(clientMessage);
@@ -109,7 +110,7 @@ test("synthetic UI flow requires consent and review, calculates a proposal, edit
   await expect(page.getByRole("button", { name: "Generate draft", exact: true })).toBeDisabled();
   await page.getByRole("checkbox", { name: /authorize sending the source text, request, reviewed scope/ }).check();
   await page.getByRole("button", { name: "Generate draft", exact: true }).click();
-  const response = page.getByLabel("Editable response", { exact: true });
+  const response = page.getByRole("textbox", { name: "Editable response", exact: true });
   await response.fill("Thanks! I propose booking for an additional $400, due November 24. Please confirm.");
   await page.getByRole("button", { name: "Save edited draft", exact: true }).click();
   await expect(page.getByText("Your edits are not saved yet.", { exact: true })).toHaveCount(0);
@@ -117,7 +118,7 @@ test("synthetic UI flow requires consent and review, calculates a proposal, edit
   await page.reload();
   await page.getByRole("button", { name: /Synthetic website.*rev 1/ }).click();
   await page.getByRole("button", { name: /Could you add consultation booking\?.*confirmed/ }).click();
-  await expect(page.getByLabel("Editable response", { exact: true })).toHaveValue("Thanks! I propose booking for an additional $400, due November 24. Please confirm.");
+  await expect(page.getByRole("textbox", { name: "Editable response", exact: true })).toHaveValue("Thanks! I propose booking for an additional $400, due November 24. Please confirm.");
   await expect(page.getByRole("link", { name: "Practice Mode", exact: true })).toHaveAttribute("href", "/simulation");
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
@@ -170,7 +171,7 @@ test("synthetic failed draft retains retry identity until explicit new operation
   await expect(page.getByText(/This may make another paid OpenAI request/)).toBeVisible();
   await consent.check();
   await generate.click();
-  await expect(page.getByLabel("Editable response", { exact: true })).toBeVisible();
+  await expect(page.getByRole("textbox", { name: "Editable response", exact: true })).toBeVisible();
   expect(fixture.draftIds).toHaveLength(3);
   expect(fixture.draftIds[2]).not.toBe(fixture.draftIds[0]);
 });
