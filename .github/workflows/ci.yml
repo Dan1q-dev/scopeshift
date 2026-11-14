@@ -2,7 +2,7 @@ name: CI
 on:
   workflow_dispatch:
   push:
-    branches: [main, feat/backend-simulation, feat/frontend-experience, feat/scenarios-quality, 'codex/**']
+    branches: [main, feat/backend-simulation, feat/frontend-experience, feat/scenarios-quality]
   pull_request:
     branches: [main]
 permissions:

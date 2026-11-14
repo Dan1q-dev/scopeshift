@@ -17,3 +17,7 @@ Thumbs.db
 .vscode/
 artifacts/
 .scopeshift/
+output/
+AGENTS.md
+.agents/
+.codex/

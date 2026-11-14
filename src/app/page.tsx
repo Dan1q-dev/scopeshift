@@ -17,8 +17,8 @@ const problems = [
 const highlights = ["3 client requests", "Contract math after every reply", "Replay any decision"];
 
 /**
- * Outcomes of the first client request in the first scenario (web-project-01), as documented in
- * docs/BACKEND_INTEGRATION.md. Update these if the scenario contract or its rules change.
+ * Outcomes of the first request in web-project-01. Keep these aligned with the
+ * active scenario's contract and acceptance rules.
  */
 const outcomes = [
   { label: "Reply A", reply: "I can add it for free with no change to the deadline.", rate: "$57.69/h", delta: "-$17.31/h", terms: "$1,500 for 26 h", good: false },
