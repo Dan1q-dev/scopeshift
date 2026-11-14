@@ -11,6 +11,12 @@ a { color: inherit; }
 @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .rise { animation: rise 0.25s ease-out; }
 
+/* Results: collapsible evaluation evidence */
+.evidence > summary { list-style: none; }
+.evidence > summary::-webkit-details-marker { display: none; }
+.evidence > summary::before { content: "+ "; }
+.evidence[open] > summary::before { content: "- "; }
+
 /* Landing page */
 [id] { scroll-margin-top: 1.5rem; }
 .hero-backdrop {
