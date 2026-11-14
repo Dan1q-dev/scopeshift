@@ -201,6 +201,21 @@ describe("Real Project Mode AI boundary", () => {
     await expect(createRealProjectAi(config, { fetch: fetchMock }).draft(project, request, impact, "friendly")).rejects.toMatchObject({ kind: "invalid_response" });
   });
 
+  it("includes focused questions once, with unknowns as a fallback when no question exists", async () => {
+    const { project, request, impact } = fixture();
+    request.analysis!.items[0].unknowns = ["Slot management has not been defined."];
+    request.analysis!.items[0].clarificationQuestions = ["Who supplies the slot list?", " who supplies the slot list? "];
+    request.analysis!.items.push({ ...request.analysis!.items[0], id: "item_2", unknowns: ["Please specify the chart data source."], clarificationQuestions: [] });
+    request.review!.items.push({ itemId: "item_2", classification: "not_specified", reason: "Source remains open." });
+    impact.input.selectedItemIds.push("item_2");
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(response({ opening: "Thank you for your request.", closing: "Please review the proposed scope." }));
+    const body = await createRealProjectAi(config, { fetch: fetchMock }).draft(project, request, impact, "professional");
+    expect(body.match(/who supplies the slot list/gi)).toHaveLength(1);
+    expect(body).not.toContain("Slot management has not been defined.");
+    expect(body).toContain("Please specify the chart data source.");
+    expect(request.analysis!.items[0].unknowns).toEqual(["Slot management has not been defined."]);
+  });
+
   it("keeps draft-provider refusal and malformed wording as explicit failures", async () => {
     const { project, request, impact } = fixture();
     const fetchMock = vi.fn<typeof fetch>()
