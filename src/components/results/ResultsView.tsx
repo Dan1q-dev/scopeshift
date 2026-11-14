@@ -107,8 +107,8 @@ export function ResultsView() {
                                   <li key={`${evidence.turnId}-${evidence.ruleId}`} className="border-l-2 border-emerald-400/30 pl-2.5 text-slate-400">
                                     {parts ? (
                                       <dl className="m-0 space-y-1">
-                                        <div><dt className="inline font-medium text-slate-300">Your reply: </dt><dd className="m-0 inline">{parts.action}</dd></div>
-                                        <div><dt className="inline font-medium text-slate-300">Scenario rule: </dt><dd className="m-0 inline">{readable(parts.rule)}</dd></div>
+                                        <div><dt className="inline font-medium text-slate-300">Action: </dt><dd className="m-0 inline">{parts.action}</dd></div>
+                                        <div><dt className="inline font-medium text-slate-300">Rule: </dt><dd className="m-0 inline">{readable(parts.rule)}</dd></div>
                                         <div><dt className="inline font-medium text-slate-300">Verified: </dt><dd className="m-0 inline">{readable(parts.verified)}</dd></div>
                                       </dl>
                                     ) : readable(evidence.observation)}
