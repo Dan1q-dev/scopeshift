@@ -1,0 +1,55 @@
+import { evaluationResultSchema, type EvaluationResult } from "@/types/scope";
+import type { SimulationEvaluator } from "@/lib/simulation/evaluation-port";
+import { initialState, processTurn } from "@/lib/simulation/engine";
+
+export const EVALUATOR_VERSION = "evidence-v1";
+
+/** Scores verified outcomes, not inferred personality or hidden willingness to pay.
+ * Each emitted criterion is one observable check worth one point. Missing checks
+ * are unassessed; consumers must not turn the returned subset into an overall grade.
+ */
+export const evaluateSimulation: SimulationEvaluator = ({ scenario, turns, project }) => {
+  const criteria: EvaluationResult["criteria"] = [];
+  const strengths: string[] = [];
+  const improvements: string[] = [];
+  let snapshot = initialState(scenario);
+  for (const turn of turns) {
+    const before = snapshot.project;
+    snapshot = processTurn(scenario, snapshot, { ...turn, action: turn.action });
+    const verified = snapshot.turns.at(-1)!;
+    if (JSON.stringify(verified) !== JSON.stringify(turn)) throw new Error("Unverified evaluation turn");
+    const event = scenario.events.find(e => e.id === turn.eventId)!;
+    const add = (category: EvaluationResult["criteria"][number]["category"], ruleId: string, observation: string, advice: string) => {
+      criteria.push({ category, earnedPoints: 1, maxPoints: 1,
+        evidence: [{ turnId: turn.turnId, ruleId, observation }], advice });
+    };
+    if (turn.action.kind === "clarify" && /\b(fields?|requirements?|included|scope|reser\w*|confirm\w*|deadline|date)\b/i.test(turn.userMessage)) {
+      // One inquiry check per event; no claim that the client's answer resolved it.
+      if (!criteria.some(c => c.evidence[0].ruleId === `${event.id}-inquiry`)) {
+        add("clarification", `${event.id}-inquiry`, `Asked a requirements question: ${turn.userMessage}`,
+          "Check that the client actually answers before committing. Asking alone does not resolve requirements.");
+      }
+    }
+    if (turn.agreement?.status !== "accepted") continue;
+    const after = snapshot.project;
+    const change = turn.agreement.change;
+    add("scope_management", `${event.id}-defined-scope`,
+      `Accepted catalog amendment: added [${change.addScopeItemIds.join(", ")}], removed [${change.removeScopeItemIds.join(", ")}].`,
+      "Keep the itemized scope and exclusions visible in the written amendment.");
+    add("explicit_agreement", `${event.id}-recorded-acceptance`,
+      `Client explicitly replied: ${turn.clientReply} Agreement ${turn.agreement.id} is recorded once.`,
+      "This verifies client acceptance and the engine record, not that every term was stated in the learner's message.");
+    add("feasibility", `${event.id}-capacity`,
+      `Accepted ${after.estimatedHours} hours by day ${after.deadlineDays}; scenario capacity is ${event.clientRules.maximumHoursPerDay} hours per day.`,
+      "This planning model does not account for elapsed work, approvals or real calendar availability.");
+    const rate = (after.effectiveHourlyRateCents / 100).toFixed(2);
+    const impact = `Agreement ${turn.agreement.id}: $${(before.totalFeeCents / 100).toFixed(2)} / ${before.estimatedHours}h to $${(after.totalFeeCents / 100).toFixed(2)} / ${after.estimatedHours}h; estimated revenue $${rate}/hour, before expenses and taxes.`;
+    improvements.push(`Review the cost of this choice. ${impact} No economic-judgment score is assigned without evidence that you considered the trade-off.`);
+    if (change.feeDeltaCents === 0 && change.addScopeItemIds.length && change.removeScopeItemIds.length && before.estimatedHours === after.estimatedHours) {
+      strengths.push("You reached a documented equal-effort exchange without increasing hours. A no-fee exchange is a defensible outcome.");
+    } else strengths.push(`You reached an explicitly accepted, capacity-checked amendment (${turn.agreement.id}).`);
+  }
+  if (JSON.stringify(snapshot.project) !== JSON.stringify(project)) throw new Error("Unverified evaluation project");
+  // Shared schema limits are respected for histories up to the supported 50 turns.
+  return evaluationResultSchema.parse({ criteria: criteria.slice(-20), strengths: strengths.slice(-20), improvements: improvements.slice(-20) });
+};
