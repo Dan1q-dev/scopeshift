@@ -83,7 +83,7 @@ describe("negotiation driver integration", () => {
     const serialized = JSON.stringify(result);
 
     expect(negotiateResponseSchema.safeParse(result).success).toBe(true);
-    expect(result.evaluation).toEqual({ criteria: [], strengths: [], improvements: [] });
+    expect(result.evaluation.criteria.length).toBeGreaterThan(0);
     for (const privateField of ["clientRules", "maxAdditionalFeeCents", "evaluationRules", "maximumHoursPerDay"]) {
       expect(serialized).not.toContain(privateField);
     }
@@ -121,7 +121,8 @@ describe("negotiation driver integration", () => {
 
     const result = negotiateHistory(scenario, [paidBooking], mutate);
 
-    expect(result).toEqual(expected);
+    expect(result.project).toEqual(expected.project);
+    expect(result.turns).toEqual(expected.turns);
     expect(scenario.initialContract.feeCents).toBe(150_000);
   });
 
@@ -141,3 +142,4 @@ describe("negotiation driver integration", () => {
     expect(() => negotiateHistory(scenario, [paidBooking], invalidEvaluator)).toThrow();
   });
 });
+

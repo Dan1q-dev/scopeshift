@@ -1,3 +1,21 @@
+# Current update: evidence-v2
+
+The default driver now selects the real evaluator through src/lib/simulation/evaluation-port.ts (defaultEvaluation). The HTTP route reports X-ScopeShift-Evaluation: evidence-v2. Existing custom evaluator injection remains supported; pendingEvaluation remains available only as an explicit opt-out.
+
+Scores are grouped by category for the existing ResultsView, with an individual evidence record per awarded point. Every awarded point requires a rule ID AND matching category in the active event clientRules.evaluationRules, the actual user message and verified engine outcome. Rules added to the active scenario cover specific inquiry, capacity and recorded acceptance. Existing IDs are preserved. The swap-economics rule explicitly rewards a no-fee equal-effort proposal, not merely a price increase. Duplicate observations of the same rule do not earn repeated points. Missing evidence remains unassessed.
+
+Real Route Handler integration coverage includes paid/free outcomes, refusal, a counteroffer followed by acceptance, identical retry in the same cookie session and prefix-preserving Replay. This is actual handler/engine code with no mocked client response. Playwright transport tests implement the same branches under tests/e2e/negotiation-api.spec.ts.
+
+Frontend update: PR #2 arrived during this task and origin/main 76b1083 was merged without conflicts. foundation.spec.ts now opens Start free simulation and checks the real panels. workspace.spec.ts covers paid completion, free Replay, comparison persistence after refresh, counteroffer/refusal and lost-response retry. Retry injects only transport loss AFTER a real server response, never a fake successful response. All other application calls are real.
+
+Browser execution limitation: automatic approval review rejected the shell launch of the browser E2E runner (sandbox approval required, but unavailable in this session), including the isolated managed Chromium option. No UI E2E pass is claimed. Three Playwright HTTP tests had already passed against the production server before the frontend merge. The final source compiles and builds, and the same HTTP paths are independently covered through the real Route Handler. Re-run the browser suite in the supported CI or local Node 22 environment before merging.
+
+Validation: 11 Vitest files, 76 passed + 3 expected failures for the previously documented parser/dialogue gaps. Those defects remain open. Node 24.22.1 local runtime; Node 22 CI remains required. Type generation, typecheck, lint and a production build passed in the isolated copy. A first frontend build failed with EPERM in its output directory; a fresh isolated output build then completed successfully. Shared source configuration and dependencies were not changed.
+
+The section below records the preceding evidence-v1 handoff. Its statement that the API remains pending is superseded by this update.
+
+---
+
 # Evaluator integration and scenario QA
 
 ## Implemented in Albina's ownership
@@ -50,3 +68,4 @@ For a future complete economic-judgment rubric, agree on a validated impact-revi
 ## Validation environment
 
 Checks were run in an isolated copy of the merged source using the existing lockfile dependencies, Node 24.22.1 and npm 11.6.2. Typecheck, lint and production build passed. Vitest: 10 files, 73 ordinary tests passed and 3 expected failures documenting known defects. The repository requires Node 22; CI on the prescribed runtime remains necessary. No browser, live LLM or deployed HTTP evaluator pass is claimed.
+

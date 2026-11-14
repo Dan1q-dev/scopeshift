@@ -15,7 +15,16 @@ describe("real engine with evidence evaluator", () => {
     const result = run(scenario, [booking, rush, swap]);
     expect(result.completed).toBe(true);
     expect(result.project).toMatchObject({ totalFeeCents: 205000, estimatedHours: 26, deadlineDays: 7 });
-    expect(result.evaluation.criteria).toHaveLength(9);
+    expect(result.evaluation.criteria.reduce((n, c) => n + c.earnedPoints, 0)).toBe(9);
+    expect(new Set(result.evaluation.criteria.map(c => c.category)).size).toBe(result.evaluation.criteria.length);
+    for (const criterion of result.evaluation.criteria) {
+      for (const evidence of criterion.evidence) {
+        const turn = result.turns.find(t => t.turnId === evidence.turnId)!;
+        const event = scenario.events.find(e => e.id === turn.eventId)!;
+        expect(event.clientRules.evaluationRules.some(r => r.id === evidence.ruleId && r.category === criterion.category)).toBe(true);
+        expect(evidence.observation).toContain(turn.userMessage);
+      }
+    }
     expect(result.evaluation.criteria.every(c => c.evidence.every(e => result.turns.some(t => t.turnId === e.turnId)))).toBe(true);
     expect(result.evaluation.strengths.join(" ")).toContain("equal-effort");
     expect(run(scenario, [booking, rush, swap])).toEqual(result);
@@ -48,6 +57,18 @@ describe("real engine with evidence evaluator", () => {
     expect(result.project.totalFeeCents).toBe(150000);
     expect(result.currentEventId).toBe("earlier-delivery");
     expect(result.evaluation.criteria).toEqual([]);
+  });
+  it("never awards a point for a rule absent from the scenario", () => {
+    const withoutCapacity = { ...scenario, events: scenario.events.map(event => ({ ...event,
+      clientRules: { ...event.clientRules, evaluationRules: event.clientRules.evaluationRules.filter(rule => rule.id !== "booking-capacity") },
+    })) };
+    const result = run(withoutCapacity, [booking]);
+    expect(result.evaluation.criteria.some(c => c.category === "feasibility")).toBe(false);
+  });
+  it("repeating clarification cannot farm additional points", () => {
+    const result = run(scenario, [entry("q1", "booking-request", "Which fields are required?"), entry("q2", "booking-request", "Which fields are required?")]);
+    expect(result.evaluation.criteria).toHaveLength(1);
+    expect(result.evaluation.criteria[0]).toMatchObject({ earnedPoints: 1, maxPoints: 1 });
   });
   it.each([
     ["swap-two", "I can add booking, but only if we remove two other features.", "unresolved"],
@@ -90,3 +111,4 @@ describe("real engine with evidence evaluator", () => {
     expect(result.turns[0].clientReply).toMatch(/already included|original contract/i);
   });
 });
+

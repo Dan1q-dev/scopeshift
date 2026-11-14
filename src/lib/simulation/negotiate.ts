@@ -1,14 +1,14 @@
 import "server-only";
 import { interpretMessage } from "@/lib/ai/rules-interpreter";
 import { currentEvent, initialState, processTurn, EngineHistoryError } from "@/lib/simulation/engine";
-import { pendingEvaluation, type SimulationEvaluator } from "@/lib/simulation/evaluation-port";
+import { defaultEvaluation, type SimulationEvaluator } from "@/lib/simulation/evaluation-port";
 import { negotiateResponseSchema, type HistoryEntry, type Scenario } from "@/types/scope";
 
 /** Rebuild a complete branch from the authoritative scenario on every request.
  * The default interpreter is synchronous and deterministic rules-v1.
  * A future LLM implementation requires durable interpreted-turn storage first.
  */
-export function negotiateHistory(scenario: Scenario, history: readonly HistoryEntry[], evaluate: SimulationEvaluator = pendingEvaluation) {
+export function negotiateHistory(scenario: Scenario, history: readonly HistoryEntry[], evaluate: SimulationEvaluator = defaultEvaluation) {
   let state = initialState(scenario);
   for (const entry of history) {
     const event = currentEvent(scenario, state);
@@ -26,3 +26,4 @@ export function negotiateHistory(scenario: Scenario, history: readonly HistoryEn
     completed: !activeEvent,
   });
 }
+

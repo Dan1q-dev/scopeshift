@@ -31,9 +31,9 @@ describe("simulation API", () => {
     expect(result.turns[0].action.kind).toBe("clarify");
     expect(result.turns[0].agreement).toBeNull();
     expect(response.headers.get("X-ScopeShift-Interpreter")).toBe("rules-v1");
-    expect(response.headers.get("X-ScopeShift-Evaluation")).toBe("pending");
+    expect(response.headers.get("X-ScopeShift-Evaluation")).toBe("evidence-v2");
     expect(response.headers.get("Cache-Control")).toBe("no-store");
-    expect(result.evaluation.criteria).toEqual([]);
+    expect(result.evaluation.criteria.length).toBeGreaterThan(0);
   });
 
   it("applies a real accepted change once and rejects changing an existing turn", async () => {
@@ -67,3 +67,4 @@ describe("simulation API", () => {
     expect((await getScenario(new Request("http://localhost"), { params: Promise.resolve({ scenarioId: "missing" }) })).status).toBe(404);
   });
 });
+

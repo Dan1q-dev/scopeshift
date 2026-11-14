@@ -1,3 +1,9 @@
+# Current production adapter
+
+The active evaluator is evidence-v2 in simulation-evaluator.ts, connected through simulation/evaluation-port.ts. It awards one point only for an applicable rule actually present in the current scenario event, with a recorded user action and reconstructed engine evidence. The no-fee equal-effort exchange can earn economic_decision credit; arbitrary free work is not automatically a mistake. Inquiry credit proves a question was asked, not that requirements were resolved. See EVALUATOR_INTEGRATION_QA.md for coverage and limitations.
+
+The original ten-criterion observation rubric below remains a proposed adapter design, not the active HTTP scoring algorithm. Do not mix the two score scales.
+
 # Evidence-based evaluation v0.1
 
 Each dimension has two equal binary criteria, listed in `src/lib/evaluation/index.ts`. Display 0-4 only when all applicable criteria have evidence. Each met criterion earns 2 points when both apply; one applicable criterion yields 0 or 4. This is a transparent teaching rubric, not a validated psychometric instrument. Do not display a single overall percentage.
@@ -19,3 +25,4 @@ Only a server adapter may create observations. It must validate the transcript/e
 ## Release acceptance
 
 Identical validated input produces deeply identical output. Empty logs yield null scores. Every strength/mistake carries evidence and practical advice. Duplicate criteria, unknown event references and mismatched dimensions fail closed. No points for more money alone, aggressive language, length, politeness proxies or hidden constraints. Two reviewers must independently map annotated transcripts to the rubric and resolve disagreements before calling the rubric calibrated.
+

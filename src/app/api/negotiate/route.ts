@@ -1,3 +1,4 @@
+import { EVALUATOR_VERSION } from "@/lib/evaluation/simulation-evaluator";
 import { findScenario } from "@/lib/simulation/scenarios";
 import { INTERPRETER_VERSION } from "@/lib/ai/rules-interpreter";
 import { EngineHistoryError } from "@/lib/simulation/engine";
@@ -57,7 +58,7 @@ export async function POST(request: Request) {
         "Cache-Control": "no-store",
         "Vary": "Cookie",
         "X-ScopeShift-Interpreter": INTERPRETER_VERSION,
-        "X-ScopeShift-Evaluation": "pending",
+        "X-ScopeShift-Evaluation": EVALUATOR_VERSION,
         "X-ScopeShift-Scenario-Revision": scenarioRevision(scenario).slice(0, 16),
         "Set-Cookie": simulationSessions.cookie(session, new URL(request.url).protocol === "https:"),
       },
@@ -69,3 +70,4 @@ export async function POST(request: Request) {
     return error(500, "INTERNAL_ERROR", "The simulation could not process this turn. Please try again.");
   }
 }
+
