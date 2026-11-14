@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getScenario, getScenarios, negotiate } from "@/lib/client/api";
+import { getScenario, getScenarios, getSessionMode, negotiate, type InterpreterMode } from "@/lib/client/api";
 import { describeError } from "@/lib/client/negotiation";
 import { loadSession, newAttempt, saveSession, type Attempt, type Session } from "@/lib/client/session";
 import type { HistoryEntry, PublicScenario } from "@/types/scope";
@@ -10,6 +10,7 @@ type Pending = { attemptId: string; history: HistoryEntry[]; message: string | n
 
 export function useSimulation() {
   const [scenario, setScenario] = useState<PublicScenario | null>(null);
+  const [interpreterMode, setInterpreterMode] = useState<InterpreterMode | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
@@ -17,23 +18,30 @@ export function useSimulation() {
   const [pending, setPending] = useState<Pending | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
   const scenarioRef = useRef<PublicScenario | null>(null);
+  const requestRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
     (async () => {
       try {
-        const [first] = await getScenarios(controller.signal);
+        const [scenarios, mode] = await Promise.all([getScenarios(controller.signal), getSessionMode(controller.signal)]);
+        const [first] = scenarios;
         if (!first) throw new Error("No scenarios are available.");
         const loaded = await getScenario(first.id, controller.signal);
+        if (controller.signal.aborted) return;
         scenarioRef.current = loaded;
         setScenario(loaded);
+        setInterpreterMode(mode);
         setSession(loadSession(loaded.id));
         setLoadError(null);
       } catch (error) {
         if (!controller.signal.aborted) setLoadError(describeError(error));
       }
     })();
-    return () => controller.abort();
+    return () => {
+      controller.abort();
+      requestRef.current?.abort();
+    };
   }, [reloadKey]);
 
   const update = useCallback((next: Session) => {
@@ -44,17 +52,23 @@ export function useSimulation() {
   const submit = useCallback(async (base: Session, job: Pending) => {
     const current = scenarioRef.current;
     if (!current) return;
+    const controller = new AbortController();
+    requestRef.current = controller;
     setSending(true);
     setFailed(null);
     setPending(job);
     try {
-      const response = await negotiate({ scenarioId: current.id, history: job.history });
+      const response = await negotiate({ scenarioId: current.id, history: job.history }, controller.signal);
+      if (controller.signal.aborted) return;
       update({ ...base, attempts: base.attempts.map((attempt) => (attempt.id === job.attemptId ? { ...attempt, history: job.history, response } : attempt)) });
     } catch (error) {
-      setFailed({ ...job, error: describeError(error) });
+      if (!controller.signal.aborted) setFailed({ ...job, error: describeError(error) });
     } finally {
-      setPending(null);
-      setSending(false);
+      if (requestRef.current === controller) requestRef.current = null;
+      if (!controller.signal.aborted) {
+        setPending(null);
+        setSending(false);
+      }
     }
   }, [update]);
 
@@ -89,7 +103,7 @@ export function useSimulation() {
   }, [session, sending, update]);
 
   return {
-    scenario, session, active, currentEventId, loadError, sending, failed,
+    scenario, interpreterMode, session, active, currentEventId, loadError, sending, failed,
     pendingMessage: pending && pending.attemptId === active?.id ? pending.message : null,
     send, retry, replayFrom, selectAttempt,
     startOver: () => replayFrom(0),
