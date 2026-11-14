@@ -20,6 +20,8 @@
 - Арсен: https://github.com/Dan1q-dev/scopeshift/blob/main/docs/tasks/arsen.md
 - Альбина: https://github.com/Dan1q-dev/scopeshift/blob/main/docs/tasks/albina.md
 
-Сначала прочитайте AGENTS.md и docs/API_CONTRACT.md. Типы и API общие, чужие зоны файлов не переписываем. Каталог и сценарий доступны через GET API, переговоры пока возвращают 501. Не выдаем fixtures за работающий AI.
+Backend-подключение подготовлено в `feat/backend-simulation`: engine и POST с HTTP 200, без live LLM и evaluator. `main` пока остается прежним каркасом. После слияния PR подтяните `origin/main` в свои ветки. Инструкция в backend-ветке: https://github.com/Dan1q-dev/scopeshift/blob/feat/backend-simulation/docs/BACKEND_INTEGRATION.md
+
+Сначала прочитайте AGENTS.md и docs/API_CONTRACT.md. Типы и API общие, чужие зоны файлов не переписываем. Не выдаем fixtures или `rules-v1` за живой AI.
 
 Первый приоритет: соединить один полный сценарий. Отпишитесь в чат, когда проект запустится и будет первый небольшой PR.

@@ -1,10 +1,15 @@
 import { findScenario } from "@/lib/simulation/scenarios";
+import { INTERPRETER_VERSION } from "@/lib/ai/rules-interpreter";
+import { EngineHistoryError } from "@/lib/simulation/engine";
+import { negotiateHistory } from "@/lib/simulation/negotiate";
+import { scenarioRevision, simulationSessions, SimulationRequestError } from "@/lib/simulation/session-store";
 import { negotiateRequestSchema, type ApiError } from "@/types/scope";
 
+export const runtime = "nodejs";
 const MAX_BODY_BYTES = 131_072;
 
 function error(status: number, code: ApiError["error"]["code"], message: string) {
-  return Response.json({ error: { code, message } } satisfies ApiError, { status });
+  return Response.json({ error: { code, message } } satisfies ApiError, { status, headers: { "Cache-Control": "no-store", ...(status === 429 ? { "Retry-After": "60" } : {}) } });
 }
 
 export async function POST(request: Request) {
@@ -42,6 +47,25 @@ export async function POST(request: Request) {
     return error(400, "INVALID_HISTORY", "History contains an unknown event.");
   }
 
-  // Foundation only. Danila implements interpretation, deterministic replay and evaluation.
-  return error(501, "NOT_IMPLEMENTED", "Negotiation engine is not implemented yet.");
+  try {
+    const session = simulationSessions.acquire(request.headers.get("cookie"));
+    simulationSessions.validate(session, scenario, parsed.data.history);
+    const result = negotiateHistory(scenario, parsed.data.history);
+    simulationSessions.commit(session, scenario, parsed.data.history);
+    return Response.json(result, {
+      headers: {
+        "Cache-Control": "no-store",
+        "Vary": "Cookie",
+        "X-ScopeShift-Interpreter": INTERPRETER_VERSION,
+        "X-ScopeShift-Evaluation": "pending",
+        "X-ScopeShift-Scenario-Revision": scenarioRevision(scenario).slice(0, 16),
+        "Set-Cookie": simulationSessions.cookie(session, new URL(request.url).protocol === "https:"),
+      },
+    });
+  } catch (cause) {
+    if (cause instanceof SimulationRequestError) return error(cause.status, cause.code, cause.message);
+    if (cause instanceof EngineHistoryError) return error(400, "INVALID_HISTORY", cause.message);
+    console.error("ScopeShift negotiation failed", cause instanceof Error ? cause.name : "UnknownError");
+    return error(500, "INTERNAL_ERROR", "The simulation could not process this turn. Please try again.");
+  }
 }
