@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   apiErrorSchema,
+  attemptsResponseSchema,
   negotiateRequestSchema,
   negotiateResponseSchema,
   publicScenarioSchema,
@@ -36,16 +37,17 @@ export async function getScenario(scenarioId: string, signal?: AbortSignal) {
 
 // Share concurrent initialization so first requests receive the same cookie
 // before any paid interpretation. A failed/lost bootstrap has no provider cost.
-const sessionInfoSchema = z.object({ mode: z.enum(["rules", "openai"]) });
+const sessionInfoSchema = z.object({ mode: z.enum(["rules", "openai"]), historyStorage: z.enum(["postgres", "browser"]).default("browser") });
+export type SessionInfo = z.infer<typeof sessionInfoSchema>;
 export type InterpreterMode = z.infer<typeof sessionInfoSchema>["mode"];
-let sessionBootstrap: Promise<InterpreterMode> | undefined;
+let sessionBootstrap: Promise<SessionInfo> | undefined;
 
-export async function getSessionMode(signal?: AbortSignal): Promise<InterpreterMode> {
+export async function getSessionInfo(signal?: AbortSignal): Promise<SessionInfo> {
   signal?.throwIfAborted();
   if (!sessionBootstrap) {
     sessionBootstrap = (async () => {
       const result = await readResponse(await fetch("/api/session", { cache: "no-store" }), sessionInfoSchema);
-      return result.mode;
+      return result;
     })().finally(() => { sessionBootstrap = undefined; });
   }
   if (!signal) return sessionBootstrap;
@@ -61,6 +63,16 @@ export async function getSessionMode(signal?: AbortSignal): Promise<InterpreterM
       reject(error);
     });
   });
+}
+
+export async function getSessionMode(signal?: AbortSignal): Promise<InterpreterMode> {
+  return (await getSessionInfo(signal)).mode;
+}
+
+/** The caller must initialize the session first so this GET uses the same identity. */
+export async function getSavedAttempts(scenarioId: string, signal?: AbortSignal) {
+  const result = await readResponse(await fetch(`/api/attempts?scenarioId=${encodeURIComponent(scenarioId)}`, { cache: "no-store", signal }), attemptsResponseSchema);
+  return result.attempts;
 }
 
 export async function negotiate(request: NegotiateRequest, signal?: AbortSignal) {

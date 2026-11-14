@@ -1,0 +1,10 @@
+.git
+node_modules
+.next
+.env*
+.scopeshift
+artifacts
+coverage
+test-results
+playwright-report
+*.log

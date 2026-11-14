@@ -1,16 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getScenario, getScenarios, getSessionMode, negotiate, type InterpreterMode } from "@/lib/client/api";
+import { getScenario, getScenarios, getSessionInfo, getSavedAttempts, negotiate, type InterpreterMode } from "@/lib/client/api";
 import { describeError } from "@/lib/client/negotiation";
 import { loadSession, newAttempt, saveSession, type Attempt, type Session } from "@/lib/client/session";
-import type { HistoryEntry, PublicScenario } from "@/types/scope";
+import type { HistoryEntry, PublicScenario, ServerAttempt } from "@/types/scope";
 
 type Pending = { attemptId: string; history: HistoryEntry[]; message: string | null };
 
 export function useSimulation() {
   const [scenario, setScenario] = useState<PublicScenario | null>(null);
   const [interpreterMode, setInterpreterMode] = useState<InterpreterMode | null>(null);
+  const [historyWarning, setHistoryWarning] = useState<string | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
@@ -19,20 +20,35 @@ export function useSimulation() {
   const [reloadKey, setReloadKey] = useState(0);
   const scenarioRef = useRef<PublicScenario | null>(null);
   const requestRef = useRef<AbortController | null>(null);
+  const serverHistoryRef = useRef(false);
 
   useEffect(() => {
     const controller = new AbortController();
     (async () => {
       try {
-        const [scenarios, mode] = await Promise.all([getScenarios(controller.signal), getSessionMode(controller.signal)]);
+        const [scenarios, info] = await Promise.all([getScenarios(controller.signal), getSessionInfo(controller.signal)]);
         const [first] = scenarios;
         if (!first) throw new Error("No scenarios are available.");
         const loaded = await getScenario(first.id, controller.signal);
+        let saved: ServerAttempt[] = [];
+        let warning: string | null = null;
+        if (info.historyStorage === "postgres") {
+          try {
+            saved = await getSavedAttempts(loaded.id, controller.signal);
+          } catch {
+            if (controller.signal.aborted) return;
+            warning = "Saved server history could not be loaded. Browser attempts are still available; reload to retry.";
+          }
+        }
         if (controller.signal.aborted) return;
         scenarioRef.current = loaded;
+        serverHistoryRef.current = info.historyStorage === "postgres";
         setScenario(loaded);
-        setInterpreterMode(mode);
-        setSession(loadSession(loaded.id));
+        setInterpreterMode(info.mode);
+        setHistoryWarning(warning);
+        const restored = loadSession(loaded.id, saved);
+        setSession(restored);
+        saveSession(loaded.id, restored);
         setLoadError(null);
       } catch (error) {
         if (!controller.signal.aborted) setLoadError(describeError(error));
@@ -58,7 +74,7 @@ export function useSimulation() {
     setFailed(null);
     setPending(job);
     try {
-      const response = await negotiate({ scenarioId: current.id, history: job.history }, controller.signal);
+      const response = await negotiate({ scenarioId: current.id, history: job.history, ...(serverHistoryRef.current ? { attemptId: job.attemptId } : {}) }, controller.signal);
       if (controller.signal.aborted) return;
       update({ ...base, attempts: base.attempts.map((attempt) => (attempt.id === job.attemptId ? { ...attempt, history: job.history, response } : attempt)) });
     } catch (error) {
@@ -103,7 +119,7 @@ export function useSimulation() {
   }, [session, sending, update]);
 
   return {
-    scenario, interpreterMode, session, active, currentEventId, loadError, sending, failed,
+    scenario, interpreterMode, historyWarning, session, active, currentEventId, loadError, sending, failed,
     // A reply that failed to send stays visible next to the error until it is sent again.
     pendingMessage: [pending, failed].find((job) => job && job.attemptId === active?.id)?.message ?? null,
     send, retry, replayFrom, selectAttempt,

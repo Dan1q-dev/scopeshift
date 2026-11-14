@@ -9,7 +9,7 @@ export function GET(request: Request) {
   try {
     const config = readAiConfig();
     const identity = config.mode === "openai" ? signedSession(request.headers.get("cookie"), config.sessionSecret) : null;
-    return Response.json({ mode: config.mode }, { headers: {
+    return Response.json({ mode: config.mode, historyStorage: config.mode === "openai" && config.storage.kind === "postgres" ? "postgres" : "browser" }, { headers: {
       "Cache-Control": "no-store",
       "Vary": "Cookie",
       ...(identity ? { "Set-Cookie": signedSessionCookie(identity, new URL(request.url).protocol === "https:") } : {}),
