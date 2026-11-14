@@ -2,6 +2,7 @@ import { findScenario } from "@/lib/simulation/scenarios";
 import { INTERPRETER_VERSION } from "@/lib/ai/rules-interpreter";
 import { AiConfigurationError, readAiConfig } from "@/lib/ai/config";
 import { createOpenAIInterpreter, OPENAI_INTERPRETER_VERSION, OpenAIProviderError } from "@/lib/ai/openai-interpreter";
+import { createOpenAIClientReplyGenerator, OPENAI_REPLY_VERSION } from "@/lib/ai/openai-client-reply";
 import { ENGINE_VERSION, EngineHistoryError } from "@/lib/simulation/engine";
 import { negotiateHistory } from "@/lib/simulation/negotiate";
 import { negotiateWithLlm } from "@/lib/simulation/llm-negotiate";
@@ -63,23 +64,35 @@ export async function POST(request: Request) {
     const config = readAiConfig();
     const identity = config.mode === "openai" ? signedSession(request.headers.get("cookie"), config.sessionSecret) : null;
     const session = simulationSessions.acquire(request.headers.get("cookie"), identity?.id);
-    const interpreterVersion = config.mode === "openai" ? `${OPENAI_INTERPRETER_VERSION}:${config.model}:${ENGINE_VERSION}` : INTERPRETER_VERSION;
+    const interpreterVersion = config.mode === "openai"
+      ? `${OPENAI_INTERPRETER_VERSION}:${OPENAI_REPLY_VERSION}:${config.model}:${ENGINE_VERSION}`
+      : INTERPRETER_VERSION;
     cookie = identity ? signedSessionCookie(identity, new URL(request.url).protocol === "https:") : simulationSessions.cookie(session, new URL(request.url).protocol === "https:");
     if (identity && !identity.established) return error(409, "INVALID_HISTORY", "Initialize the anonymous session with GET /api/session before sending a negotiation turn.", cookie);
     simulationSessions.validate(session, scenario, parsed.data.history, interpreterVersion);
     let modelCalls = 0;
-    const interpret = config.mode === "openai" ? createOpenAIInterpreter(config) : null;
-    const result = config.mode === "rules" ? negotiateHistory(scenario, parsed.data.history, evaluateSimulation) : await negotiateWithLlm(scenario, parsed.data.history, {
-      scope: identity!.id,
-      version: interpreterVersion,
-      store: createReplayStore(config),
-      interpret: async (context) => {
-        if (config.storage.kind === "postgres") await reserveAiCall(getDatabasePool(config.storage.connectionString), config.dailyAiCallLimit);
-        modelCalls += 1;
-        return interpret!(context);
-      },
-      evaluate: evaluateSimulation,
-    });
+    const result = config.mode === "rules"
+      ? negotiateHistory(scenario, parsed.data.history, evaluateSimulation)
+      : await (() => {
+        const openaiConfig = config;
+        const interpret = createOpenAIInterpreter(openaiConfig);
+        const generateReply = createOpenAIClientReplyGenerator(openaiConfig);
+        const runMeteredCall = async <T>(call: () => Promise<T>): Promise<T> => {
+          if (openaiConfig.storage.kind === "postgres") {
+            await reserveAiCall(getDatabasePool(openaiConfig.storage.connectionString), openaiConfig.dailyAiCallLimit);
+          }
+          modelCalls += 1;
+          return call();
+        };
+        return negotiateWithLlm(scenario, parsed.data.history, {
+          scope: identity!.id,
+          version: interpreterVersion,
+          store: createReplayStore(openaiConfig),
+          interpret: (context) => runMeteredCall(() => interpret(context)),
+          reply: (context) => runMeteredCall(() => generateReply(context)),
+          evaluate: evaluateSimulation,
+        });
+      })();
     if (config.mode === "openai" && config.storage.kind === "postgres" && parsed.data.attemptId) {
       await new PostgresAttemptStore(getDatabasePool(config.storage.connectionString)).save(identity!.id, scenario.id, parsed.data.attemptId, parsed.data.history, result);
     }

@@ -1,4 +1,4 @@
-import { evaluationResultSchema, type EvaluationResult } from "@/types/scope";
+import { evaluationResultSchema, negotiationTurnSchema, type EvaluationResult } from "@/types/scope";
 import type { SimulationEvaluator } from "@/lib/simulation/evaluation-port";
 import { initialState, processTurn } from "@/lib/simulation/engine";
 
@@ -14,7 +14,7 @@ function boundedEvidence(value: string) {
  * Each emitted criterion is one observable check worth one point. Missing checks
  * are unassessed; consumers must not turn the returned subset into an overall grade.
  */
-export const evaluateSimulation: SimulationEvaluator = ({ scenario, turns, project }) => {
+export const evaluateSimulation: SimulationEvaluator = ({ scenario, turns, project, allowGeneratedClientReply }) => {
   const criteria: EvaluationResult["criteria"] = [];
   const strengths: string[] = [];
   const improvements: string[] = [];
@@ -23,7 +23,14 @@ export const evaluateSimulation: SimulationEvaluator = ({ scenario, turns, proje
     const before = snapshot.project;
     snapshot = processTurn(scenario, snapshot, { ...turn, action: turn.action });
     const verified = snapshot.turns.at(-1)!;
-    if (JSON.stringify(verified) !== JSON.stringify(turn)) throw new Error("Unverified evaluation turn");
+    if (allowGeneratedClientReply) {
+      if (!negotiationTurnSchema.safeParse(turn).success) throw new Error("Unverified evaluation turn");
+      if (JSON.stringify({ ...verified, clientReply: turn.clientReply }) !== JSON.stringify(turn)) {
+        throw new Error("Unverified evaluation turn");
+      }
+    } else if (JSON.stringify(verified) !== JSON.stringify(turn)) {
+      throw new Error("Unverified evaluation turn");
+    }
     const event = scenario.events.find(e => e.id === turn.eventId)!;
     const add = (category: EvaluationResult["criteria"][number]["category"], ruleId: string, observation: string, advice: string) => {
       const rule = event.clientRules.evaluationRules.find(r => r.id === ruleId && r.category === category);

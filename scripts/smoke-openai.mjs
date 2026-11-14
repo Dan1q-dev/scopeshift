@@ -13,7 +13,7 @@ async function post(history, expectedCalls, expectedStatus = 200) {
   const result = await response.json();
   assert.equal(response.status, expectedStatus, JSON.stringify(result));
   if (expectedStatus === 200) {
-    assert.equal(response.headers.get("x-scopeshift-interpreter"), "openai-v1");
+    assert.equal(response.headers.get("x-scopeshift-interpreter"), "openai-v2");
     assert.equal(response.headers.get("x-scopeshift-openai-calls"), String(expectedCalls));
     assert.equal(response.headers.get("x-scopeshift-evaluation"), "evidence-v2");
   }
@@ -32,21 +32,21 @@ if (process.argv.includes("--retry")) {
   cookie = session.headers.get("set-cookie").split(";")[0];
   const entry = (eventId, userMessage) => ({ turnId: crypto.randomUUID(), eventId, userMessage });
   const history = [entry("booking-request", "I propose adding consultation booking for an additional four hundred dollars, with delivery on day nine.")];
-  const paid = await post(history, 1);
+  const paid = await post(history, 2);
   assert.equal(paid.turns[0].agreement?.status, "accepted");
   assert.deepEqual([paid.project.totalFeeCents, paid.project.estimatedHours, paid.project.deadlineDays], [190_000, 26, 9]);
   assert.deepEqual(await post(history, 0), paid);
   await post([{ ...history[0], userMessage: "I will add it for free." }], undefined, 409);
   history.push(entry("earlier-delivery", "I can bring delivery forward from day nine to day seven for another one hundred and fifty dollars."));
-  const rushed = await post(history, 1);
+  const rushed = await post(history, 2);
   assert.equal(rushed.turns.at(-1).agreement?.status, "accepted");
   history.push(entry("scope-swap", "Let's exchange the four-hour portfolio gallery for the four-hour testimonials section. Keep the fee and delivery day unchanged."));
-  const result = await post(history, 1);
+  const result = await post(history, 2);
   assert.equal(result.completed, true);
   assert.deepEqual([result.project.totalFeeCents, result.project.estimatedHours, result.project.deadlineDays], [205_000, 26, 7]);
   assert.equal(result.project.effectiveHourlyRateCents, 7_885);
   assert.equal(result.evaluation.criteria.reduce((sum, criterion) => sum + criterion.earnedPoints, 0), 9);
-  const question = await post([entry("booking-request", "Before I commit, which details would visitors need to provide when booking?")], 1);
+  const question = await post([entry("booking-request", "Before I commit, which details would visitors need to provide when booking?")], 2);
   assert.equal(question.turns[0].action.kind, "clarify");
   assert.equal(question.project.totalFeeCents, 150_000);
   assert.equal(question.turns[0].agreement, null);
