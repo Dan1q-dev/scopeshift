@@ -129,7 +129,7 @@ export function practiceSuggestion(request: Pick<RealClientRequest, "impact" | "
     return { title: "Practice trading scope", focus: "Request 3 of 3", body: "Practice Mode includes a request to swap part of the agreed work at the same price and date. It rehearses exactly this kind of exchange." };
   }
   if (request.review?.items.some((item) => item.classification === "ambiguous" || item.classification === "not_specified")) {
-    return { title: "Practice asking before you commit", focus: "Request 1 of 3", body: "Practice Mode starts with a booking request the contract does not describe. You rehearse asking clarifying questions and pricing extra work before agreeing." };
+    return { title: "Practice asking before you commit", focus: "Request 1 of 3", body: "Practice Mode starts with a booking request; the practice agreement does not include appointment scheduling. You rehearse asking clarifying questions and pricing extra work before agreeing." };
   }
   return { title: "Practice pricing a change request", focus: "Request 1 of 3", body: "Practice Mode lets you answer a client who asks for more, then shows what your answer did to your hourly rate." };
 }

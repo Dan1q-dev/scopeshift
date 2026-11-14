@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { formatDate, formatHours, formatRate, formatSignedUsd, formatUsd, practiceSuggestion, type StepState } from "@/lib/client/real-project-ui";
 import type { ChangeOrder, DraftStyle, NegotiationDraft, RealClientRequest } from "@/types/real-project";
 import { checkboxClass, CopyButton, fieldClass, primaryClass, SectionCard, secondaryClass, Spinner } from "./ui";
+import { DocumentIcon, GraduationIcon, PlusIcon, RefreshIcon, SaveIcon, SparkIcon } from "./icons";
 
 const tones: { value: DraftStyle; label: string; hint: string }[] = [
   { value: "friendly", label: "Friendly and collaborative", hint: "Warm, relationship first" },
@@ -91,7 +92,7 @@ function DraftEditor({ draft, disabled, snippets, onSave, onDirtyChange }: {
           onKeyDown={(event) => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") { event.preventDefault(); if (canSave) onSave(edit.draft, body); } }} />
       </label>
       <div className="flex flex-wrap items-center gap-2">
-        <button type="button" className={secondaryClass} disabled={!canSave} onClick={() => onSave(edit.draft, body)}>Save edited draft</button>
+        <button type="button" className={secondaryClass} disabled={!canSave} onClick={() => onSave(edit.draft, body)}><SaveIcon className="h-4 w-4" />Save edited draft</button>
         <CopyButton text={body} label="Copy response" />
         {dirty && <button type="button" className="text-xs text-slate-400 underline-offset-2 hover:underline" onClick={() => setEdit({ draft, body: draft.body })}>Discard edits</button>}
         <span className="tabular ml-auto text-xs text-slate-500">{words} words / {body.length.toLocaleString()} of 12,000 characters</span>
@@ -203,9 +204,9 @@ export function ResponseStudio(props: {
         </label>
       </fieldset>
       <div className="flex flex-wrap gap-3">
-        <button type="button" className={primaryClass} disabled={proposalLocked || !props.consent} onClick={props.onGenerate}>{props.generating && <Spinner />}Generate draft</button>
-        <button type="button" className={secondaryClass} disabled={props.locked} onClick={props.onRefreshDrafts}>Refresh saved drafts</button>
-        <button type="button" className={secondaryClass} disabled={proposalLocked} onClick={props.onPrepareNewDraft}>Prepare a new draft</button>
+        <button type="button" className={primaryClass} disabled={proposalLocked || !props.consent} onClick={props.onGenerate}>{props.generating ? <Spinner /> : <SparkIcon className="h-4 w-4" />}Generate draft</button>
+        <button type="button" className={secondaryClass} disabled={props.locked} onClick={props.onRefreshDrafts}><RefreshIcon className="h-4 w-4" />Refresh saved drafts</button>
+        <button type="button" className={secondaryClass} disabled={proposalLocked} onClick={props.onPrepareNewDraft}><PlusIcon className="h-4 w-4" />Prepare a new draft</button>
       </div>
 
       {currentDrafts.length > 0 && (
@@ -238,12 +239,12 @@ export function ResponseStudio(props: {
 
       <div className="space-y-3 border-t border-white/10 pt-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h3 className="m-0 text-base font-semibold">Proposed Change Order</h3>
+          <h3 className="m-0 flex items-center gap-2 text-base font-semibold"><DocumentIcon className="h-4 w-4 text-amber-300" />Proposed Change Order</h3>
           <span className="rounded-full border border-amber-300/30 px-2 py-0.5 text-[11px] text-amber-200">Proposed, not accepted</span>
         </div>
         {props.changeOrder ? (
           <>
-            <pre className="paper m-0 max-h-96 overflow-auto rounded-xl border border-white/10 p-4 font-mono text-[13px] leading-6 whitespace-pre-wrap break-words text-slate-300">{props.changeOrder.body}</pre>
+            <pre className="paper m-0 max-h-96 overflow-auto rounded-xl border border-white/10 p-4 font-mono text-xs leading-5 sm:text-[13px] sm:leading-6 whitespace-pre-wrap break-words text-slate-300">{props.changeOrder.body}</pre>
             <CopyButton text={props.changeOrder.body} label="Copy proposed Change Order" />
           </>
         ) : (
@@ -257,7 +258,7 @@ export function ResponseStudio(props: {
           <p className="m-0 mt-1 text-sm font-medium">{practice.title}</p>
           <p className="m-0 mt-1 max-w-xl text-xs leading-5 text-slate-400">{practice.body} The practice project is fictional; your agreement and client message are not transferred.</p>
         </div>
-        <Link href="/simulation" className={`${secondaryClass} shrink-0`}>Practice negotiating a change request</Link>
+        <Link href="/simulation" className={`${secondaryClass} shrink-0`}><GraduationIcon className="h-4 w-4" />Practice negotiating a change request</Link>
       </aside>
     </SectionCard>
   );

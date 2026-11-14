@@ -10,8 +10,8 @@ const steps = [
 
 const problems = [
   { title: "\"It's just a small change\"", text: "Extra requests arrive after the price is agreed. Each one looks minor. Together they turn a fair project into unpaid work." },
-  { title: "Nobody teaches the conversation", text: "Contract templates and blog posts explain what to say. They do not let you practice saying it to a client who pushes back." },
-  { title: "Mistakes are paid in real money", text: "Today the only place to practice is a live project, where a poor answer costs hours you never invoice." },
+  { title: "Practice before the real conversation", text: "Rehearse client pushback, review your decisions, and try another reply before using it with a client." },
+  { title: "Mistakes are paid in real money", text: "On a live project, a poor answer can cost hours you never invoice." },
 ];
 
 const highlights = ["3 client requests", "Contract math after every reply", "Replay any decision"];

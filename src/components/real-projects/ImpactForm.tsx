@@ -7,7 +7,8 @@ import {
   type ImpactFormValues, type StepState,
 } from "@/lib/client/real-project-ui";
 import { scopeClassificationLabels, type FinancialImpact, type FinancialImpactInput, type RealClientRequest } from "@/types/real-project";
-import { checkboxClass, fieldClass, primaryClass, quietButton, SectionCard, Spinner } from "./ui";
+import { accentStyle, checkboxClass, fieldClass, primaryClass, quietButton, SectionCard, Spinner } from "./ui";
+import { CalculatorIcon, CalendarIcon, ClockIcon, DollarIcon, GaugeIcon, PlusIcon } from "./icons";
 
 function deltaTone(value: number, higherIsBetter: boolean) {
   if (value === 0) return "text-slate-500";
@@ -20,26 +21,26 @@ function Comparison({ impact }: { impact: FinancialImpact }) {
   const rateDelta = impact.updatedEffectiveHourlyRateCents - impact.originalEffectiveHourlyRateCents;
   const days = daysBetween(impact.originalDeadline, impact.proposedDeadline);
   const rows = [
-    { label: "Total fee", from: formatUsd(impact.originalFeeCents), to: formatUsd(impact.proposedFeeCents), delta: formatSignedUsd(feeDelta), tone: deltaTone(feeDelta, true) },
-    { label: "Estimated effort", from: formatHours(impact.originalEstimatedHours), to: formatHours(impact.updatedEstimatedHours), delta: formatSignedHours(impact.netAdditionalHours), tone: "text-slate-400" },
-    { label: "Revenue per hour", from: formatRate(impact.originalEffectiveHourlyRateCents), to: formatRate(impact.updatedEffectiveHourlyRateCents), delta: formatSignedRate(rateDelta), tone: deltaTone(rateDelta, true) },
-    { label: "Delivery", from: formatDate(impact.originalDeadline), to: formatDate(impact.proposedDeadline), delta: formatSignedDays(days), tone: "text-slate-400" },
+    { label: "Total fee", icon: <DollarIcon className="h-3.5 w-3.5" />, accent: "52 211 153", from: formatUsd(impact.originalFeeCents), to: formatUsd(impact.proposedFeeCents), delta: formatSignedUsd(feeDelta), tone: deltaTone(feeDelta, true) },
+    { label: "Estimated effort", icon: <ClockIcon className="h-3.5 w-3.5" />, accent: "56 189 248", from: formatHours(impact.originalEstimatedHours), to: formatHours(impact.updatedEstimatedHours), delta: formatSignedHours(impact.netAdditionalHours), tone: "text-slate-400" },
+    { label: "Revenue per hour", icon: <GaugeIcon className="h-3.5 w-3.5" />, accent: "167 139 250", from: formatRate(impact.originalEffectiveHourlyRateCents), to: formatRate(impact.updatedEffectiveHourlyRateCents), delta: formatSignedRate(rateDelta), tone: deltaTone(rateDelta, true) },
+    { label: "Delivery", icon: <CalendarIcon className="h-3.5 w-3.5" />, accent: "251 191 36", from: formatDate(impact.originalDeadline), to: formatDate(impact.proposedDeadline), delta: formatSignedDays(days), tone: "text-slate-400" },
   ];
   const max = Math.max(impact.originalEffectiveHourlyRateCents, impact.updatedEffectiveHourlyRateCents, 1);
   return (
     <div className="space-y-4">
-      <table className="w-full border-collapse text-sm">
-        <thead><tr className="text-left text-[11px] uppercase tracking-wider text-slate-500"><th className="pb-2 font-medium">Term</th><th className="pb-2 font-medium">Original</th><th className="pb-2 font-medium">Proposed</th></tr></thead>
-        <tbody>
-          {rows.map((row) => (
-            <tr key={row.label} className="border-t border-white/5 align-top">
-              <th scope="row" className="py-2 pr-2 text-left font-normal text-slate-400">{row.label}</th>
-              <td className="tabular py-2 pr-2 text-slate-400">{row.from}</td>
-              <td className="tabular py-2"><span key={row.to} className="value-flash font-semibold text-slate-100">{row.to}</span><span className={`block text-xs ${row.tone}`}>{row.delta}</span></td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <dl className="m-0 grid grid-cols-2 gap-2">
+        {rows.map((row) => (
+          <div key={row.label} className="rounded-xl border border-white/10 bg-black/30 p-3" style={accentStyle(row.accent)}>
+            <dt className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-slate-500"><span className="accent-text">{row.icon}</span>{row.label}</dt>
+            <dd className="m-0 mt-1">
+              <span className="tabular block text-xs text-slate-500 line-through decoration-slate-600"><span className="sr-only">Original: </span>{row.from}</span>
+              <span key={row.to} className="value-flash tabular block font-semibold text-slate-100"><span className="sr-only">Proposed: </span>{row.to}</span>
+              <span className={`tabular block text-xs ${row.tone}`}>{row.delta}</span>
+            </dd>
+          </div>
+        ))}
+      </dl>
       <div className="space-y-1.5" aria-hidden="true">
         {[{ label: "Original", value: impact.originalEffectiveHourlyRateCents, className: "bg-slate-500/60" }, { label: "Proposed", value: impact.updatedEffectiveHourlyRateCents, className: rateDelta >= 0 ? "bg-emerald-400" : "bg-rose-400" }].map((bar) => (
           <div key={bar.label} className="grid grid-cols-[4.5rem_1fr] items-center gap-2 text-[11px] text-slate-500">
@@ -113,7 +114,7 @@ export function ImpactForm({ request, state, disabled, calculating, onCalculate 
             <div className="space-y-3 rounded-xl border border-white/10 p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className="m-0 text-sm font-medium">Work removed from the original agreement</p>
-                <button type="button" className={quietButton} disabled={values.removedScope.length >= 20} onClick={() => set("removedScope", [...values.removedScope, { description: "", estimatedHours: "" }])}><span aria-hidden="true">+</span>Add removed task</button>
+                <button type="button" className={quietButton} disabled={values.removedScope.length >= 20} onClick={() => set("removedScope", [...values.removedScope, { description: "", estimatedHours: "" }])}><PlusIcon className="h-4 w-4" />Add removed task</button>
               </div>
               {values.removedScope.length === 0 && <p className="m-0 text-xs text-slate-500">No deliverables removed. Add one for a scope swap.</p>}
               {values.removedScope.map((item, index) => (
@@ -158,7 +159,7 @@ export function ImpactForm({ request, state, disabled, calculating, onCalculate 
                 <span>I checked these estimates and the selected scope. These are proposed terms, pending client agreement.</span>
               </label>
               {submitMessage && <p role="alert" className="m-0 text-xs text-rose-200">{submitMessage}</p>}
-              <button className={primaryClass} disabled={!checked || values.selected.length === 0} type="submit">{calculating && <Spinner />}Calculate proposed impact</button>
+              <button className={primaryClass} disabled={!checked || values.selected.length === 0} type="submit">{calculating ? <Spinner /> : <CalculatorIcon className="h-4 w-4" />}Calculate proposed impact</button>
             </div>
           </fieldset>
         </form>

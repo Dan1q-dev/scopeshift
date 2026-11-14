@@ -4,6 +4,7 @@ import Link from "next/link";
 import { formatUsd } from "@/lib/client/real-project-ui";
 import type { RealProjectSummary } from "@/types/real-project";
 import { cardClass, quietButton } from "./ui";
+import { FolderIcon, GraduationIcon, PlusIcon } from "./icons";
 
 export function ProjectSidebar({ projects, activeId, loading, disabled, onOpen, onNew }: {
   projects: RealProjectSummary[];
@@ -16,8 +17,8 @@ export function ProjectSidebar({ projects, activeId, loading, disabled, onOpen, 
   return (
     <aside aria-label="Private project history" className={`${cardClass} min-w-0 space-y-4 p-4 lg:sticky lg:top-4`}>
       <div className="flex items-center justify-between gap-2">
-        <h2 className="m-0 text-sm font-semibold">Your projects</h2>
-        <button type="button" className={quietButton} disabled={disabled} onClick={onNew}><span aria-hidden="true">+</span>New project</button>
+        <h2 className="m-0 flex items-center gap-2 text-sm font-semibold whitespace-nowrap"><FolderIcon className="h-4 w-4 text-emerald-300" />Your projects</h2>
+        <button type="button" className={`${quietButton} px-1.5 text-xs whitespace-nowrap`} disabled={disabled} onClick={onNew}><PlusIcon className="h-3.5 w-3.5" />New project</button>
       </div>
       {loading ? (
         <div className="space-y-2" aria-hidden="true">{[0, 1].map((key) => <div key={key} className="skeleton h-14 rounded-lg" />)}</div>
@@ -41,7 +42,7 @@ export function ProjectSidebar({ projects, activeId, loading, disabled, onOpen, 
       )}
       <p className="m-0 text-xs leading-5 text-slate-500">History is linked to this browser&apos;s anonymous cookie. No login or cross-device recovery is provided.</p>
       <Link className="chip block rounded-xl border border-white/10 p-3 text-sm text-slate-300 no-underline hover:border-emerald-300/30 hover:bg-white/5" href="/simulation">
-        Practice with a fictional client
+        <span className="flex items-center gap-2"><GraduationIcon className="h-4 w-4 text-emerald-300" />Practice with a fictional client</span>
         <span className="mt-1 block text-xs text-slate-500">Your real project data is not transferred.</span>
       </Link>
     </aside>

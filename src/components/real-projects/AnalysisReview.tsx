@@ -6,7 +6,8 @@ import {
   scopeClassificationLabels, scopeClassificationSchema,
   type RealClientRequest, type ScopeClassification, type ScopeReviewInput, type SourceDocument, type SourceQuote,
 } from "@/types/real-project";
-import { checkboxClass, ClassificationPill, fieldClass, primaryClass, SectionCard, Spinner } from "./ui";
+import { checkboxClass, ClassificationIcon, ClassificationPill, fieldClass, primaryClass, SectionCard, Spinner } from "./ui";
+import { CheckCircleIcon, QuoteIcon } from "./icons";
 
 /** A cited quote, with the surrounding source text on demand so the user can verify it. */
 function Quote({ quote, document, tone }: { quote: SourceQuote; document: SourceDocument | undefined; tone: "contract" | "request" }) {
@@ -15,7 +16,7 @@ function Quote({ quote, document, tone }: { quote: SourceQuote; document: Source
   const context = document ? quoteContext(document, quote.start, quote.end) : null;
   return (
     <blockquote className={`m-0 rounded-lg border-l-2 bg-black/20 py-2 pr-3 pl-3 text-sm ${tone === "contract" ? "border-emerald-400/60" : "border-sky-400/60"}`}>
-      <p className="m-0 whitespace-pre-wrap break-words text-slate-200">&ldquo;{quote.quote}&rdquo;</p>
+      <p className="m-0 flex gap-2 whitespace-pre-wrap break-words text-slate-200"><QuoteIcon className={`mt-0.5 h-4 w-4 ${tone === "contract" ? "text-emerald-300" : "text-sky-300"}`} /><span>&ldquo;{quote.quote}&rdquo;</span></p>
       <footer className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
         <span>{document?.label ?? "Source"}, passage {quote.passageId.split("_p").at(-1)}, characters {quote.start}-{quote.end}</span>
         {context && <button type="button" aria-expanded={open} aria-controls={id} className="p-0 text-emerald-200/90 underline-offset-2 hover:underline" onClick={() => setOpen((value) => !value)}>{open ? "Hide context" : "Show in source"}</button>}
@@ -85,7 +86,7 @@ export function AnalysisReview({ request, state, disabled, saving, onConfirm, on
             {classificationOrder.map((key) => counts[key] > 0 && (
               <button key={key} type="button" aria-pressed={filter === key} onClick={() => setFilter(filter === key ? null : key)}
                 className={`chip inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 ${filter === key ? classificationStyle[key].pill : "border-white/10 text-slate-400 hover:text-white"}`}>
-                <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${classificationStyle[key].dot}`} />{counts[key]} {classificationStyle[key].short}
+                <ClassificationIcon classification={key} />{counts[key]} {classificationStyle[key].short}
               </button>
             ))}
             {corrections > 0 && <span className="ml-1 text-amber-200">{corrections} corrected by you</span>}
@@ -190,7 +191,7 @@ export function AnalysisReview({ request, state, disabled, saving, onConfirm, on
         )}
         <div className="flex flex-wrap items-center gap-3">
           <button type="button" className={primaryClass} disabled={disabled || !canConfirm} onClick={() => onConfirm({ sourceRevision: request.sourceRevision, expectedReviewRevision: request.review?.revision ?? 0, items })}>
-            {saving && <Spinner />}{request.review ? "Save updated review" : "Confirm reviewed scope"}
+            {saving ? <Spinner /> : <CheckCircleIcon className="h-4 w-4" />}{request.review ? "Save updated review" : "Confirm reviewed scope"}
           </button>
           {request.review && <p className="m-0 text-xs text-emerald-200">Review {request.review.revision} confirmed. Changing it will require a new impact calculation and draft.</p>}
         </div>
