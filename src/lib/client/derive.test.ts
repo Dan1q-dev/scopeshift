@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { websiteProjectScenario } from "@/data/scenarios/website-project";
 import { negotiateHistory } from "@/lib/simulation/negotiate";
 import { toPublicScenario, type PublicScenario } from "@/types/scope";
-import { evidenceParts, readableIds } from "./derive";
+import { evidenceParts, normalizeLegacyScopeEvidence, readableIds } from "./derive";
 
 const scenario = toPublicScenario(websiteProjectScenario);
 const agreementId = "a5a7df3a-f8e7-42e7-8bdd-6a7f9ea8297b";
@@ -68,5 +68,37 @@ describe("readableIds", () => {
         item.id === "contact-form" ? { ...item, title: "Contact $& $$ portfolio-gallery" } : item) },
     };
     expect(readableIds("contact-form / portfolio-gallery", literal, response)).toBe("Contact $& $$ portfolio-gallery / Portfolio gallery");
+  });
+});
+
+describe("normalizeLegacyScopeEvidence", () => {
+  const legacy = "Accepted catalog amendment: added [consultation-booking], removed [].";
+  const accepted = response.turns[0];
+
+  it("shows an old accepted addition readably without changing its saved evidence or scores", () => {
+    const saved = JSON.stringify(response);
+    expect(readableIds(normalizeLegacyScopeEvidence(legacy, accepted), scenario, response))
+      .toBe("Accepted scope amendment. Added: Consultation booking. No deliverables removed.");
+    expect(JSON.stringify(response)).toBe(saved);
+  });
+
+  it("keeps the original wording when the accepted change does not confirm the legacy claim", () => {
+    const withRemoval = structuredClone(accepted);
+    withRemoval.agreement!.change.removeScopeItemIds.push("contact-form");
+    const withOtherAddition = structuredClone(accepted);
+    withOtherAddition.agreement!.change.addScopeItemIds = ["testimonials-section"];
+    const withOtherSource = structuredClone(accepted);
+    withOtherSource.agreement!.sourceTurnId = "another-turn";
+    const counteroffer = structuredClone(accepted);
+    counteroffer.agreement!.status = "counteroffered";
+    for (const turn of [withRemoval, withOtherAddition, withOtherSource, counteroffer, undefined]) {
+      expect(normalizeLegacyScopeEvidence(legacy, turn)).toBe(legacy);
+    }
+  });
+
+  it("leaves learner quotations, unknown text and malformed legacy wording unchanged", () => {
+    for (const text of [`Asked a requirements question: ${legacy}`, `Quoted: ${legacy}`, "Accepted scope amendment. No deliverables removed.", "Accepted catalog amendment: added [unknown-item], removed [].", "Accepted catalog amendment: added [], removed []."]) {
+      expect(normalizeLegacyScopeEvidence(text, accepted)).toBe(text);
+    }
   });
 });

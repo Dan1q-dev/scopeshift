@@ -1,4 +1,4 @@
-import type { Agreement, NegotiateResponse, ProjectState, PublicScenario, ScopeItem } from "@/types/scope";
+import type { Agreement, NegotiateResponse, NegotiationTurn, ProjectState, PublicScenario, ScopeItem } from "@/types/scope";
 
 /** Project state before any negotiation. Mirrors the documented rate formula from docs/API_CONTRACT.md. */
 export function initialProject(scenario: PublicScenario): ProjectState {
@@ -51,6 +51,19 @@ export function evidenceParts(observation: string, userMessage?: string): Eviden
   }
   const match = /^Action: ([\s\S]*?) Rule: ([\s\S]*?) Verified: ([\s\S]*)$/.exec(observation);
   return match ? { action: match[1], rule: match[2], verified: match[3] } : null;
+}
+
+/** Presents the old empty-removal wording only when its accepted turn confirms it. */
+export function normalizeLegacyScopeEvidence(verified: string, turn?: NegotiationTurn): string {
+  const agreement = turn?.agreement;
+  if (!turn || !agreement || agreement.status !== "accepted" || agreement.sourceTurnId !== turn.turnId
+    || agreement.eventId !== turn.eventId || agreement.change.removeScopeItemIds.length) return verified;
+  const match = /^Accepted catalog amendment: added \[([a-zA-Z0-9_-]+(?:, [a-zA-Z0-9_-]+)*)\], removed \[\]\.$/.exec(verified);
+  if (!match) return verified;
+  const addedIds = match[1].split(", ");
+  if (addedIds.length !== agreement.change.addScopeItemIds.length
+    || addedIds.some((id, index) => id !== agreement.change.addScopeItemIds[index])) return verified;
+  return `Accepted scope amendment. Added: ${addedIds.join(", ")}. No deliverables removed.`;
 }
 
 /** Replaces internal agreement and scope item IDs in evaluator text with the names shown elsewhere in the UI. */
