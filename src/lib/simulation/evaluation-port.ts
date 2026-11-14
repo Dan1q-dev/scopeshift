@@ -13,4 +13,3 @@ export type SimulationEvaluator = (context: EvaluationContext) => EvaluationResu
 export const pendingEvaluation: SimulationEvaluator = () => ({ criteria: [], strengths: [], improvements: [] });
 
 export { evaluateSimulation as defaultEvaluation } from "@/lib/evaluation/simulation-evaluator";
-

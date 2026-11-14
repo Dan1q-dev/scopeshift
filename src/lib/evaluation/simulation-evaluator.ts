@@ -71,4 +71,3 @@ export const evaluateSimulation: SimulationEvaluator = ({ scenario, turns, proje
   }
   return evaluationResultSchema.parse({ criteria: grouped, strengths: strengths.slice(-20), improvements: improvements.slice(-20) });
 };
-

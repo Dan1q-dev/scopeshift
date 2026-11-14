@@ -26,4 +26,3 @@ export function negotiateHistory(scenario: Scenario, history: readonly HistoryEn
     completed: !activeEvent,
   });
 }
-

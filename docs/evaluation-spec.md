@@ -25,4 +25,3 @@ Only a server adapter may create observations. It must validate the transcript/e
 ## Release acceptance
 
 Identical validated input produces deeply identical output. Empty logs yield null scores. Every strength/mistake carries evidence and practical advice. Duplicate criteria, unknown event references and mismatched dimensions fail closed. No points for more money alone, aggressive language, length, politeness proxies or hidden constraints. Two reviewers must independently map annotated transcripts to the rubric and resolve disagreements before calling the rubric calibrated.
-

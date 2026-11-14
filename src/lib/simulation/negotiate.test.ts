@@ -142,4 +142,3 @@ describe("negotiation driver integration", () => {
     expect(() => negotiateHistory(scenario, [paidBooking], invalidEvaluator)).toThrow();
   });
 });
-

@@ -68,4 +68,3 @@ For a future complete economic-judgment rubric, agree on a validated impact-revi
 ## Validation environment
 
 Checks were run in an isolated copy of the merged source using the existing lockfile dependencies, Node 24.22.1 and npm 11.6.2. Typecheck, lint and production build passed. Vitest: 10 files, 73 ordinary tests passed and 3 expected failures documenting known defects. The repository requires Node 22; CI on the prescribed runtime remains necessary. No browser, live LLM or deployed HTTP evaluator pass is claimed.
-

@@ -67,4 +67,3 @@ describe("simulation API", () => {
     expect((await getScenario(new Request("http://localhost"), { params: Promise.resolve({ scenarioId: "missing" }) })).status).toBe(404);
   });
 });
-

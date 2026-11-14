@@ -79,4 +79,3 @@ test("lost response after real server acceptance retries identical turn without 
   expect(result.project.acceptedAgreementIds).toHaveLength(1);
   await expect(page.getByRole("region", { name: "Project impact" })).toContainText("$1,900");
 });
-

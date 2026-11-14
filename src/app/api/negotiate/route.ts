@@ -70,4 +70,3 @@ export async function POST(request: Request) {
     return error(500, "INTERNAL_ERROR", "The simulation could not process this turn. Please try again.");
   }
 }
-

@@ -11,4 +11,3 @@ test("marketing page opens Arsen's real simulation panels", async ({ page, reque
   expect(response.ok()).toBeTruthy();
   expect((await response.json()).scenarios[0].id).toBe("web-project-01");
 });
-

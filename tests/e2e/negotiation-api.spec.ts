@@ -56,4 +56,3 @@ test("HTTP retry is idempotent; Replay preserves the prefix and original outcome
   expect(await negotiate(request, [paid, rush, swap])).toEqual(original);
   expect(original.evaluation.criteria.some(c => c.category === "economic_decision")).toBe(true);
 });
-
