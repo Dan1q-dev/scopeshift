@@ -43,7 +43,7 @@ export const evaluateSimulation: SimulationEvaluator = ({ scenario, turns, proje
     const after = snapshot.project;
     const change = turn.agreement.change;
     if (change.addScopeItemIds.length > 0 && (event.id === "booking-request" || (change.removeScopeItemIds.includes("portfolio-gallery") && before.activeScopeItems.some(i => i.id === "portfolio-gallery")))) add("scope_management", (event.id === "booking-request" ? "booking-scope" : "swap-active-scope"),
-      `Accepted catalog amendment: added [${change.addScopeItemIds.join(", ")}], removed [${change.removeScopeItemIds.join(", ")}].`,
+      `Accepted scope amendment. Added: ${change.addScopeItemIds.map(id => event.availableScopeItems.find(item => item.id === id)?.title ?? id).join(", ")}. ${change.removeScopeItemIds.length ? `Removed: ${change.removeScopeItemIds.map(id => before.activeScopeItems.find(item => item.id === id)?.title ?? id).join(", ")}.` : "No deliverables removed."}`,
       "Keep the itemized scope and exclusions visible in the written amendment.");
     add("explicit_agreement", (event.id === "booking-request" ? "booking-documentation" : event.id === "earlier-delivery" ? "rush-documentation" : "swap-documentation"),
       `Client explicitly replied: ${turn.clientReply} Agreement ${turn.agreement.id} is recorded once.`,
