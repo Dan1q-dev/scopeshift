@@ -90,7 +90,8 @@ export function useSimulation() {
 
   return {
     scenario, session, active, currentEventId, loadError, sending, failed,
-    pendingMessage: pending && pending.attemptId === active?.id ? pending.message : null,
+    // A reply that failed to send stays visible next to the error until it is sent again.
+    pendingMessage: [pending, failed].find((job) => job && job.attemptId === active?.id)?.message ?? null,
     send, retry, replayFrom, selectAttempt,
     startOver: () => replayFrom(0),
     reload: () => setReloadKey((value) => value + 1),
