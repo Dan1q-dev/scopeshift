@@ -138,11 +138,12 @@ export function RealProjectWorkspace() {
     <div className="min-h-screen">
       <SiteHeader />
       <main className="mx-auto max-w-7xl space-y-6 px-4 py-8 sm:px-6">
-        <div className="rise flex flex-wrap items-end justify-between gap-4">
-          <div className="max-w-3xl">
+        <div className="rise relative overflow-hidden rounded-3xl border border-white/10 px-6 py-7 sm:px-9 sm:py-9">
+          <div className="aurora" aria-hidden="true"><span /><span /><span /></div>
+          <div className="relative max-w-3xl">
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">Real Project Mode - Learn it. Apply it. Improve it.</p>
             <h1 className="m-0 mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Handle scope changes with confidence.</h1>
-            <p className="m-0 mt-3 text-base leading-7 text-slate-400">Check a client request against your actual agreement, review the evidence, and prepare a clear proposal. You stay in control of scope, estimates, and what you send.</p>
+            <p className="m-0 mt-3 text-base leading-7 text-slate-300">Check a client request against your actual agreement, review the evidence, and prepare a clear proposal. You stay in control of scope, estimates, and what you send.</p>
           </div>
         </div>
 
@@ -225,6 +226,10 @@ export function RealProjectWorkspace() {
                     onOpen={(record) => void run("Opening saved analysis", async () => {
                       const current = await realProjectApi.request(project.id, record.id);
                       selectRequest(current); setDrafts(await realProjectApi.drafts(project.id, record.id));
+                      // Continue where this request stopped, instead of leaving the user at the history list.
+                      if (current.sourceRevision === project.sourceRevision) {
+                        jumpTo(current.impact ? "respond" : current.review ? "price" : current.analysis ? "review" : "request");
+                      }
                     })}
                     onRefreshStatus={() => request && void run("Refreshing stored analysis", async () => selectRequest(await realProjectApi.request(request.projectId, request.id)))}
                     onPrepareReanalysis={() => {

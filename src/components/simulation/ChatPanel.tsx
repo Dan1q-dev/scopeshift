@@ -34,6 +34,20 @@ function ClientBubble({ name, children }: { name: string; children: React.ReactN
 export function ChatPanel({ scenario, turns, currentEventId, completed, sending, pendingMessage, error, onSend, onRetry, onReplay, initialDraft }: Props) {
   const [draft, setDraft] = useState(initialDraft ?? "");
   const endRef = useRef<HTMLDivElement>(null);
+  const replyRef = useRef<HTMLTextAreaElement>(null);
+  // "Improve this reply" prefills the editor: bring it into view and focus it, so the learner can start
+  // rewriting at once. On phones the editor is otherwise far below the fold.
+  useEffect(() => {
+    const element = replyRef.current;
+    if (!initialDraft || !element) return;
+    const timer = window.setTimeout(() => {
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      element.scrollIntoView({ block: "center", behavior: reduce ? "auto" : "smooth" });
+      element.focus({ preventScroll: true });
+      element.setSelectionRange(element.value.length, element.value.length);
+    }, 150);
+    return () => window.clearTimeout(timer);
+  }, [initialDraft]);
   useEffect(() => { endRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" }); }, [turns.length, pendingMessage, error, currentEventId]);
 
   const visibleEvents = scenario.events.filter((event) => event.id === currentEventId || turns.some((turn) => turn.eventId === event.id));
@@ -110,7 +124,7 @@ export function ChatPanel({ scenario, turns, currentEventId, completed, sending,
           </div>
         )}
         <label htmlFor="reply" className="sr-only">Your reply to the client</label>
-        <textarea id="reply" rows={3} value={draft} maxLength={MAX_LENGTH} disabled={completed || sending || Boolean(error)}
+        <textarea ref={replyRef} id="reply" rows={3} value={draft} maxLength={MAX_LENGTH} disabled={completed || sending || Boolean(error)}
           onChange={(event) => setDraft(event.target.value)}
           onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); submit(); } }}
           placeholder={completed ? "Scenario complete" : "Type your response..."}

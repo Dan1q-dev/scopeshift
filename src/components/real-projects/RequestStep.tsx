@@ -3,6 +3,7 @@
 import { formatDate, formatUsd, type StepState } from "@/lib/client/real-project-ui";
 import { REAL_PROJECT_LIMITS, type RealClientRequest, type RealProject } from "@/types/real-project";
 import { checkboxClass, fieldClass, primaryClass, quietButton, secondaryClass, SectionCard, Spinner } from "./ui";
+import { PlusIcon, RefreshIcon, SparkIcon } from "./icons";
 
 const sampleRequest = "Hi! Could you also add appointment booking so visitors can pick a consultation time, sync it with my calendar, and add two more pages for our new services? We would still like to launch on the same date.";
 
@@ -35,7 +36,7 @@ export function RequestStep(props: {
   return (
     <SectionCard step="request" index={1} state={props.state} eyebrow="Analyze a change request" title="What did your client ask for?"
       description="Each requested change is checked separately against your saved agreement, with quotes you can verify."
-      actions={request ? <button type="button" className={secondaryClass} disabled={locked} onClick={props.onNewRequest}>Analyze a new request</button> : undefined}>
+      actions={request ? <button type="button" className={secondaryClass} disabled={locked} onClick={props.onNewRequest}><PlusIcon className="h-4 w-4" />Analyze a new request</button> : undefined}>
       {!request ? (
         <div className="space-y-4">
           <div>
@@ -57,7 +58,7 @@ export function RequestStep(props: {
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <button type="button" className={primaryClass} disabled={locked || !props.consent || !props.message.trim()} onClick={props.onAnalyze}>
-              {props.analyzing && <Spinner />}Analyze request
+              {props.analyzing ? <Spinner /> : <SparkIcon className="h-4 w-4" />}Analyze request
             </button>
             <p className="m-0 text-xs text-slate-500">An analysis is an interpretation of your text, not legal advice or client acceptance.</p>
           </div>
@@ -76,7 +77,7 @@ export function RequestStep(props: {
             <div className="space-y-3">
               <p className="m-0 text-sm text-amber-200">{request.status === "pending" ? "Analysis is still pending. Refresh its stored status before starting a separate analysis; this does not start another AI call." : request.error?.message ?? "Analysis could not be completed."}</p>
               <div className="flex flex-wrap gap-2">
-                <button type="button" className={secondaryClass} disabled={locked} onClick={props.onRefreshStatus}>Refresh analysis status</button>
+                <button type="button" className={secondaryClass} disabled={locked} onClick={props.onRefreshStatus}><RefreshIcon className="h-4 w-4" />Refresh analysis status</button>
                 {!stale && <button type="button" className={secondaryClass} disabled={locked} onClick={props.onPrepareReanalysis}>Prepare a new analysis</button>}
               </div>
             </div>
@@ -111,7 +112,7 @@ export function RequestStep(props: {
               );
             })}
           </ol>
-          {request && <button type="button" className={quietButton} disabled={locked} onClick={props.onNewRequest}><span aria-hidden="true">+</span>Analyze another request</button>}
+          {request && <button type="button" className={quietButton} disabled={locked} onClick={props.onNewRequest}><PlusIcon className="h-4 w-4" />Analyze another request</button>}
         </section>
       )}
     </SectionCard>
