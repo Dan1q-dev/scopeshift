@@ -29,7 +29,7 @@ npm run dev
 
 Приложение открывается по адресу `http://localhost:3000`. Сначала прочитайте `AGENTS.md`, `docs/PROJECT_BRIEF.md`, `docs/API_CONTRACT.md` и свое задание в `docs/tasks/`.
 
-Ключ для запуска не нужен. `.env.example` содержит зарезервированные имена и пока не используется. В `feat/backend-simulation` добавлены engine и переговоры с HTTP 200 по прежнему контракту; live LLM и evaluator не подключены. До слияния PR `main` остается прежним каркасом. После слияния подтяните `origin/main` в свои ветки. Подключение: `docs/BACKEND_INTEGRATION.md`.
+PR #1 уже слит в `main`: engine и переговоры с HTTP 200 доступны по прежнему контракту. Выполните `git fetch origin` и `git merge origin/main` в своей ветке, затем при изменении lockfile повторите `npm ci`. Режим `rules-v1` не требует ключа. OpenAI подключается отдельно в backend-ветке; evaluator пока не подключен. Подключение: `docs/BACKEND_INTEGRATION.md`.
 
 ## Как работать
 

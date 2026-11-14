@@ -34,11 +34,26 @@ export async function getScenario(scenarioId: string, signal?: AbortSignal) {
   return result.scenario;
 }
 
+// Share concurrent initialization so first requests receive the same cookie
+// before any paid interpretation. A failed/lost bootstrap has no provider cost.
+let sessionBootstrap: Promise<void> | undefined;
+
+async function ensureSession() {
+  if (!sessionBootstrap) {
+    sessionBootstrap = (async () => {
+      await readResponse(await fetch("/api/session", { cache: "no-store" }), z.object({ mode: z.enum(["rules", "openai"]) }));
+    })().finally(() => { sessionBootstrap = undefined; });
+  }
+  await sessionBootstrap;
+}
+
 export async function negotiate(request: NegotiateRequest, signal?: AbortSignal) {
+  const validated = negotiateRequestSchema.parse(request);
+  await ensureSession();
   return readResponse(await fetch("/api/negotiate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(negotiateRequestSchema.parse(request)),
+    body: JSON.stringify(validated),
     signal,
   }), negotiateResponseSchema);
 }

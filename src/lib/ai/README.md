@@ -1,13 +1,16 @@
 # Negotiation interpretation
 
-`interpretMessage` currently runs the deterministic, bounded English `rules-v1`
-interpreter. The API identifies it in `X-ScopeShift-Interpreter`; no LLM is called.
-Unsupported or ambiguous text produces clarification instead of an amendment.
+`SCOPESHIFT_AI_MODE=rules` runs the deterministic, bounded English interpreter.
+`SCOPESHIFT_AI_MODE=openai` uses the server-only OpenAI Responses adapter with
+structured output and shared Zod validation. The API identifies the selected
+mode in `X-ScopeShift-Interpreter`. OpenAI failures do not fall back to rules.
 
 The engine makes all client acceptance decisions, computes money and estimates,
 and generates replies from those actual decisions. A provider must never assign
 the project state or bypass scenario policies.
 
-Before adding a nondeterministic provider, persist validated interpreted turns
-and their exact history prefixes durably. The current process-local fingerprint
-map is not a persistent LLM replay store. See `docs/BACKEND_INTEGRATION.md`.
+The client initializes a signed anonymous cookie before paid calls. Validated
+OpenAI actions and canonical engine turns are persisted by `FileReplayStore`,
+bound to the exact history and model/engine version. Old turns are read from
+receipts. Only the latest new turn can invoke OpenAI. The local filesystem
+adapter is not a Vercel storage solution. See `docs/OPENAI_SETUP.md`.

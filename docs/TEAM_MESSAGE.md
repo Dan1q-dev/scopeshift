@@ -20,7 +20,7 @@
 - Арсен: https://github.com/Dan1q-dev/scopeshift/blob/main/docs/tasks/arsen.md
 - Альбина: https://github.com/Dan1q-dev/scopeshift/blob/main/docs/tasks/albina.md
 
-Backend-подключение подготовлено в `feat/backend-simulation`: engine и POST с HTTP 200, без live LLM и evaluator. `main` пока остается прежним каркасом. После слияния PR подтяните `origin/main` в свои ветки. Инструкция в backend-ветке: https://github.com/Dan1q-dev/scopeshift/blob/feat/backend-simulation/docs/BACKEND_INTEGRATION.md
+PR #1 слит в `main`: engine и POST с HTTP 200 уже доступны. Сохраните текущую работу и выполните в своих ветках `git fetch origin`, затем `git merge origin/main`. Для `rules-v1` ключ не нужен. Подключение OpenAI идет отдельно в backend-ветке, evaluator пока не подключен. Инструкция: https://github.com/Dan1q-dev/scopeshift/blob/main/docs/BACKEND_INTEGRATION.md
 
 Сначала прочитайте AGENTS.md и docs/API_CONTRACT.md. Типы и API общие, чужие зоны файлов не переписываем. Не выдаем fixtures или `rules-v1` за живой AI.
 

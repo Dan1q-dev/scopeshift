@@ -5,8 +5,8 @@ import { pendingEvaluation, type SimulationEvaluator } from "@/lib/simulation/ev
 import { negotiateResponseSchema, type HistoryEntry, type Scenario } from "@/types/scope";
 
 /** Rebuild a complete branch from the authoritative scenario on every request.
- * The default interpreter is synchronous and deterministic rules-v1.
- * A future LLM implementation requires durable interpreted-turn storage first.
+ * The rules interpreter is synchronous and deterministic. The OpenAI driver
+ * separately reuses durable interpreted-turn receipts in llm-negotiate.ts.
  */
 export function negotiateHistory(scenario: Scenario, history: readonly HistoryEntry[], evaluate: SimulationEvaluator = pendingEvaluation) {
   let state = initialState(scenario);

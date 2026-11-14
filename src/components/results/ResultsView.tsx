@@ -93,11 +93,11 @@ export function ResultsView() {
 
                     <h3 className="mt-5 mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">Skills feedback</h3>
                     {response.evaluation.criteria.length === 0 && response.evaluation.strengths.length === 0 && response.evaluation.improvements.length === 0 ? (
-                      <p className="m-0 text-sm text-slate-500">Evaluation is pending. No scores are shown until the evaluator returns evidence.</p>
+                      <p className="m-0 text-sm text-slate-500">No assessed evidence yet. Unassessed skills are not a zero score.</p>
                     ) : (
                       <div className="space-y-3 text-sm">
                         {response.evaluation.criteria.map((criterion) => (
-                          <div key={criterion.category} className="rounded-lg border border-white/10 px-3 py-2">
+                          <div key={`${criterion.category}:${criterion.evidence.map((item) => `${item.turnId}:${item.ruleId}`).join("|")}`} className="rounded-lg border border-white/10 px-3 py-2">
                             <div className="flex items-center justify-between gap-2"><span className="font-medium">{categoryLabels[criterion.category]}</span><span className="tabular text-xs text-slate-400">{criterion.earnedPoints} / {criterion.maxPoints}</span></div>
                             <ul className="mt-1 mb-0 space-y-0.5 pl-4 text-xs text-slate-400">{criterion.evidence.map((evidence) => <li key={`${evidence.turnId}-${evidence.ruleId}`}>{evidence.observation}</li>)}</ul>
                             <p className="mt-1 mb-0 text-xs text-slate-300">{criterion.advice}</p>
