@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getScenario, getScenarios } from "@/lib/client/api";
-import { describeError, runNegotiation } from "@/lib/client/negotiation";
+import { getScenario, getScenarios, negotiate } from "@/lib/client/api";
+import { describeError } from "@/lib/client/negotiation";
 import { loadSession, newAttempt, saveSession, type Attempt, type Session } from "@/lib/client/session";
 import type { HistoryEntry, PublicScenario } from "@/types/scope";
 
@@ -48,8 +48,8 @@ export function useSimulation() {
     setFailed(null);
     setPending(job);
     try {
-      const result = await runNegotiation(current, { scenarioId: current.id, history: job.history });
-      update({ ...base, attempts: base.attempts.map((attempt) => (attempt.id === job.attemptId ? { ...attempt, history: job.history, response: result.response, source: result.source } : attempt)) });
+      const response = await negotiate({ scenarioId: current.id, history: job.history });
+      update({ ...base, attempts: base.attempts.map((attempt) => (attempt.id === job.attemptId ? { ...attempt, history: job.history, response } : attempt)) });
     } catch (error) {
       setFailed({ ...job, error: describeError(error) });
     } finally {

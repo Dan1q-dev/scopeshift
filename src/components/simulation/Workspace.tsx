@@ -8,10 +8,10 @@ import { ghostButton, navLink, primaryButton, SiteHeader } from "@/components/ui
 import { agreementsOf, initialProject } from "@/lib/client/derive";
 import { useSimulation } from "@/lib/client/use-simulation";
 
-export function FixtureBanner() {
+export function InterpreterNote() {
   return (
-    <p role="note" className="m-0 border-b border-amber-400/20 bg-amber-400/10 px-4 py-2 text-center text-xs text-amber-100">
-      Development fixture: the negotiation backend is not connected yet. Client replies and numbers here come from a scripted stand-in, not from the AI client or the simulation engine.
+    <p role="note" className="m-0 border-b border-white/10 bg-white/[0.03] px-4 py-2 text-center text-xs text-slate-400">
+      Client replies come from a rules-based interpreter (rules-v1), not a live AI. State exact terms - price, days, and scope - so your proposal is understood.
     </p>
   );
 }
@@ -41,7 +41,7 @@ export function Workspace() {
         <button type="button" onClick={sim.startOver} disabled={sim.sending} className={ghostButton}>New attempt</button>
         <Link href="/results" className={response?.completed ? primaryButton : navLink}>Results</Link>
       </SiteHeader>
-      {active.source === "fixture" && <FixtureBanner />}
+      <InterpreterNote />
       <h1 className="sr-only">Simulation workspace</h1>
       {session.attempts.length > 1 && (
         <div className="flex items-center gap-2 overflow-x-auto border-b border-white/10 px-4 py-2 text-xs sm:px-6" role="tablist" aria-label="Attempts">

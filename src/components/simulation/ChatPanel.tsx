@@ -60,6 +60,8 @@ export function ChatPanel({ scenario, turns, currentEventId, completed, sending,
                     <div className="mt-2 rounded-lg border border-white/10 bg-black/25 px-2.5 py-2">
                       <div className="mb-1"><StatusChip status={turn.agreement.status} /></div>
                       <ChangeSummary change={turn.agreement.change} scenario={scenario} />
+                      {turn.agreement.status === "counteroffered" && <p className="mt-1 mb-0 text-xs text-sky-200">This is an offer from the client. The contract is unchanged until you accept it or agree on other terms.</p>}
+                      {turn.agreement.status === "rejected" && <p className="mt-1 mb-0 text-xs text-slate-400">Not agreed. The contract is unchanged.</p>}
                     </div>
                   )}
                 </ClientBubble>

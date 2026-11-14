@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { FixtureBanner } from "@/components/simulation/Workspace";
 import { ChangeSummary } from "@/components/ui/ChangeSummary";
 import { ghostButton, navLink, panel, primaryButton, SiteHeader } from "@/components/ui/SiteHeader";
 import { StatusChip } from "@/components/ui/StatusChip";
@@ -39,7 +38,6 @@ export function ResultsView() {
   return (
     <div className="min-h-screen">
       <SiteHeader><Link href="/simulation" className={navLink}>Back to simulation</Link></SiteHeader>
-      {shown.some(({ attempt }) => attempt.source === "fixture") && <FixtureBanner />}
       <main className="mx-auto max-w-5xl space-y-6 px-4 py-8 sm:px-6">
         <div>
           <h1 className="m-0 text-2xl font-semibold tracking-tight">Results: {scenario.title}</h1>
@@ -95,7 +93,7 @@ export function ResultsView() {
 
                     <h3 className="mt-5 mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">Skills feedback</h3>
                     {response.evaluation.criteria.length === 0 && response.evaluation.strengths.length === 0 && response.evaluation.improvements.length === 0 ? (
-                      <p className="m-0 text-sm text-slate-500">No evaluation was returned for this attempt.</p>
+                      <p className="m-0 text-sm text-slate-500">Evaluation is pending. No scores are shown until the evaluator returns evidence.</p>
                     ) : (
                       <div className="space-y-3 text-sm">
                         {response.evaluation.criteria.map((criterion) => (

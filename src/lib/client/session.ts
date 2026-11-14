@@ -6,17 +6,16 @@ const attemptSchema = z.object({
   createdAt: z.number(),
   history: z.array(historyEntrySchema).max(50),
   response: negotiateResponseSchema.nullable(),
-  source: z.enum(["backend", "fixture"]).nullable(),
 });
 export type Attempt = z.infer<typeof attemptSchema>;
 
 const sessionSchema = z.object({ attempts: z.array(attemptSchema).min(1).max(20), activeId: z.string() });
 export type Session = z.infer<typeof sessionSchema>;
 
-const key = (scenarioId: string) => `scopeshift:v1:${scenarioId}`;
+const key = (scenarioId: string) => `scopeshift:v2:${scenarioId}`;
 
 export function newAttempt(history: Attempt["history"] = []): Attempt {
-  return { id: crypto.randomUUID(), createdAt: Date.now(), history, response: null, source: null };
+  return { id: crypto.randomUUID(), createdAt: Date.now(), history, response: null };
 }
 
 export function loadSession(scenarioId: string): Session {
