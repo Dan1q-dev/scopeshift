@@ -241,7 +241,7 @@ export const evaluationResultSchema = z.object({
 }).strict();
 export type EvaluationResult = z.infer<typeof evaluationResultSchema>;
 
-// Target success contract. The foundation does not yet implement negotiation.
+// Stable success contract shared by the rules-based backend and the frontend adapter.
 export const negotiateResponseSchema = z.object({
   scenarioId: idSchema,
   turns: z.array(negotiationTurnSchema).min(1).max(50),
