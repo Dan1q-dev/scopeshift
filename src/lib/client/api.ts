@@ -36,20 +36,37 @@ export async function getScenario(scenarioId: string, signal?: AbortSignal) {
 
 // Share concurrent initialization so first requests receive the same cookie
 // before any paid interpretation. A failed/lost bootstrap has no provider cost.
-let sessionBootstrap: Promise<void> | undefined;
+const sessionInfoSchema = z.object({ mode: z.enum(["rules", "openai"]) });
+export type InterpreterMode = z.infer<typeof sessionInfoSchema>["mode"];
+let sessionBootstrap: Promise<InterpreterMode> | undefined;
 
-async function ensureSession() {
+export async function getSessionMode(signal?: AbortSignal): Promise<InterpreterMode> {
+  signal?.throwIfAborted();
   if (!sessionBootstrap) {
     sessionBootstrap = (async () => {
-      await readResponse(await fetch("/api/session", { cache: "no-store" }), z.object({ mode: z.enum(["rules", "openai"]) }));
+      const result = await readResponse(await fetch("/api/session", { cache: "no-store" }), sessionInfoSchema);
+      return result.mode;
     })().finally(() => { sessionBootstrap = undefined; });
   }
-  await sessionBootstrap;
+  if (!signal) return sessionBootstrap;
+  // Cancel only this consumer. Other callers still need the shared cookie.
+  return new Promise((resolve, reject) => {
+    const onAbort = () => reject(signal.reason);
+    signal.addEventListener("abort", onAbort, { once: true });
+    sessionBootstrap!.then((mode) => {
+      signal.removeEventListener("abort", onAbort);
+      resolve(mode);
+    }, (error) => {
+      signal.removeEventListener("abort", onAbort);
+      reject(error);
+    });
+  });
 }
 
 export async function negotiate(request: NegotiateRequest, signal?: AbortSignal) {
   const validated = negotiateRequestSchema.parse(request);
-  await ensureSession();
+  await getSessionMode(signal);
+  signal?.throwIfAborted();
   return readResponse(await fetch("/api/negotiate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
