@@ -1,15 +1,20 @@
 import { findScenario } from "@/lib/simulation/scenarios";
 import { INTERPRETER_VERSION } from "@/lib/ai/rules-interpreter";
-import { EngineHistoryError } from "@/lib/simulation/engine";
+import { AiConfigurationError, readAiConfig } from "@/lib/ai/config";
+import { createOpenAIInterpreter, OPENAI_INTERPRETER_VERSION, OpenAIProviderError } from "@/lib/ai/openai-interpreter";
+import { ENGINE_VERSION, EngineHistoryError } from "@/lib/simulation/engine";
 import { negotiateHistory } from "@/lib/simulation/negotiate";
+import { negotiateWithLlm } from "@/lib/simulation/llm-negotiate";
+import { FileReplayStore, ReplayConflictError, ReplayStoreError } from "@/lib/simulation/replay-store";
+import { signedSession, signedSessionCookie } from "@/lib/simulation/signed-session";
 import { scenarioRevision, simulationSessions, SimulationRequestError } from "@/lib/simulation/session-store";
 import { negotiateRequestSchema, type ApiError } from "@/types/scope";
 
 export const runtime = "nodejs";
 const MAX_BODY_BYTES = 131_072;
 
-function error(status: number, code: ApiError["error"]["code"], message: string) {
-  return Response.json({ error: { code, message } } satisfies ApiError, { status, headers: { "Cache-Control": "no-store", ...(status === 429 ? { "Retry-After": "60" } : {}) } });
+function error(status: number, code: ApiError["error"]["code"], message: string, cookie?: string) {
+  return Response.json({ error: { code, message } } satisfies ApiError, { status, headers: { "Cache-Control": "no-store", ...(cookie ? { "Set-Cookie": cookie } : {}), ...(status === 429 ? { "Retry-After": "60" } : {}) } });
 }
 
 export async function POST(request: Request) {
@@ -47,25 +52,43 @@ export async function POST(request: Request) {
     return error(400, "INVALID_HISTORY", "History contains an unknown event.");
   }
 
+  let cookie: string | undefined;
   try {
-    const session = simulationSessions.acquire(request.headers.get("cookie"));
-    simulationSessions.validate(session, scenario, parsed.data.history);
-    const result = negotiateHistory(scenario, parsed.data.history);
-    simulationSessions.commit(session, scenario, parsed.data.history);
+    const config = readAiConfig();
+    const identity = config.mode === "openai" ? signedSession(request.headers.get("cookie"), config.sessionSecret) : null;
+    const session = simulationSessions.acquire(request.headers.get("cookie"), identity?.id);
+    const interpreterVersion = config.mode === "openai" ? `${OPENAI_INTERPRETER_VERSION}:${config.model}:${ENGINE_VERSION}` : INTERPRETER_VERSION;
+    cookie = identity ? signedSessionCookie(identity, new URL(request.url).protocol === "https:") : simulationSessions.cookie(session, new URL(request.url).protocol === "https:");
+    if (identity && !identity.established) return error(409, "INVALID_HISTORY", "Initialize the anonymous session with GET /api/session before sending a negotiation turn.", cookie);
+    simulationSessions.validate(session, scenario, parsed.data.history, interpreterVersion);
+    let modelCalls = 0;
+    const interpret = config.mode === "openai" ? createOpenAIInterpreter(config) : null;
+    const result = config.mode === "rules" ? negotiateHistory(scenario, parsed.data.history) : await negotiateWithLlm(scenario, parsed.data.history, {
+      scope: identity!.id,
+      version: interpreterVersion,
+      store: new FileReplayStore(config.replayDirectory),
+      interpret: async (context) => { modelCalls += 1; return interpret!(context); },
+    });
+    simulationSessions.commit(session, scenario, parsed.data.history, interpreterVersion);
     return Response.json(result, {
       headers: {
         "Cache-Control": "no-store",
         "Vary": "Cookie",
-        "X-ScopeShift-Interpreter": INTERPRETER_VERSION,
+        "X-ScopeShift-Interpreter": config.mode === "openai" ? OPENAI_INTERPRETER_VERSION : INTERPRETER_VERSION,
+        ...(config.mode === "openai" ? { "X-ScopeShift-LLM-Model": config.model, "X-ScopeShift-OpenAI-Calls": String(modelCalls) } : {}),
         "X-ScopeShift-Evaluation": "pending",
-        "X-ScopeShift-Scenario-Revision": scenarioRevision(scenario).slice(0, 16),
-        "Set-Cookie": simulationSessions.cookie(session, new URL(request.url).protocol === "https:"),
+        "X-ScopeShift-Scenario-Revision": scenarioRevision(scenario, interpreterVersion).slice(0, 16),
+        "Set-Cookie": cookie,
       },
     });
   } catch (cause) {
-    if (cause instanceof SimulationRequestError) return error(cause.status, cause.code, cause.message);
-    if (cause instanceof EngineHistoryError) return error(400, "INVALID_HISTORY", cause.message);
+    if (cause instanceof SimulationRequestError) return error(cause.status, cause.code, cause.message, cookie);
+    if (cause instanceof EngineHistoryError) return error(400, "INVALID_HISTORY", cause.message, cookie);
+    if (cause instanceof ReplayConflictError) return error(409, "INVALID_HISTORY", cause.message, cookie);
+    if (cause instanceof AiConfigurationError) return error(503, "AI_UNAVAILABLE", cause.message, cookie);
+    if (cause instanceof OpenAIProviderError) return error(cause.kind === "rate_limit" ? 429 : 503, cause.kind === "rate_limit" ? "RATE_LIMITED" : "AI_UNAVAILABLE", cause.message, cookie);
+    if (cause instanceof ReplayStoreError) return error(503, "AI_UNAVAILABLE", "Replay storage is unavailable. Please retry the request.", cookie);
     console.error("ScopeShift negotiation failed", cause instanceof Error ? cause.name : "UnknownError");
-    return error(500, "INTERNAL_ERROR", "The simulation could not process this turn. Please try again.");
+    return error(500, "INTERNAL_ERROR", "The simulation could not process this turn. Please try again.", cookie);
   }
 }

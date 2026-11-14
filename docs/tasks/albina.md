@@ -4,7 +4,7 @@
 
 Твои файлы: `src/data/scenarios/**`, `src/lib/evaluation/**`, `tests/**`, `docs/**`, `pitch/**`. Общие типы и `docs/API_CONTRACT.md` меняет Данила после согласования. Не переписывай UI, API или engine.
 
-Начальная заготовка `websiteProjectScenario` уже есть в `src/data/scenarios/website-project.ts`. Проверь и развивай ее: правила учебные и требуют продуктовой проверки. Сохраняй идентификаторы либо согласуй их изменение с Данилой. В `feat/backend-simulation` engine и HTTP 200 для переговоров реализованы без live LLM, но evaluator пока не подключен. До слияния PR `main` остается прежним каркасом. Точка подключения оценки и ограничения сценария описаны в `docs/BACKEND_INTEGRATION.md`.
+Начальная заготовка `websiteProjectScenario` уже есть в `src/data/scenarios/website-project.ts`. Проверь и развивай ее: правила учебные и требуют продуктовой проверки. Сохраняй идентификаторы либо согласуй их изменение с Данилой. PR #1 уже слит в `main`: engine и HTTP 200 доступны в режиме `rules-v1`. Сохрани свою работу и подтяни `origin/main` в свою ветку. OpenAI-режим находится отдельно в `feat/backend-simulation` до следующего слияния; evaluator пока не подключен. Точка подключения оценки и ограничения сценария описаны в `docs/BACKEND_INTEGRATION.md`.
 
 ## Первый результат
 

@@ -6,6 +6,8 @@
 
 Твоя ветка: `feat/frontend-experience`. Не создавай новый репозиторий, отдельный проект или новый каркас через `create-next-app`.
 
+Если frontend уже находится в fork `arsengabdrahmanov7-ux/scopeshift-arsen`, сохрани его и следуй разделу Арсена в `docs/TEAM_SYNC_MESSAGE.md`: общий репозиторий подключается как `upstream`, готовый frontend заново не создается.
+
 ## 1. Найди и открой проект
 
 Проверь текущую папку и выполни:
@@ -51,7 +53,7 @@ npm run dev
 
 Исходные $1,500, 20 часов и 7 дней бери из GET API. Денежные поля в центах USD. Не выдумывай показатели доверия или готовые результаты переговоров.
 
-Backend развивается отдельно в `feat/backend-simulation`. Пока капитан не слил его PR, твоя ветка и `main` могут содержать POST-заглушку 501. Это не причина пересоздавать проект или переписывать сервер. Временно используй только явно помеченные development fixtures. После сообщения капитана сохрани свою работу, выполни `git fetch origin`, затем `git merge origin/main` в своей ветке. Не форсируй конфликты.
+PR #1 уже слит в `main`: рабочий backend с `rules-v1` возвращает HTTP 200 по общему контракту. Сохрани свою работу и выполни `git fetch origin`, затем `git merge origin/main` в своей frontend-ветке. Если старый checkout еще отвечает 501, сначала проверь синхронизацию, не пересоздавай проект и не переписывай сервер. OpenAI подключается отдельно в backend-ветке. Не форсируй конфликты и не выдавай development fixtures за интеграцию.
 
 Твоя зона: `src/app/page.tsx`, `src/app/simulation/**`, `src/app/results/**`, `src/app/globals.css`, `src/components/**`, `src/lib/client/**`. Не меняй общие типы, API, AI, engine, evaluator, сценарии, `package.json` и lockfile без согласования с капитаном. Motion и shadcn/ui могут быть еще не установлены.
 

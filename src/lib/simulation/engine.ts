@@ -12,6 +12,8 @@ import {
   type ScopeChange,
 } from "@/types/scope";
 
+export const ENGINE_VERSION = "simulation-v1";
+
 export interface EngineSnapshot {
   readonly scenarioId: string;
   readonly project: ProjectState;
