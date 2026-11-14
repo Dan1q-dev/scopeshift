@@ -81,7 +81,7 @@ export default function Home() {
             <h2 className={sectionTitle}>Scope creep is a negotiation problem</h2>
             <div className="mt-8 grid gap-4 md:grid-cols-3">
               {problems.map((item) => (
-                <div key={item.title} className={`${panel} lift p-5`}>
+                <div key={item.title} className={`${panel} lift reveal p-5`}>
                   <span className="block h-0.5 w-8 rounded-full bg-rose-300/70" aria-hidden="true" />
                   <h3 className="mt-4 mb-0 text-base font-semibold">{item.title}</h3>
                   <p className="mt-2 mb-0 text-sm leading-6 text-slate-400">{item.text}</p>
@@ -96,7 +96,7 @@ export default function Home() {
           <h2 className={sectionTitle}>How it works</h2>
           <ol className="m-0 mt-8 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-4">
             {steps.map((step, index) => (
-              <li key={step.title} className={`${panel} lift p-5`}>
+              <li key={step.title} className={`${panel} lift reveal p-5`}>
                 <span className="tabular inline-flex h-8 w-8 items-center justify-center rounded-full border border-emerald-400/40 bg-emerald-400/10 text-sm font-semibold text-emerald-300">{index + 1}</span>
                 <h3 className="mt-4 mb-0 text-base font-semibold">{step.title}</h3>
                 <p className="mt-2 mb-0 text-sm leading-6 text-slate-400">{step.text}</p>
@@ -111,18 +111,18 @@ export default function Home() {
             <h2 className={sectionTitle}>Pricing</h2>
             <p className="mt-2 mb-0 text-sm text-slate-500">Planned pricing. The first scenario is free and payments are not enabled in this demo.</p>
             <div className="mt-8 grid gap-4 md:grid-cols-3">
-              <div className={`${panel} flex flex-col border-emerald-400/40 bg-emerald-400/[0.04] p-5`}>
+              <div className={`${panel} reveal flex flex-col border-emerald-400/40 bg-emerald-400/[0.04] p-5`}>
                 <div className="flex items-center justify-between gap-2"><h3 className="m-0 text-base font-semibold">First scenario</h3><span className="rounded-full bg-emerald-400/15 px-2.5 py-1 text-[11px] font-medium text-emerald-200">Available now</span></div>
                 <p className="tabular mt-3 mb-0 text-3xl font-semibold">Free</p>
                 <p className="mt-2 mb-5 flex-1 text-sm leading-6 text-slate-400">The full website project with replay and comparison.</p>
                 <Link href="/simulation" className={primaryButton}>Start now</Link>
               </div>
-              <div className={`${panel} flex flex-col p-5`}>
+              <div className={`${panel} lift reveal flex flex-col p-5`}>
                 <div className="flex items-center justify-between gap-2"><h3 className="m-0 text-base font-semibold">Membership</h3><span className="rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-slate-400">Coming soon</span></div>
-                <p className="tabular mt-3 mb-0 text-3xl font-semibold">$12<span className="text-base font-normal text-slate-400"> / month</span></p>
+                <p className="tabular mt-3 mb-0 text-3xl font-semibold">$9<span className="text-base font-normal text-slate-400"> / month</span></p>
                 <p className="mt-2 mb-0 flex-1 text-sm leading-6 text-slate-400">New client scenarios across freelance professions.</p>
               </div>
-              <div className={`${panel} flex flex-col p-5`}>
+              <div className={`${panel} lift reveal flex flex-col p-5`}>
                 <div className="flex items-center justify-between gap-2"><h3 className="m-0 text-base font-semibold">Scenario pack</h3><span className="rounded-full border border-white/10 px-2.5 py-1 text-[11px] text-slate-400">Coming soon</span></div>
                 <p className="tabular mt-3 mb-0 text-3xl font-semibold">$19<span className="text-base font-normal text-slate-400"> one-time</span></p>
                 <p className="mt-2 mb-0 flex-1 text-sm leading-6 text-slate-400">A themed set of projects for one profession.</p>

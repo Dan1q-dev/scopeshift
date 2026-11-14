@@ -61,7 +61,7 @@ export function ResultsView() {
                 ))}
               </div>
             )}
-            <div className={`grid gap-4 ${shown.length > 1 ? "md:grid-cols-2" : ""}`}>
+            <div key={shown.map(({ attempt }) => attempt.id).join("|")} className={`stagger grid gap-4 ${shown.length > 1 ? "md:grid-cols-2" : ""}`}>
               {shown.map(({ attempt, label }) => {
                 const response = attempt.response!;
                 const project = response.project;

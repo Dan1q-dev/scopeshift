@@ -13,6 +13,6 @@ export function SiteHeader({ children }: { children?: React.ReactNode }) {
 }
 
 export const navLink = "rounded-md px-3 py-1.5 text-slate-300 no-underline hover:bg-white/5 hover:text-white";
-export const primaryButton = "inline-flex items-center justify-center rounded-lg bg-emerald-400 px-4 py-2 text-sm font-semibold text-slate-950 no-underline transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-40";
-export const ghostButton = "inline-flex items-center justify-center rounded-lg border border-white/15 px-3 py-1.5 text-sm text-slate-200 no-underline transition hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-40";
+export const primaryButton = "inline-flex items-center justify-center rounded-lg bg-emerald-400 px-4 py-2 text-sm font-semibold text-slate-950 no-underline transition duration-200 hover:bg-emerald-300 hover:shadow-[0_10px_28px_-12px_rgb(52_211_153/0.7)] active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none";
+export const ghostButton = "inline-flex items-center justify-center rounded-lg border border-white/15 px-3 py-1.5 text-sm text-slate-200 no-underline transition duration-200 hover:border-white/30 hover:bg-white/5 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40";
 export const panel = "rounded-xl border border-white/10 bg-white/[0.03]";
