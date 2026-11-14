@@ -150,11 +150,11 @@ export function interpretMessage(context: InterpretationContext): NegotiationAct
   }
 
   const keepContract = /\b(?:keep|retain|stick to|stay with)\s+(?:the\s+|our\s+)?(?:original|current|existing|agreed)\s+(?:contract|terms|scope|deadline)\b/.test(text);
-  const declineRequest = /\b(?:i|we)\s+(?:decline|reject)\s+(?:this|the|your)\s+(?:request|change)\b/.test(text)
+  const declineRequest = /\b(?:i|we)\s+(?:(?:have|need)\s+to\s+|must\s+)?(?:decline|reject)\s+(?:this|the|your)\s+(?:request|change)\b/.test(text)
     || /\b(?:i|we)\s+(?:cannot|can't|won't)\s+(?:take\s+(?:this|that|it)\s+on|do\s+(?:this|that|it)|meet\s+(?:the|your|this)\s+(?:earlier\s+)?deadline|accommodate\s+(?:this|that|your)\s+request)\b/.test(text);
   if (keepContract || declineRequest) {
     const ownRefusal = commitment.test(text)
-      || /^(?:no[,.!]?\s*)?(?:i|we)\s+(?:cannot|can't|won't|decline|reject)\b/.test(text)
+      || /^(?:no[,.!]?\s*)?(?:i|we)\s+(?:cannot|can't|won't|(?:(?:have|need)\s+to\s+|must\s+)?(?:decline|reject))\b/.test(text)
       || /^(?:keep|retain|stick to|stay with)\s/.test(text);
     if (!ownRefusal) return unresolved("Please state whether you personally decline the request or are quoting another message.");
     if (/\b(?:but|however|unless|instead|if)\b|\$|\b(?:add|replace|swap|remove)\b/.test(text)) {

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { ChangeSummary } from "@/components/ui/ChangeSummary";
 import { ghostButton, navLink, panel, primaryButton, SiteHeader } from "@/components/ui/SiteHeader";
 import { StatusChip } from "@/components/ui/StatusChip";
-import { agreementsOf, evidenceParts, initialProject, readableIds } from "@/lib/client/derive";
+import { agreementsOf, evidenceParts, initialProject, normalizeLegacyScopeEvidence, readableIds } from "@/lib/client/derive";
 import { formatDays, formatHours, formatMoney, formatRate } from "@/lib/client/format";
 import { useSimulation } from "@/lib/client/use-simulation";
 import type { EvaluationCategory } from "@/types/scope";
@@ -107,14 +107,15 @@ export function ResultsView() {
                               <summary className="cursor-pointer text-slate-400 hover:text-emerald-300">Evidence ({criterion.evidence.length})</summary>
                             <ul className="m-0 mt-2 list-none space-y-2 p-0">
                               {criterion.evidence.map((evidence) => {
-                                const parts = evidenceParts(evidence.observation, response.turns.find((turn) => turn.turnId === evidence.turnId)?.userMessage);
+                                const evidenceTurn = response.turns.find((turn) => turn.turnId === evidence.turnId);
+                                const parts = evidenceParts(evidence.observation, evidenceTurn?.userMessage);
                                 return (
                                   <li key={`${evidence.turnId}-${evidence.ruleId}`} className="border-l-2 border-emerald-400/30 pl-2.5 text-slate-400">
                                     {parts ? (
                                       <dl className="m-0 space-y-1">
                                         <div><dt className="inline font-medium text-slate-300">Action: </dt><dd className="m-0 inline">{parts.action}</dd></div>
                                         <div><dt className="inline font-medium text-slate-300">Rule: </dt><dd className="m-0 inline">{readable(parts.rule)}</dd></div>
-                                        <div><dt className="inline font-medium text-slate-300">Verified: </dt><dd className="m-0 inline">{readable(parts.verified)}</dd></div>
+                                        <div><dt className="inline font-medium text-slate-300">Verified: </dt><dd className="m-0 inline">{readable(normalizeLegacyScopeEvidence(parts.verified, evidenceTurn))}</dd></div>
                                       </dl>
                                     ) : readable(evidence.observation)}
                                   </li>
