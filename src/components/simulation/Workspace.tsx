@@ -7,11 +7,14 @@ import { ImpactPanel } from "@/components/simulation/ImpactPanel";
 import { ghostButton, navLink, primaryButton, SiteHeader } from "@/components/ui/SiteHeader";
 import { agreementsOf, initialProject } from "@/lib/client/derive";
 import { useSimulation } from "@/lib/client/use-simulation";
+import type { InterpreterMode } from "@/lib/client/api";
 
-export function InterpreterNote() {
+export function InterpreterNote({ mode }: { mode: InterpreterMode }) {
   return (
     <p role="note" className="m-0 border-b border-white/10 bg-white/[0.03] px-4 py-2 text-center text-xs text-slate-400">
-      Client replies come from a rules-based interpreter (rules-v1), not a live AI. State exact terms - price, days, and scope - so your proposal is understood.
+      {mode === "openai"
+        ? "OpenAI interprets your proposals. The simulation engine determines client replies and outcomes."
+        : "The rules-v2 interpreter reads your proposals. The simulation engine determines client replies and outcomes. State exact terms - price, days, and scope."}
     </p>
   );
 }
@@ -29,7 +32,7 @@ export function Workspace() {
       </main>
     );
   }
-  if (!scenario || !session || !active) return <main className="px-6 py-24 text-center text-sm text-slate-400" role="status">Loading project...</main>;
+  if (!scenario || !session || !active || !sim.interpreterMode) return <main className="px-6 py-24 text-center text-sm text-slate-400" role="status">Loading project...</main>;
 
   const response = active.response;
   const project = response?.project ?? initialProject(scenario);
@@ -39,9 +42,11 @@ export function Workspace() {
     <div className="flex min-h-screen flex-col lg:h-screen">
       <SiteHeader>
         <button type="button" onClick={sim.startOver} disabled={sim.sending} className={ghostButton}>New attempt</button>
-        <Link href="/results" className={response?.completed ? primaryButton : navLink}>Results</Link>
+        {sim.sending
+          ? <button type="button" disabled aria-busy="true" aria-label="Results unavailable while the client is replying" className={`${navLink} cursor-wait opacity-40`}>Results</button>
+          : <Link href="/results" className={response?.completed ? primaryButton : navLink}>Results</Link>}
       </SiteHeader>
-      <InterpreterNote />
+      <InterpreterNote mode={sim.interpreterMode} />
       <h1 className="sr-only">Simulation workspace</h1>
       {session.attempts.length > 1 && (
         <div className="flex items-center gap-2 overflow-x-auto border-b border-white/10 px-4 py-2 text-xs sm:px-6" role="tablist" aria-label="Attempts">
