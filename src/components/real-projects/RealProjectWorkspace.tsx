@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ZodError } from "zod";
 import { SiteHeader } from "@/components/ui/SiteHeader";
 import { getSessionInfo } from "@/lib/client/api";
 import { realProjectApi, RealProjectApiError } from "@/lib/client/real-project-api";
 import { errorGuidance, refreshAfterCodes, stepStates, type StepKey } from "@/lib/client/real-project-ui";
-import type { ChangeOrder, DraftStyle, NegotiationDraft, RealClientRequest, RealProject, RealProjectSummary } from "@/types/real-project";
+import { restoreSavedChangeOrder } from "@/lib/client/saved-change-order";
+import type { DraftStyle, NegotiationDraft, RealClientRequest, RealProject, RealProjectSummary } from "@/types/real-project";
 import { AnalysisReview } from "./AnalysisReview";
 import { ImpactForm } from "./ImpactForm";
 import { ProjectForm } from "./ProjectForm";
@@ -33,7 +34,7 @@ export function RealProjectWorkspace() {
   const [requests, setRequests] = useState<RealClientRequest[]>([]);
   const [request, setRequest] = useState<RealClientRequest | null>(null);
   const [drafts, setDrafts] = useState<NegotiationDraft[]>([]);
-  const [changeOrder, setChangeOrder] = useState<ChangeOrder | null>(null);
+  const changeOrder = useMemo(() => restoreSavedChangeOrder(request), [request]);
   const [clientMessage, setClientMessage] = useState("");
   const [analysisConsent, setAnalysisConsent] = useState(false);
   const [draftConsent, setDraftConsent] = useState(false);
@@ -108,21 +109,21 @@ export function RealProjectWorkspace() {
   }
 
   function selectRequest(record: RealClientRequest) {
-    setRequest(record); setChangeOrder(null); setDraftConsent(false); setDrafts([]);
+    setRequest(record); setDraftConsent(false); setDrafts([]);
     setReviewDirty(false);
     setRequests((previous) => [record, ...previous.filter((item) => item.id !== record.id)]);
   }
   async function openProject(id: string) {
     const [record, history] = await Promise.all([realProjectApi.get(id), realProjectApi.requests(id)]);
-    setProject(record); setRequests(history); setRequest(null); setDrafts([]); setChangeOrder(null);
+    setProject(record); setRequests(history); setRequest(null); setDrafts([]);
     setEditing(false); setClientMessage(""); setAnalysisConsent(false);
   }
   function newProject() {
-    setProject(null); setRequests([]); setRequest(null); setDrafts([]); setChangeOrder(null);
+    setProject(null); setRequests([]); setRequest(null); setDrafts([]);
     setEditing(false); setClientMessage(""); setAnalysisConsent(false); setError(null); setNotice(null);
   }
   function newRequest() {
-    setRequest(null); setDrafts([]); setChangeOrder(null); setReviewDirty(false);
+    setRequest(null); setDrafts([]); setReviewDirty(false);
     setClientMessage(""); setAnalysisConsent(false); requestOperation.current = null;
     jumpTo("request");
   }
@@ -229,7 +230,7 @@ export function RealProjectWorkspace() {
                     onPrepareReanalysis={() => {
                       if (!request) return;
                       const text = request.clientMessage;
-                      setRequest(null); setDrafts([]); setChangeOrder(null); setReviewDirty(false);
+                      setRequest(null); setDrafts([]); setReviewDirty(false);
                       setClientMessage(text); setAnalysisConsent(false); requestOperation.current = null;
                       setNotice("Review the text and authorize a new analysis. This creates a separate operation and may make another paid OpenAI request, even if the earlier operation later completes.");
                       jumpTo("request");
@@ -251,7 +252,7 @@ export function RealProjectWorkspace() {
                     <ImpactForm key={`${request.id}-${request.review.revision}-${request.impactHash ?? "new"}`} request={request} state={steps.price} disabled={proposalLocked} calculating={busyIs("Calculating")}
                       onCalculate={(input) => void run("Calculating proposed terms", async () => {
                         const result = await realProjectApi.impact(request.projectId, request.id, input);
-                        selectRequest(result.request); setChangeOrder(result.changeOrder);
+                        selectRequest(result.request);
                         setDrafts(await realProjectApi.drafts(request.projectId, request.id)); setDraftConsent(false);
                         jumpTo("respond");
                       })} />
